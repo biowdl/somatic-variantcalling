@@ -1,0 +1,5 @@
+*.jar
+cromwell-executions/
+cromwell-workflow-logs/
+target/
+test-output/
