@@ -1,8 +1,9 @@
-name: multsample
+name: somatic-variantcalling
 channels:
   - bioconda
   - conda-forge
   - defaults
   - r
 dependencies:
-  - pyyaml
+  - gatk4=4.0.4.0
+  -
