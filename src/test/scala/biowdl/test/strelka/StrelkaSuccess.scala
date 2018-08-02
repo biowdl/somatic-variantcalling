@@ -19,6 +19,15 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package biowdl.test
+package biowdl.test.strelka
 
-class TestPipelineTest extends TestPipelineSuccess
+import java.io.File
+
+import nl.biopet.utils.biowdl.PipelineSuccess
+import nl.biopet.utils.ngs.vcf.getVcfIndexFile
+
+trait StrelkaSuccess extends Strelka with PipelineSuccess {
+  val outputVcf: File = new File(outputDir, vcfPath)
+  addMustHaveFile(outputVcf)
+  addMustHaveFile(getVcfIndexFile(File))
+}

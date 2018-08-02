@@ -19,22 +19,19 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package biowdl.test
+package biowdl.test.strelka
 
 import java.io.File
 
-import nl.biopet.utils.biowdl.multisample.MultisamplePipeline
-import nl.biopet.utils.biowdl.samples.{Wgs1PairedEnd, Wgs2PairedEnd}
+import nl.biopet.utils.biowdl.fixtureFile
+import nl.biopet.utils.biowdl.references.TestReference
 
-trait TestPipeline
-    extends MultisamplePipeline
-    with Wgs1PairedEnd
-    with Wgs2PairedEnd {
-  override def inputs: Map[String, Any] =
-    super.inputs ++
-      Map(
-        s"$startPipelineName.outputDir" -> outputDir.getAbsolutePath
-      )
+class StrelkaTestUnpaired extends StrelkaSuccess with TestReference {
+  override def vcfPath: String = "test.vcf"
+  override def tumorBam: File = fixtureFile("samples", "wgs2", "wgs2.bam")
+}
 
-  def startFile: File = new File("./pipeline.wdl")
+class StrelkaTestPaired extends StrelkaTestUnpaired {
+  override def controlBam: Option[File] =
+    Option(fixtureFile("samples", "wgs1", "wgs1.bam"))
 }
