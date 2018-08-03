@@ -33,7 +33,7 @@ available inputs.
 
 | field | type | default | |
 |-|-|-|-|
-| refDict | `File` | | The reference dict file. |
+| refDict | `File` | | The reference Dict file. |
 | refFasta | `File` | | The reference fasta file. |
 | refFastaIndex | `File` | | The index for the reference fasta file. |
 | tumorBam | `File` | | The BAM file containing the aligned sequencing data for the tumor sample. |
@@ -65,19 +65,19 @@ available inputs.
 
 | field | type | default | |
 |-|-|-|-|
-| refDict | `File` | | The reference dict file. |
+| refDict | `File` | | The reference Dict file. |
 | refFasta | `File` | | The reference fasta file. |
 | refFastaIndex | `File` | | The index for the reference fasta file. |
 | tumorBam | `File` | | The BAM file containing the aligned sequencing data for the tumor sample. |
 | tumorIndex | `File` | | The index for the tumor BAM file. |
 | vcfPath | `String` | | The output VCF file. |
-| strelkaGermline.exome | `Boolean` | `false` | Whether or not the data is exome (or targeted) sequecing data. Only used if no control BAM is given. |
+| strelkaGermline.exome | `Boolean` | `false` | Whether or not the data is exome (or targeted) sequencing data. Only used if no control BAM is given. |
 | strelkaGermline.rna | `Boolean` | `false` | Whether or not the data is RNAseq data. Only used if no control BAM is given. |
-| strelkaSomatic.exome | `Boolean` | `false` | Whether or not the data is exome (or targeted) sequecing data. Only used if a control BAM is given. |
+| strelkaSomatic.exome | `Boolean` | `false` | Whether or not the data is exome (or targeted) sequencing data. Only used if a control BAM is given. |
 | controlBam | `File?` | | The BAM file containing the aligned sequencing data for the control/normal sample. If this is not given Strelka's germline analysis is used. |
 | controlIndex | `File?` | | The index for the control BAM file. |
 
->All inputs have to be preceded by with `Strelka.`.
+>All inputs have to be preceded by `Strelka.`.
 Type is indicated according to the WDL data types: `File` should be indicators
 of file location (a string in JSON). Types ending in `?` indicate the input is
 optional, types ending in `+` indicate they require at least one element.
@@ -98,7 +98,7 @@ available inputs.
 
 | field | type | default | |
 |-|-|-|-|
-| refDict | `File` | | The reference dict file. |
+| refDict | `File` | | The reference Dict file. |
 | refFasta | `File` | | The reference fasta file. |
 | refFastaIndex | `File` | | The index for the reference fasta file. |
 | tumorBam | `File` | | The BAM file containing the aligned sequencing data for the tumor sample. |
@@ -109,7 +109,7 @@ available inputs.
 | controlIndex | `File?` | | The index for the control BAM file. |
 | controlSample | `String?` | | The name/identifier for the control sample. |
 
->All inputs have to be preceded by with `VarDict.`.
+>All inputs have to be preceded by `VarDict.`.
 Type is indicated according to the WDL data types: `File` should be indicators
 of file location (a string in JSON). Types ending in `?` indicate the input is
 optional, types ending in `+` indicate they require at least one element.
@@ -130,16 +130,16 @@ available inputs.
 
 | field | type | default | |
 |-|-|-|-|
-| outputDir | `String` | | The outpur directory. |
-| refDict | `File` | | The reference dict file. |
+| outputDir | `String` | | The output directory. |
+| refDict | `File` | | The reference Dict file. |
 | refFasta | `File` | | The reference fasta file. |
 | refFastaIndex | `File` | | The index for the reference fasta file. |
 | tumorBam | `File` | | The BAM file containing the aligned sequencing data for the tumor sample. |
 | tumorIndex | `File` | | The index for the tumor BAM file. |
 | tumorSample | `String` | | The name/identifier of the tumor sample. |
-| strelka.Strelka.<br />strelkaGermline.exome | `Boolean` | `false` | Whether or not the data is exome (or targeted) sequecing data. Only used if no control BAM is given. |
+| strelka.Strelka.<br />strelkaGermline.exome | `Boolean` | `false` | Whether or not the data is exome (or targeted) sequencing data. Only used if no control BAM is given. |
 | strelka.Strelka.<br />strelkaGermline.rna | `Boolean` | `false` | Whether or not the data is RNAseq data. Only used if no control BAM is given. |
-| strelka.Strelka.<br />strelkaSomatic.exome | `Boolean` | `false` | Whether or not the data is exome (or targeted) sequecing data. Only used if a control BAM is given. |
+| strelka.Strelka.<br />strelkaSomatic.exome | `Boolean` | `false` | Whether or not the data is exome (or targeted) sequencing data. Only used if a control BAM is given. |
 | controlBam | `File?` | | The BAM file containing the aligned sequencing data for the control/normal sample. If this is not given Strelka's germline analysis is used. |
 | controlIndex | `File?` | | The index for the control BAM file. |
 | controlSample | `String?` | | The name/identifier for the control sample. |
