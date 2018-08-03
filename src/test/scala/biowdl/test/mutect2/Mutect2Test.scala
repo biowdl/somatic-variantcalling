@@ -19,19 +19,21 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package biowdl.test.strelka
+package biowdl.test.mutect2
 
 import java.io.File
 
 import nl.biopet.utils.biowdl.fixtureFile
 import nl.biopet.utils.biowdl.references.TestReference
 
-class StrelkaTestUnpaired extends StrelkaSuccess with TestReference {
+class Mutect2TestUnpaired extends Mutect2Success with TestReference {
   def outputVcf: File = new File(outputDir, "test.vcf")
+  def tumorSample: String = "wgs2"
   def tumorBam: File = fixtureFile("samples", "wgs2", "wgs2.bam")
 }
 
-class StrelkaTestPaired extends StrelkaTestUnpaired {
+class Mutect2TestPaired extends Mutect2TestUnpaired {
+  override def controlSample: Option[String] = Option("wgs1")
   override def controlBam: Option[File] =
     Option(fixtureFile("samples", "wgs1", "wgs1.bam"))
 }

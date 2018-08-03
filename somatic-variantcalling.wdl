@@ -19,7 +19,7 @@ workflow SomaticVariantcalling {
         String outputDir
     }
 
-    call mutect2Workflow.Mutect2Workflow as mutect2 {
+    call mutect2Workflow.Mutect2 as mutect2 {
         input:
             tumorSample = tumorSample,
             tumorBam = tumorBam,

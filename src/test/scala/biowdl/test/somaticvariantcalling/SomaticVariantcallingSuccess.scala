@@ -19,14 +19,39 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package biowdl.test.strelka
+package biowdl.test.somaticvariantcalling
+
+import java.io.File
 
 import nl.biopet.utils.biowdl.PipelineSuccess
 import nl.biopet.utils.ngs.vcf.getVcfIndexFile
 
-trait StrelkaSuccess extends Strelka with PipelineSuccess {
-  addMustHaveFile(outputVcf)
-  addMustHaveFile(getVcfIndexFile(outputVcf))
+trait SomaticVariantcallingSuccess
+    extends SomaticVariantcalling
+    with PipelineSuccess {
+  val mutect2Vcf: File = controlBam match {
+    case Some(_) =>
+      new File(
+        s"${outputDir.getAbsolutePath}/mutect2/$tumorSample-$controlSample.vcf")
+    case _ => new File(s"${outputDir.getAbsolutePath}/mutect2/$tumorSample.vcf")
+  }
+  val stelkaVcf: File = controlBam match {
+    case Some(_) =>
+      new File(
+        s"${outputDir.getAbsolutePath}/strelka/$tumorSample-$controlSample.vcf")
+    case _ => new File(s"${outputDir.getAbsolutePath}/strelka/$tumorSample.vcf")
+  }
+  val vardictVcf: File = controlBam match {
+    case Some(_) =>
+      new File(
+        s"${outputDir.getAbsolutePath}/vardict/$tumorSample-$controlSample.vcf")
+    case _ => new File(s"${outputDir.getAbsolutePath}/vardict/$tumorSample.vcf")
+  }
 
-  //TODO content tests
+  addMustHaveFile(mutect2Vcf)
+  addMustHaveFile(getVcfIndexFile(mutect2Vcf))
+  addMustHaveFile(stelkaVcf)
+  addMustHaveFile(getVcfIndexFile(stelkaVcf))
+  addMustHaveFile(vardictVcf)
+  addMustHaveFile(getVcfIndexFile(vardictVcf))
 }

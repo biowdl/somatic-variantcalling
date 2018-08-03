@@ -4,7 +4,7 @@ import "tasks/biopet.wdl" as biopet
 import "tasks/gatk.wdl" as gatk
 import "tasks/picard.wdl" as picard
 
-workflow Mutect2Workflow {
+workflow Mutect2 {
     input {
         String tumorSample
         File tumorBam

@@ -19,19 +19,14 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package biowdl.test.strelka
+package biowdl.test.vardict
 
-import java.io.File
+import nl.biopet.utils.biowdl.PipelineSuccess
+import nl.biopet.utils.ngs.vcf.getVcfIndexFile
 
-import nl.biopet.utils.biowdl.fixtureFile
-import nl.biopet.utils.biowdl.references.TestReference
+trait VarDictSuccess extends VarDict with PipelineSuccess {
+  addMustHaveFile(outputVcf)
+  addMustHaveFile(getVcfIndexFile(outputVcf))
 
-class StrelkaTestUnpaired extends StrelkaSuccess with TestReference {
-  def outputVcf: File = new File(outputDir, "test.vcf")
-  def tumorBam: File = fixtureFile("samples", "wgs2", "wgs2.bam")
-}
-
-class StrelkaTestPaired extends StrelkaTestUnpaired {
-  override def controlBam: Option[File] =
-    Option(fixtureFile("samples", "wgs1", "wgs1.bam"))
+  //TODO content tests
 }

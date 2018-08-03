@@ -19,19 +19,20 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package biowdl.test.strelka
+package biowdl.test.somaticvariantcalling
 
 import java.io.File
 
 import nl.biopet.utils.biowdl.Pipeline
 import nl.biopet.utils.biowdl.references.Reference
 
-trait Strelka extends Pipeline with Reference {
+trait SomaticVariantcalling extends Pipeline with Reference {
 
+  def tumorSample: String
   def tumorBam: File
   def tumorIndex: File = getBamIndex(tumorBam)
-  def outputVcf: File
 
+  def controlSample: Option[String] = None
   def controlBam: Option[File] = None
   def controlIndex: Option[File] = controlBam match {
     case Some(_) =>
@@ -42,17 +43,20 @@ trait Strelka extends Pipeline with Reference {
   override def inputs: Map[String, Any] =
     super.inputs ++
       Map(
-        "Strelka.tumorBam" -> tumorBam.getAbsolutePath,
-        "Strelka.tumorIndex" -> tumorIndex.getAbsolutePath,
-        "Strelka.vcfPath" -> outputVcf.getAbsolutePath,
-        "Strelka.refFasta" -> referenceFasta.getAbsolutePath,
-        "Strelka.refFastaIndex" -> referenceFastaIndexFile.getAbsolutePath,
-        "Strelka.refDict" -> referenceFastaDictFile.getAbsolutePath
+        "SomaticVariantcalling.tumorSample" -> tumorSample,
+        "SomaticVariantcalling.tumorBam" -> tumorBam.getAbsolutePath,
+        "SomaticVariantcalling.tumorIndex" -> tumorIndex.getAbsolutePath,
+        "SomaticVariantcalling.outputDir" -> outputDir.getAbsolutePath,
+        "SomaticVariantcalling.refFasta" -> referenceFasta.getAbsolutePath,
+        "SomaticVariantcalling.refFastaIndex" -> referenceFastaIndexFile.getAbsolutePath,
+        "SomaticVariantcalling.refDict" -> referenceFastaDictFile.getAbsolutePath
       ) ++
-      controlBam.map("Strelka.controlBam" -> _.getAbsolutePath) ++
-      controlIndex.map("Strelka.controlIndex" -> _.getAbsolutePath)
+      controlBam.map("SomaticVariantcalling.controlBam" -> _.getAbsolutePath) ++
+      controlIndex.map(
+        "SomaticVariantcalling.controlIndex" -> _.getAbsolutePath) ++
+      controlSample.map("SomaticVariantcalling.controlSample" -> _)
 
-  def startFile: File = new File("./strelka.wdl")
+  def startFile: File = new File("./somatic-variantcalling.wdl")
 
   def getBamIndex(bam: File): File = {
     val index1 = new File(bam.getAbsolutePath + ".bai")

@@ -19,19 +19,21 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package biowdl.test.strelka
+package biowdl.test.mutect2
 
 import java.io.File
 
 import nl.biopet.utils.biowdl.Pipeline
 import nl.biopet.utils.biowdl.references.Reference
 
-trait Strelka extends Pipeline with Reference {
+trait Mutect2 extends Pipeline with Reference {
 
+  def tumorSample: String
   def tumorBam: File
   def tumorIndex: File = getBamIndex(tumorBam)
   def outputVcf: File
 
+  def controlSample: Option[String] = None
   def controlBam: Option[File] = None
   def controlIndex: Option[File] = controlBam match {
     case Some(_) =>
@@ -42,17 +44,19 @@ trait Strelka extends Pipeline with Reference {
   override def inputs: Map[String, Any] =
     super.inputs ++
       Map(
-        "Strelka.tumorBam" -> tumorBam.getAbsolutePath,
-        "Strelka.tumorIndex" -> tumorIndex.getAbsolutePath,
-        "Strelka.vcfPath" -> outputVcf.getAbsolutePath,
-        "Strelka.refFasta" -> referenceFasta.getAbsolutePath,
-        "Strelka.refFastaIndex" -> referenceFastaIndexFile.getAbsolutePath,
-        "Strelka.refDict" -> referenceFastaDictFile.getAbsolutePath
+        "Mutect2.tumorSample" -> tumorSample,
+        "Mutect2.tumorBam" -> tumorBam.getAbsolutePath,
+        "Mutect2.tumorIndex" -> tumorIndex.getAbsolutePath,
+        "Mutect2.vcfPath" -> outputVcf.getAbsolutePath,
+        "Mutect2.refFasta" -> referenceFasta.getAbsolutePath,
+        "Mutect2.refFastaIndex" -> referenceFastaIndexFile.getAbsolutePath,
+        "Mutect2.refDict" -> referenceFastaDictFile.getAbsolutePath
       ) ++
-      controlBam.map("Strelka.controlBam" -> _.getAbsolutePath) ++
-      controlIndex.map("Strelka.controlIndex" -> _.getAbsolutePath)
+      controlBam.map("Mutect2.controlBam" -> _.getAbsolutePath) ++
+      controlIndex.map("Mutect2.controlIndex" -> _.getAbsolutePath) ++
+      controlSample.map("Mutect2.controlSample" -> _)
 
-  def startFile: File = new File("./strelka.wdl")
+  def startFile: File = new File("./mutect2.wdl")
 
   def getBamIndex(bam: File): File = {
     val index1 = new File(bam.getAbsolutePath + ".bai")
