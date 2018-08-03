@@ -31,8 +31,8 @@ workflow SomaticVariantcalling {
             refFastaIndex = refFastaIndex,
             refDict = refDict,
             vcfPath = if defined(controlBam)
-                then "${outputDir}/mutect2/${tumorSample}-${controlSample}.vcf"
-                else "${outputDir}/mutect2/${tumorSample}.vcf"
+                then "${outputDir}/mutect2/${tumorSample}-${controlSample}.vcf.gz"
+                else "${outputDir}/mutect2/${tumorSample}.vcf.gz"
     }
 
     call strelkaWorkflow.Strelka as strelka {
@@ -45,8 +45,8 @@ workflow SomaticVariantcalling {
             refFastaIndex = refFastaIndex,
             refDict = refDict,
             vcfPath = if defined(controlBam)
-                then "${outputDir}/strelka/${tumorSample}-${controlSample}.vcf"
-                else "${outputDir}/strelka/${tumorSample}.vcf"
+                then "${outputDir}/strelka/${tumorSample}-${controlSample}.vcf.gz"
+                else "${outputDir}/strelka/${tumorSample}.vcf.gz"
     }
 
     call vardictWorkflow.VarDict as vardict {
@@ -61,8 +61,8 @@ workflow SomaticVariantcalling {
             refFastaIndex = refFastaIndex,
             refDict = refDict,
             vcfPath = if defined(controlBam)
-                then "${outputDir}/vardict/${tumorSample}-${controlSample}.vcf"
-                else "${outputDir}/vardict/${tumorSample}.vcf"
+                then "${outputDir}/vardict/${tumorSample}-${controlSample}.vcf.gz"
+                else "${outputDir}/vardict/${tumorSample}.vcf.gz"
     }
 
     #TODO some kind of merging (SomaticSeq?)

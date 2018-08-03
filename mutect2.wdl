@@ -36,7 +36,7 @@ workflow Mutect2 {
                 refFasta = refFasta,
                 refFastaIndex = refFastaIndex,
                 refDict = refDict,
-                outputVcf = scatterDir + "/" + basename(bed) + ".vcf",
+                outputVcf = scatterDir + "/" + basename(bed) + ".vcf.gz",
                 tumorSample = tumorSample,
                 normalSample = controlSample,
                 intervals = [bed]

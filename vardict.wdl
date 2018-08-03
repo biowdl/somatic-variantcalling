@@ -39,7 +39,7 @@ workflow VarDict{
                 normalIndex = controlIndex,
                 refFasta = refFasta,
                 bedFile = bed,
-                outputVcf = scatterDir + "/" + basename(bed) + ".vcf"
+                outputVcf = scatterDir + "/" + basename(bed) + ".vcf.gz"
         }
 
         call samtools.Tabix as index {
