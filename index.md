@@ -21,7 +21,7 @@ These workflows do not perform any kind of preprocessing.
 `mutect2.wdl` can be run using
 [Cromwell](http://cromwell.readthedocs.io/en/stable/):
 ```
-java -jar cromwell-<version>.jar run -i inputs.json mutect2.wdl.wdl
+java -jar cromwell-<version>.jar run -i inputs.json mutect2.wdl
 ```
 
 The inputs JSON can be generated using WOMtools as described in the [WOMtools
