@@ -5,5 +5,7 @@ channels:
   - defaults
   - r
 dependencies:
-  - gatk4=4.0.4.0
-  -
+  - gatk4==4.0.4.0
+  - strelka==2.9.4
+  - vardict==2018.07.25
+  - samtools==1.8
