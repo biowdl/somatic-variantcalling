@@ -27,11 +27,18 @@ import nl.biopet.utils.biowdl.fixtureFile
 import nl.biopet.utils.biowdl.references.TestReference
 
 class StrelkaTestUnpaired extends StrelkaSuccess with TestReference {
-  def outputVcf: File = new File(outputDir, "test.vcf")
   def tumorBam: File = fixtureFile("samples", "wgs2", "wgs2.bam")
 }
 
 class StrelkaTestPaired extends StrelkaTestUnpaired {
   override def controlBam: Option[File] =
     Option(fixtureFile("samples", "wgs1", "wgs1.bam"))
+}
+
+class StrelkaTestUnpairedWithManta extends StrelkaTestUnpaired {
+  override def runManta: Boolean = true
+}
+
+class StrelkaTestPairedWithManta extends StrelkaTestPaired {
+  override def runManta: Boolean = true
 }

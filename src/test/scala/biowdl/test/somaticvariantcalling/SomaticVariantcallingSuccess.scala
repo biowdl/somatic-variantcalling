@@ -35,12 +35,6 @@ trait SomaticVariantcallingSuccess
         s"${outputDir.getAbsolutePath}/mutect2/$tumorSample-$controlSample.vcf")
     case _ => new File(s"${outputDir.getAbsolutePath}/mutect2/$tumorSample.vcf")
   }
-  val stelkaVcf: File = controlBam match {
-    case Some(_) =>
-      new File(
-        s"${outputDir.getAbsolutePath}/strelka/$tumorSample-$controlSample.vcf")
-    case _ => new File(s"${outputDir.getAbsolutePath}/strelka/$tumorSample.vcf")
-  }
   val vardictVcf: File = controlBam match {
     case Some(_) =>
       new File(
@@ -50,8 +44,29 @@ trait SomaticVariantcallingSuccess
 
   addMustHaveFile(mutect2Vcf)
   addMustHaveFile(getVcfIndexFile(mutect2Vcf))
-  addMustHaveFile(stelkaVcf)
-  addMustHaveFile(getVcfIndexFile(stelkaVcf))
   addMustHaveFile(vardictVcf)
   addMustHaveFile(getVcfIndexFile(vardictVcf))
+
+  def snvVCF: File = new File(outputDir, "strelka_snvs.vcf.gz")
+  def indelVCF: File = new File(outputDir, "strelka_indels.vcf.gz")
+  def mantaVCF: File = new File(outputDir, "strelka_manta.vcf.gz")
+
+  addMustHaveFile(snvVCF)
+  addMustHaveFile(getVcfIndexFile(snvVCF))
+
+  if (runManta) {
+    addMustHaveFile(mantaVCF)
+    addMustHaveFile(getVcfIndexFile(mantaVCF))
+  } else {
+    addMustNotHaveFile(mantaVCF)
+    addMustNotHaveFile(getVcfIndexFile(mantaVCF))
+  }
+
+  if (controlBam.isDefined) {
+    addMustHaveFile(indelVCF)
+    addMustHaveFile(getVcfIndexFile(indelVCF))
+  } else {
+    addMustNotHaveFile(indelVCF)
+    addMustNotHaveFile(getVcfIndexFile(indelVCF))
+  }
 }

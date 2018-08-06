@@ -21,12 +21,34 @@
 
 package biowdl.test.strelka
 
+import java.io.File
+
 import nl.biopet.utils.biowdl.PipelineSuccess
 import nl.biopet.utils.ngs.vcf.getVcfIndexFile
 
 trait StrelkaSuccess extends Strelka with PipelineSuccess {
-  addMustHaveFile(outputVcf)
-  addMustHaveFile(getVcfIndexFile(outputVcf))
+  def snvVCF: File = new File(outputDir, s"${basename}_snvs.vcf.gz")
+  def indelVCF: File = new File(outputDir, s"${basename}_indels.vcf.gz")
+  def mantaVCF: File = new File(outputDir, s"${basename}_manta.vcf.gz")
+
+  addMustHaveFile(snvVCF)
+  addMustHaveFile(getVcfIndexFile(snvVCF))
+
+  if (runManta) {
+    addMustHaveFile(mantaVCF)
+    addMustHaveFile(getVcfIndexFile(mantaVCF))
+  } else {
+    addMustNotHaveFile(mantaVCF)
+    addMustNotHaveFile(getVcfIndexFile(mantaVCF))
+  }
+
+  if (controlBam.isDefined) {
+    addMustHaveFile(indelVCF)
+    addMustHaveFile(getVcfIndexFile(indelVCF))
+  } else {
+    addMustNotHaveFile(indelVCF)
+    addMustNotHaveFile(getVcfIndexFile(indelVCF))
+  }
 
   //TODO content tests
 }

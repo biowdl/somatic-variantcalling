@@ -44,9 +44,7 @@ workflow SomaticVariantcalling {
             refFasta = refFasta,
             refFastaIndex = refFastaIndex,
             refDict = refDict,
-            vcfPath = if defined(controlBam)
-                then "${outputDir}/strelka/${tumorSample}-${controlSample}.vcf.gz"
-                else "${outputDir}/strelka/${tumorSample}.vcf.gz"
+            outputDir = "${outputDir}/strelka"
     }
 
     call vardictWorkflow.VarDict as vardict {
@@ -71,9 +69,13 @@ workflow SomaticVariantcalling {
     output{
         File mutect2Vcf = mutect2.outputVCF
         File mutect2Index = mutect2.outputVCFindex
-        File strelkaVcf = strelka.outputVCF
-        File strelkaIndex = strelka.outputVCFindex
         File vardictVcf = vardict.outputVCF
         File vardictIndex = vardict.outputVCFindex
+        File strelkaSnvsVcf = strelka.snvVCF
+        File strelkaSnvsIndex = strelka.snvVCFindex
+        File? strelkaIndelsVcf = strelka.indelsVCF
+        File? strelkaIndelsIndex = strelka.indelsVCFindex
+        File? mantaVcf = strelka.mantaVCF
+        File? mantaIndex = strelka.mantaVCFindex
     }
 }

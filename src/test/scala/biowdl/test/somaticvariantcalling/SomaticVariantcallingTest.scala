@@ -39,3 +39,13 @@ class SomaticVariantcallingTestPaired
   override def controlBam: Option[File] =
     Option(fixtureFile("samples", "wgs1", "wgs1.bam"))
 }
+
+class SomaticVariantcallingTestUnpairedWithManta
+    extends SomaticVariantcallingTestUnpaired {
+  override def runManta: Boolean = true
+}
+
+class SomaticVariantcallingTestPairedWithManta
+    extends SomaticVariantcallingTestPaired {
+  override def runManta: Boolean = true
+}

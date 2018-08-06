@@ -19,7 +19,7 @@ workflow VarDict{
         String vcfPath
     }
 
-    String scatterDir = sub(vcfPath, basename(vcfPath), "/scatters/")
+    String scatterDir = vcfPath + "_scatters/"
 
     call biopet.ScatterRegions as scatterList {
         input:

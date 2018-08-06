@@ -30,7 +30,8 @@ trait Strelka extends Pipeline with Reference {
 
   def tumorBam: File
   def tumorIndex: File = getBamIndex(tumorBam)
-  def outputVcf: File
+  def basename: String = "strelka"
+  def runManta: Boolean = false
 
   def controlBam: Option[File] = None
   def controlIndex: Option[File] = controlBam match {
@@ -42,9 +43,11 @@ trait Strelka extends Pipeline with Reference {
   override def inputs: Map[String, Any] =
     super.inputs ++
       Map(
+        "Strelka.runManta" -> runManta,
+        "Strelka.basename" -> basename,
         "Strelka.tumorBam" -> tumorBam.getAbsolutePath,
         "Strelka.tumorIndex" -> tumorIndex.getAbsolutePath,
-        "Strelka.vcfPath" -> outputVcf.getAbsolutePath,
+        "Strelka.outputDir" -> outputDir.getAbsolutePath,
         "Strelka.refFasta" -> referenceFasta.getAbsolutePath,
         "Strelka.refFastaIndex" -> referenceFastaIndexFile.getAbsolutePath,
         "Strelka.refDict" -> referenceFastaDictFile.getAbsolutePath

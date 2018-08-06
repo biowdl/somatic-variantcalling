@@ -31,6 +31,7 @@ trait SomaticVariantcalling extends Pipeline with Reference {
   def tumorSample: String
   def tumorBam: File
   def tumorIndex: File = getBamIndex(tumorBam)
+  def runManta: Boolean = false
 
   def controlSample: Option[String] = None
   def controlBam: Option[File] = None
@@ -43,6 +44,7 @@ trait SomaticVariantcalling extends Pipeline with Reference {
   override def inputs: Map[String, Any] =
     super.inputs ++
       Map(
+        "SomaticVariantcalling.strelka.runManta" -> runManta,
         "SomaticVariantcalling.tumorSample" -> tumorSample,
         "SomaticVariantcalling.tumorBam" -> tumorBam.getAbsolutePath,
         "SomaticVariantcalling.tumorIndex" -> tumorIndex.getAbsolutePath,
