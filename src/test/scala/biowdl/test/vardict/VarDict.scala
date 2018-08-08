@@ -56,7 +56,7 @@ trait VarDict extends Pipeline with Reference {
       controlIndex.map("VarDict.controlIndex" -> _.getAbsolutePath) ++
       controlSample.map("VarDict.controlSample" -> _)
 
-  def startFile: File = new File("./mutect2.wdl")
+  def startFile: File = new File("./vardict.wdl")
 
   def getBamIndex(bam: File): File = {
     val index1 = new File(bam.getAbsolutePath + ".bai")

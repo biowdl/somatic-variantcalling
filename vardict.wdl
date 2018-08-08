@@ -38,6 +38,7 @@ workflow VarDict{
                 normalBam = controlBam,
                 normalIndex = controlIndex,
                 refFasta = refFasta,
+                refFastaIndex = refFastaIndex,
                 bedFile = bed,
                 outputVcf = scatterDir + "/" + basename(bed) + ".vcf.gz"
         }

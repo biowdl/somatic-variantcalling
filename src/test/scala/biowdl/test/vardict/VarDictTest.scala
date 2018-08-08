@@ -27,9 +27,9 @@ import nl.biopet.utils.biowdl.fixtureFile
 import nl.biopet.utils.biowdl.references.TestReference
 
 class VarDictTestUnpaired extends VarDictSuccess with TestReference {
-  def outputVcf: File = new File(outputDir, "test.vcf")
+  def outputVcf: File = new File(outputDir, "test.vcf.gz")
   def tumorSample: String = "wgs2"
-  def tumorBam: File = fixtureFile("samples", "wgs2", "wgs2.bam")
+  def tumorBam: File = fixtureFile("samples", "wgs2", "wgs2.realign.bam")
 }
 
 class VarDictTestPaired extends VarDictTestUnpaired {

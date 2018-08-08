@@ -9,3 +9,8 @@ dependencies:
   - strelka==2.9.4
   - vardict==2018.07.25
   - samtools==1.8
+  - manta==1.4.0
+  - picard==2.18.11
+  - biopet-scatterregions==0.1
+  - tabix==0.2.5
+  - vardict-java==1.5.4

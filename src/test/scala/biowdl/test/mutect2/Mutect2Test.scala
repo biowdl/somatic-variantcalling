@@ -27,13 +27,23 @@ import nl.biopet.utils.biowdl.fixtureFile
 import nl.biopet.utils.biowdl.references.TestReference
 
 class Mutect2TestUnpaired extends Mutect2Success with TestReference {
-  def outputVcf: File = new File(outputDir, "test.vcf")
+  def outputVcf: File = new File(outputDir, "test.vcf.gz")
   def tumorSample: String = "wgs2"
-  def tumorBam: File = fixtureFile("samples", "wgs2", "wgs2.bam")
+  def tumorBam: File = fixtureFile("samples", "wgs2", "wgs2.realign.bam")
+
+  override def truth: File = fixtureFile("samples", "wgs2", "wgs2.vcf.gz")
 }
 
 class Mutect2TestPaired extends Mutect2TestUnpaired {
   override def controlSample: Option[String] = Option("wgs1")
   override def controlBam: Option[File] =
     Option(fixtureFile("samples", "wgs1", "wgs1.bam"))
+}
+
+class Mutect2TestPairedSameSample extends Mutect2TestUnpaired {
+  override def controlSample: Option[String] = Option("wgs2")
+  override def controlBam: Option[File] =
+    Option(fixtureFile("samples", "wgs2", "wgs2.realign.bam"))
+
+  override def negativeTest: Boolean = true
 }

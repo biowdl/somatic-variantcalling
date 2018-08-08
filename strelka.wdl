@@ -42,11 +42,12 @@ workflow Strelka {
             call manta.Somatic as mantaSomatic {
                 input:
                     runDir = scatterDir + "/" + basename(bed) + "_runManta",
-                    normalBam = select_first([controlBam]),
-                    normalIndex = select_first([controlIndex]),
+                    normalBam = controlBam,
+                    normalIndex = controlIndex,
                     tumorBam = tumorBam,
                     tumorIndex = tumorIndex,
                     refFasta = refFasta,
+                    refFastaIndex = refFastaIndex,
                     callRegions = bedPrepare.compressed,
                     callRegionsIndex = bedPrepare.index
             }
@@ -61,6 +62,7 @@ workflow Strelka {
                     tumorBam = tumorBam,
                     tumorIndex = tumorIndex,
                     refFasta = refFasta,
+                    refFastaIndex = refFastaIndex,
                     callRegions = bedPrepare.compressed,
                     callRegionsIndex = bedPrepare.index,
                     indelCandidates = mantaSomatic.condidateSmallIndels,
@@ -75,6 +77,7 @@ workflow Strelka {
                     bams = [tumorBam],
                     indexes = [tumorIndex],
                     refFasta = refFasta,
+                    refFastaIndex = refFastaIndex,
                     callRegions = bedPrepare.compressed,
                     callRegionsIndex = bedPrepare.index
             }

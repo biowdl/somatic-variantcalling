@@ -32,14 +32,16 @@ trait SomaticVariantcallingSuccess
   val mutect2Vcf: File = controlBam match {
     case Some(_) =>
       new File(
-        s"${outputDir.getAbsolutePath}/mutect2/$tumorSample-$controlSample.vcf")
-    case _ => new File(s"${outputDir.getAbsolutePath}/mutect2/$tumorSample.vcf")
+        s"${outputDir.getAbsolutePath}/mutect2/$tumorSample-$controlSample.vcf.gz")
+    case _ =>
+      new File(s"${outputDir.getAbsolutePath}/mutect2/$tumorSample.vcf.gz")
   }
   val vardictVcf: File = controlBam match {
     case Some(_) =>
       new File(
-        s"${outputDir.getAbsolutePath}/vardict/$tumorSample-$controlSample.vcf")
-    case _ => new File(s"${outputDir.getAbsolutePath}/vardict/$tumorSample.vcf")
+        s"${outputDir.getAbsolutePath}/vardict/$tumorSample-$controlSample.vcf.gz")
+    case _ =>
+      new File(s"${outputDir.getAbsolutePath}/vardict/$tumorSample.vcf.gz")
   }
 
   addMustHaveFile(mutect2Vcf)

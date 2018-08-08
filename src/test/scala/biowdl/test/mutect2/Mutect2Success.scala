@@ -21,12 +21,35 @@
 
 package biowdl.test.mutect2
 
+import java.io.File
+
 import nl.biopet.utils.biowdl.PipelineSuccess
+import nl.biopet.utils.ngs.intervals.BedRecord
 import nl.biopet.utils.ngs.vcf.getVcfIndexFile
+import nl.biopet.utils.ngs.vcf.loadRegion
+import org.testng.annotations.Test
 
 trait Mutect2Success extends Mutect2 with PipelineSuccess {
   addMustHaveFile(outputVcf)
   addMustHaveFile(getVcfIndexFile(outputVcf))
 
-  //TODO content tests
+  def truth: File
+
+  def negativeTest: Boolean = false
+
+  @Test
+  def testVariantsDontExist()
+    : Unit = { //Test if no records from truth are present in output
+    val truthVariants = loadRegion(truth, BedRecord("chr1", 1, 16000))
+    val outputVariants = loadRegion(outputVcf, BedRecord("chr1", 1, 16000))
+
+    truthVariants.foreach(v => {
+      val exists = outputVariants.exists(
+        v2 =>
+          v.getStart == v2.getStart & v.getEnd == v2.getEnd & v.getAlleles
+            .equals(v2.getAlleles))
+      if (negativeTest) assert(!exists)
+      else assert(exists)
+    })
+  }
 }

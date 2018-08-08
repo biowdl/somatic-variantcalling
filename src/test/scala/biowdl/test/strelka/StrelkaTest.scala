@@ -27,7 +27,7 @@ import nl.biopet.utils.biowdl.fixtureFile
 import nl.biopet.utils.biowdl.references.TestReference
 
 class StrelkaTestUnpaired extends StrelkaSuccess with TestReference {
-  def tumorBam: File = fixtureFile("samples", "wgs2", "wgs2.bam")
+  def tumorBam: File = fixtureFile("samples", "wgs2", "wgs2.realign.bam")
 }
 
 class StrelkaTestPaired extends StrelkaTestUnpaired {
