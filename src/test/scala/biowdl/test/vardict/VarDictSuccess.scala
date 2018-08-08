@@ -21,7 +21,6 @@
 
 package biowdl.test.vardict
 
-import biowdl.test.TempSuccess
 import nl.biopet.utils.biowdl.PipelineSuccess
 import nl.biopet.utils.ngs.vcf.getVcfIndexFile
 
