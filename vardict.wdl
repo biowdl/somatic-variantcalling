@@ -42,22 +42,16 @@ workflow VarDict{
                 bedFile = bed,
                 outputVcf = scatterDir + "/" + basename(bed) + ".vcf.gz"
         }
-
-        call samtools.Tabix as index {
-            input:
-                inputFile = varDict.vcfFile
-        }
     }
 
-    call picard.MergeVCFs as gatherVcfs {
+    call picard.SortVcf as gatherVcfs {
         input:
-            inputVCFs = varDict.vcfFile,
-            inputVCFsIndexes = index.index,
-            outputVCFpath = vcfPath
+            vcfFiles = varDict.vcfFile,
+            outputVcf = vcfPath
     }
 
     output {
-        File outputVCF = gatherVcfs.outputVCF
-        File outputVCFindex = gatherVcfs.outputVCFindex
+        File outputVCF = gatherVcfs.vcfFile
+        File outputVCFindex = gatherVcfs.vcfIndex
     }
 }

@@ -25,8 +25,7 @@ import java.io.File
 
 import nl.biopet.utils.biowdl.PipelineSuccess
 import nl.biopet.utils.ngs.intervals.BedRecord
-import nl.biopet.utils.ngs.vcf.getVcfIndexFile
-import nl.biopet.utils.ngs.vcf.loadRegion
+import nl.biopet.utils.ngs.vcf.{getVcfIndexFile, loadRegion}
 import org.testng.annotations.Test
 
 trait Mutect2Success extends Mutect2 with PipelineSuccess {
