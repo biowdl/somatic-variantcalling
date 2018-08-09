@@ -44,7 +44,10 @@ workflow SomaticVariantcalling {
             refFasta = refFasta,
             refFastaIndex = refFastaIndex,
             refDict = refDict,
-            outputDir = "${outputDir}/strelka"
+            outputDir = "${outputDir}/strelka",
+            basename = if defined(controlBam)
+                then "${tumorSample}-${controlSample}"
+                else tumorSample
     }
 
     call vardictWorkflow.VarDict as vardict {
