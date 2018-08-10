@@ -47,7 +47,8 @@ workflow VarDict{
     call picard.SortVcf as gatherVcfs {
         input:
             vcfFiles = varDict.vcfFile,
-            outputVcf = vcfPath
+            outputVcf = vcfPath,
+            sequenceDict = refDict
     }
 
     output {
