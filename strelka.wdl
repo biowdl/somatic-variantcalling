@@ -39,7 +39,7 @@ workflow Strelka {
         }
 
         if (runManta) {
-            call manta.Somatic as mantaSomatic {
+            call manta.ConfigureSomatic as mantaSomatic {
                 input:
                     runDir = scatterDir + "/" + basename(bed) + "_runManta",
                     normalBam = controlBam,
@@ -51,10 +51,16 @@ workflow Strelka {
                     callRegions = bedPrepare.compressed,
                     callRegionsIndex = bedPrepare.index
             }
+
+            call manta.RunSomatic as mantaSomaticRun {
+                input:
+                    runDir = mantaSomatic.runDirectory,
+                    paired = defined(controlBam)
+            }
         }
 
         if (defined(controlBam)){
-            call strelka.Somatic as strelkaSomatic {
+            call strelka.ConfigureSomatic as strelkaSomatic {
                 input:
                     runDir = scatterDir + "/" + basename(bed) + "_runStrelka",
                     normalBam = select_first([controlBam]),
@@ -65,13 +71,13 @@ workflow Strelka {
                     refFastaIndex = refFastaIndex,
                     callRegions = bedPrepare.compressed,
                     callRegionsIndex = bedPrepare.index,
-                    indelCandidates = mantaSomatic.condidateSmallIndels,
-                    indelCandidatesIndex = mantaSomatic.condidateSmallIndelsIndex
+                    indelCandidates = mantaSomaticRun.condidateSmallIndels,
+                    indelCandidatesIndex = mantaSomaticRun.condidateSmallIndelsIndex
             }
         }
 
         if (! defined(controlBam)) {
-            call strelka.Germline as strelkaGermline {
+            call strelka.ConfigureGermline as strelkaGermline {
                 input:
                     runDir = scatterDir + "/" + basename(bed) + "_runStrelka",
                     bams = [tumorBam],
@@ -82,13 +88,21 @@ workflow Strelka {
                     callRegionsIndex = bedPrepare.index
             }
         }
+
+        call strelka.Run as strelkaRun {
+            input:
+                runDir = if defined(controlBam)
+                    then select_first([strelkaSomatic.runDirectory])
+                    else select_first([strelkaGermline.runDirectory]),
+                somatic = defined(controlBam)
+        }
     }
 
     if (runManta) {
         call picard.MergeVCFs as gatherSVs {
             input:
-                inputVCFs = select_all(mantaSomatic.tumorSV),
-                inputVCFsIndexes = select_all(mantaSomatic.tumorSVindex),
+                inputVCFs = select_all(mantaSomaticRun.tumorSV),
+                inputVCFsIndexes = select_all(mantaSomaticRun.tumorSVindex),
                 outputVCFpath = outputDir + "/" + basename + "_manta.vcf.gz"
         }
     }
@@ -96,21 +110,17 @@ workflow Strelka {
     if (defined(controlBam)){
         call picard.MergeVCFs as gatherIndels {
             input:
-                inputVCFs = select_all(strelkaSomatic.indelsVcf),
-                inputVCFsIndexes = select_all(strelkaSomatic.indelsIndex),
+                inputVCFs = select_all(strelkaRun.indelsVcf),
+                inputVCFsIndexes = select_all(strelkaRun.indelsIndex),
                 outputVCFpath = outputDir + "/" + basename + "_indels.vcf.gz"
 
         }
     }
 
-    call picard.MergeVCFs as gatherSnvs {
+    call picard.MergeVCFs as gatherVariants {
         input:
-            inputVCFs = if defined(controlBam)
-                then select_all(strelkaSomatic.snvVcf)
-                else select_all(strelkaGermline.variants),
-            inputVCFsIndexes = if defined(controlBam)
-                then select_all(strelkaSomatic.snvIndex)
-                else select_all(strelkaGermline.variantsIndex),
+            inputVCFs = strelkaRun.variants,
+            inputVCFsIndexes = strelkaRun.variantsIndex,
             outputVCFpath = outputDir + "/" + basename + "_snvs.vcf.gz"
     }
 
@@ -120,8 +130,8 @@ workflow Strelka {
         File? indelsVCF = gatherIndels.outputVCF
         File? indelsVCFindex = gatherIndels.outputVCFindex
 
-        File snvVCF = gatherSnvs.outputVCF
-        File snvVCFindex = gatherSnvs.outputVCFindex
+        File variantsVCF = gatherVariants.outputVCF
+        File variantsVCFindex = gatherVariants.outputVCFindex
     }
 }
 

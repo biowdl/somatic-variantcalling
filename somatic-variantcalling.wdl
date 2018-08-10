@@ -74,8 +74,8 @@ workflow SomaticVariantcalling {
         File mutect2Index = mutect2.outputVCFindex
         File vardictVcf = vardict.outputVCF
         File vardictIndex = vardict.outputVCFindex
-        File strelkaSnvsVcf = strelka.snvVCF
-        File strelkaSnvsIndex = strelka.snvVCFindex
+        File strelkaSnvsVcf = strelka.variantsVCF
+        File strelkaSnvsIndex = strelka.variantsVCFindex
         File? strelkaIndelsVcf = strelka.indelsVCF
         File? strelkaIndelsIndex = strelka.indelsVCFindex
         File? mantaVcf = strelka.mantaVCF
