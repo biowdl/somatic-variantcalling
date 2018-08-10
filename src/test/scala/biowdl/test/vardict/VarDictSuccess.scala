@@ -21,12 +21,33 @@
 
 package biowdl.test.vardict
 
+import java.io.File
+
 import nl.biopet.utils.biowdl.PipelineSuccess
-import nl.biopet.utils.ngs.vcf.getVcfIndexFile
+import nl.biopet.utils.ngs.intervals.BedRecord
+import nl.biopet.utils.ngs.vcf.{getVcfIndexFile, loadRegion}
+import org.testng.annotations.Test
 
 trait VarDictSuccess extends VarDict with PipelineSuccess {
   addMustHaveFile(outputVcf)
   addMustHaveFile(getVcfIndexFile(outputVcf))
 
-  //TODO content tests
+  def truth: File
+
+  def negativeTest: Boolean = false
+
+  @Test
+  def testVariantsExist(): Unit = {
+    val truthVariants = loadRegion(truth, BedRecord("chr1", 1, 16000))
+    val outputVariants = loadRegion(outputVcf, BedRecord("chr1", 1, 16000))
+
+    truthVariants.foreach(v => {
+      val exists = outputVariants.exists(
+        v2 =>
+          v.getStart == v2.getStart & v.getEnd == v2.getEnd & v.getAlleles
+            .equals(v2.getAlleles))
+      if (negativeTest) assert(!exists)
+      else assert(exists)
+    })
+  }
 }

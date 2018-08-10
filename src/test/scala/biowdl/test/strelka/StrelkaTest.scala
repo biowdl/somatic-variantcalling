@@ -28,6 +28,8 @@ import nl.biopet.utils.biowdl.references.TestReference
 
 class StrelkaTestUnpaired extends StrelkaSuccess with TestReference {
   def tumorBam: File = fixtureFile("samples", "wgs2", "wgs2.realign.bam")
+
+  override def truth: File = fixtureFile("samples", "wgs2", "wgs2.vcf.gz")
 }
 
 class StrelkaTestPaired extends StrelkaTestUnpaired {
@@ -40,5 +42,16 @@ class StrelkaTestUnpairedWithManta extends StrelkaTestUnpaired {
 }
 
 class StrelkaTestPairedWithManta extends StrelkaTestPaired {
+  override def runManta: Boolean = true
+}
+
+class StrelkaTestPairedSameSample extends StrelkaTestUnpaired {
+  override def controlBam: Option[File] =
+    Option(fixtureFile("samples", "wgs2", "wgs2.realign.bam"))
+
+  override def negativeTest: Boolean = true
+}
+
+class StrelkaTestPairedSameSampleWithManta extends StrelkaTestPairedSameSample {
   override def runManta: Boolean = true
 }

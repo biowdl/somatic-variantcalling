@@ -24,10 +24,12 @@ package biowdl.test.strelka
 import java.io.File
 
 import nl.biopet.utils.biowdl.PipelineSuccess
-import nl.biopet.utils.ngs.vcf.getVcfIndexFile
+import nl.biopet.utils.ngs.intervals.BedRecord
+import nl.biopet.utils.ngs.vcf.{getVcfIndexFile, loadRegion}
+import org.testng.annotations.Test
 
 trait StrelkaSuccess extends Strelka with PipelineSuccess {
-  def snvVCF: File = new File(outputDir, s"${basename}_snvs.vcf.gz")
+  def snvVCF: File = new File(outputDir, s"${basename}_variants.vcf.gz")
   def indelVCF: File = new File(outputDir, s"${basename}_indels.vcf.gz")
   def mantaVCF: File = new File(outputDir, s"${basename}_manta.vcf.gz")
 
@@ -50,5 +52,22 @@ trait StrelkaSuccess extends Strelka with PipelineSuccess {
     addMustNotHaveFile(getVcfIndexFile(indelVCF))
   }
 
-  //TODO content tests
+  def truth: File
+
+  def negativeTest: Boolean = false
+
+  @Test
+  def testVariantsExist(): Unit = {
+    val truthVariants = loadRegion(truth, BedRecord("chr1", 1, 16000))
+    val outputVariants = loadRegion(snvVCF, BedRecord("chr1", 1, 16000))
+
+    truthVariants.foreach(v => {
+      val exists = outputVariants.exists(
+        v2 =>
+          v.getStart == v2.getStart & v.getEnd == v2.getEnd & v.getAlleles
+            .equals(v2.getAlleles))
+      if (negativeTest) assert(!exists)
+      else assert(exists)
+    })
+  }
 }

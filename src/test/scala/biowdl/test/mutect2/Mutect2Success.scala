@@ -37,7 +37,7 @@ trait Mutect2Success extends Mutect2 with PipelineSuccess {
   def negativeTest: Boolean = false
 
   @Test
-  def testVariantsDontExist()
+  def testVariantsExist()
     : Unit = { //Test if no records from truth are present in output
     val truthVariants = loadRegion(truth, BedRecord("chr1", 1, 16000))
     val outputVariants = loadRegion(outputVcf, BedRecord("chr1", 1, 16000))

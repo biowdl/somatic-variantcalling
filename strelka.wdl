@@ -121,7 +121,7 @@ workflow Strelka {
         input:
             inputVCFs = strelkaRun.variants,
             inputVCFsIndexes = strelkaRun.variantsIndex,
-            outputVCFpath = outputDir + "/" + basename + "_snvs.vcf.gz"
+            outputVCFpath = outputDir + "/" + basename + "_variants.vcf.gz"
     }
 
     output {
