@@ -37,7 +37,7 @@ trait VarDictSuccess extends VarDict with PipelineSuccess {
   def negativeTest: Boolean = false
 
   @Test
-  def testVariantsExist(): Unit = {
+  def testVariantStatus(): Unit = {
     val truthVariants = loadRegion(truth, BedRecord("chr1", 1, 16000))
     val outputVariants = loadRegion(outputVcf, BedRecord("chr1", 1, 16000))
 
@@ -45,7 +45,9 @@ trait VarDictSuccess extends VarDict with PipelineSuccess {
       val exists = outputVariants.exists(
         v2 =>
           v.getStart == v2.getStart & v.getEnd == v2.getEnd & v.getAlleles
-            .equals(v2.getAlleles))
+            .equals(v2.getAlleles) & v2
+            .getAttributeAsString("STATUS", "")
+            .matches(".*Somatic.*"))
       if (negativeTest) assert(!exists)
       else assert(exists)
     })
