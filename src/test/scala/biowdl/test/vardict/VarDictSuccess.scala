@@ -45,9 +45,11 @@ trait VarDictSuccess extends VarDict with PipelineSuccess {
       val exists = outputVariants.exists(
         v2 =>
           v.getStart == v2.getStart & v.getEnd == v2.getEnd & v.getAlleles
-            .equals(v2.getAlleles) & v2
-            .getAttributeAsString("STATUS", "")
-            .matches(".*Somatic.*"))
+            .equals(v2.getAlleles) & {
+            if (controlBam.isDefined)
+              v2.getAttributeAsString("STATUS", "").matches(".*Somatic.*")
+            else true
+        })
       if (negativeTest) assert(!exists)
       else assert(exists)
     })
