@@ -29,29 +29,40 @@ import nl.biopet.utils.ngs.vcf.getVcfIndexFile
 trait SomaticVariantcallingSuccess
     extends SomaticVariantcalling
     with PipelineSuccess {
+
+  // Mutect2
   val mutect2Vcf: File = controlBam match {
     case Some(_) =>
       new File(
-        s"${outputDir.getAbsolutePath}/mutect2/$tumorSample-$controlSample.vcf.gz")
+        s"${outputDir.getAbsolutePath}/mutect2/$tumorSample-${controlSample
+          .getOrElse(throw new IllegalStateException())}.vcf.gz")
     case _ =>
       new File(s"${outputDir.getAbsolutePath}/mutect2/$tumorSample.vcf.gz")
   }
+  addMustHaveFile(mutect2Vcf)
+  addMustHaveFile(getVcfIndexFile(mutect2Vcf))
+
+  // Vardict
   val vardictVcf: File = controlBam match {
     case Some(_) =>
       new File(
-        s"${outputDir.getAbsolutePath}/vardict/$tumorSample-$controlSample.vcf.gz")
+        s"${outputDir.getAbsolutePath}/vardict/$tumorSample-${controlSample
+          .getOrElse(throw new IllegalStateException())}.vcf.gz")
     case _ =>
       new File(s"${outputDir.getAbsolutePath}/vardict/$tumorSample.vcf.gz")
   }
-
-  addMustHaveFile(mutect2Vcf)
-  addMustHaveFile(getVcfIndexFile(mutect2Vcf))
   addMustHaveFile(vardictVcf)
   addMustHaveFile(getVcfIndexFile(vardictVcf))
 
-  def snvVCF: File = new File(outputDir, "strelka_snvs.vcf.gz")
-  def indelVCF: File = new File(outputDir, "strelka_indels.vcf.gz")
-  def mantaVCF: File = new File(outputDir, "strelka_manta.vcf.gz")
+  // Strelka
+  val basename: String = controlBam match {
+    case Some(_) =>
+      s"$tumorSample-${controlSample.getOrElse(throw new IllegalStateException())}"
+    case _ => s"$tumorSample"
+  }
+  def snvVCF: File = new File(outputDir, s"strelka/${basename}_variants.vcf.gz")
+  def indelVCF: File = new File(outputDir, s"strelka/${basename}_indels.vcf.gz")
+  def mantaVCF: File = new File(outputDir, s"strelka/${basename}_manta.vcf.gz")
 
   addMustHaveFile(snvVCF)
   addMustHaveFile(getVcfIndexFile(snvVCF))

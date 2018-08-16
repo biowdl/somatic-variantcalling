@@ -45,6 +45,7 @@ class StrelkaTestPairedWithManta extends StrelkaTestPaired {
   override def runManta: Boolean = true
 }
 
+/* Strelka detects the fact that the same BAM is given twice
 class StrelkaTestPairedSameSample extends StrelkaTestUnpaired {
   override def controlBam: Option[File] =
     Option(fixtureFile("samples", "wgs2", "wgs2.realign.bam"))
@@ -55,3 +56,4 @@ class StrelkaTestPairedSameSample extends StrelkaTestUnpaired {
 class StrelkaTestPairedSameSampleWithManta extends StrelkaTestPairedSameSample {
   override def runManta: Boolean = true
 }
+ */

@@ -19,6 +19,10 @@ workflow SomaticVariantcalling {
         String outputDir
     }
 
+    String mutect2Dir = outputDir + "/mutect2"
+    String strelkaDir = outputDir + "/strelka"
+    String vardictDir = outputDir + "/vardict"
+
     call mutect2Workflow.Mutect2 as mutect2 {
         input:
             tumorSample = tumorSample,
@@ -31,8 +35,8 @@ workflow SomaticVariantcalling {
             refFastaIndex = refFastaIndex,
             refDict = refDict,
             vcfPath = if defined(controlBam)
-                then "${outputDir}/mutect2/${tumorSample}-${controlSample}.vcf.gz"
-                else "${outputDir}/mutect2/${tumorSample}.vcf.gz"
+                then "${mutect2Dir}/${tumorSample}-${controlSample}.vcf.gz"
+                else "${mutect2Dir}/${tumorSample}.vcf.gz"
     }
 
     call strelkaWorkflow.Strelka as strelka {
@@ -44,7 +48,7 @@ workflow SomaticVariantcalling {
             refFasta = refFasta,
             refFastaIndex = refFastaIndex,
             refDict = refDict,
-            outputDir = "${outputDir}/strelka",
+            outputDir = strelkaDir,
             basename = if defined(controlBam)
                 then "${tumorSample}-${controlSample}"
                 else tumorSample
@@ -62,8 +66,8 @@ workflow SomaticVariantcalling {
             refFastaIndex = refFastaIndex,
             refDict = refDict,
             vcfPath = if defined(controlBam)
-                then "${outputDir}/vardict/${tumorSample}-${controlSample}.vcf.gz"
-                else "${outputDir}/vardict/${tumorSample}.vcf.gz"
+                then "${vardictDir}/${tumorSample}-${controlSample}.vcf.gz"
+                else "${vardictDir}/${tumorSample}.vcf.gz"
     }
 
     #TODO some kind of merging (SomaticSeq?)
