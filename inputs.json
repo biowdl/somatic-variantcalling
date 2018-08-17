@@ -1,4 +1,0 @@
-{
-  "pipeline.sampleConfigFile": "samples.example.yml",
-  "pipeline.outputDir": "pipeline_output"
-}

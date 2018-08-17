@@ -19,22 +19,31 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package biowdl.test
+package biowdl.test.vardict
 
 import java.io.File
 
-import nl.biopet.utils.biowdl.multisample.MultisamplePipeline
-import nl.biopet.utils.biowdl.samples.{Wgs1PairedEnd, Wgs2PairedEnd}
+import nl.biopet.utils.biowdl.fixtureFile
+import nl.biopet.utils.biowdl.references.TestReference
 
-trait TestPipeline
-    extends MultisamplePipeline
-    with Wgs1PairedEnd
-    with Wgs2PairedEnd {
-  override def inputs: Map[String, Any] =
-    super.inputs ++
-      Map(
-        s"$startPipelineName.outputDir" -> outputDir.getAbsolutePath
-      )
+class VarDictTestUnpaired extends VarDictSuccess with TestReference {
+  def outputVcf: File = new File(outputDir, "test.vcf.gz")
+  def tumorSample: String = "wgs2"
+  def tumorBam: File = fixtureFile("samples", "wgs2", "wgs2.realign.bam")
 
-  def startFile: File = new File("./pipeline.wdl")
+  override def truth: File = fixtureFile("samples", "wgs2", "wgs2.vcf.gz")
+}
+
+class VarDictTestPaired extends VarDictTestUnpaired {
+  override def controlSample: Option[String] = Option("wgs1")
+  override def controlBam: Option[File] =
+    Option(fixtureFile("samples", "wgs1", "wgs1.bam"))
+}
+
+class VarDictTestPairedSameSample extends VarDictTestUnpaired {
+  override def controlSample: Option[String] = Option("wgs2")
+  override def controlBam: Option[File] =
+    Option(fixtureFile("samples", "wgs2", "wgs2.realign.bam"))
+
+  override def negativeTest: Boolean = true
 }

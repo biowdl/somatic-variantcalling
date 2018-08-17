@@ -19,6 +19,33 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package biowdl.test
+package biowdl.test.somaticvariantcalling
 
-class TestPipelineTest extends TestPipelineSuccess
+import java.io.File
+
+import nl.biopet.utils.biowdl.fixtureFile
+import nl.biopet.utils.biowdl.references.TestReference
+
+class SomaticVariantcallingTestUnpaired
+    extends SomaticVariantcallingSuccess
+    with TestReference {
+  def tumorSample: String = "wgs2"
+  def tumorBam: File = fixtureFile("samples", "wgs2", "wgs2.realign.bam")
+}
+
+class SomaticVariantcallingTestPaired
+    extends SomaticVariantcallingTestUnpaired {
+  override def controlSample: Option[String] = Option("wgs1")
+  override def controlBam: Option[File] =
+    Option(fixtureFile("samples", "wgs1", "wgs1.bam"))
+}
+
+class SomaticVariantcallingTestUnpairedWithManta
+    extends SomaticVariantcallingTestUnpaired {
+  override def runManta: Boolean = true
+}
+
+class SomaticVariantcallingTestPairedWithManta
+    extends SomaticVariantcallingTestPaired {
+  override def runManta: Boolean = true
+}
