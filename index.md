@@ -21,7 +21,7 @@ These workflows do not perform any kind of preprocessing.
 `mutect2.wdl` can be run using
 [Cromwell](http://cromwell.readthedocs.io/en/stable/):
 ```
-java -jar cromwell-<version>.jar run -i inputs.json mutect2.wdl.wdl
+java -jar cromwell-<version>.jar run -i inputs.json mutect2.wdl
 ```
 
 The inputs JSON can be generated using WOMtools as described in the [WOMtools
@@ -33,7 +33,7 @@ available inputs.
 
 | field | type | default | |
 |-|-|-|-|
-| refDict | `File` | | The reference dict file. |
+| refDict | `File` | | The reference Dict file. |
 | refFasta | `File` | | The reference fasta file. |
 | refFastaIndex | `File` | | The index for the reference fasta file. |
 | tumorBam | `File` | | The BAM file containing the aligned sequencing data for the tumor sample. |
@@ -65,19 +65,22 @@ available inputs.
 
 | field | type | default | |
 |-|-|-|-|
-| refDict | `File` | | The reference dict file. |
+| outputDir | `String` | | The output directory. |
+| refDict | `File` | | The reference Dict file. |
 | refFasta | `File` | | The reference fasta file. |
 | refFastaIndex | `File` | | The index for the reference fasta file. |
 | tumorBam | `File` | | The BAM file containing the aligned sequencing data for the tumor sample. |
 | tumorIndex | `File` | | The index for the tumor BAM file. |
-| vcfPath | `String` | | The output VCF file. |
-| strelkaGermline.exome | `Boolean` | `false` | Whether or not the data is exome (or targeted) sequecing data. Only used if no control BAM is given. |
+| basename | `String` | `"strelka"` | The basename for the output files. |
+| mantaSomatic.exome | `Boolean` | `false` | Whether or not the data is exome (or targeted) sequencing data. |
+| runManta | `Boolean` | `true` | Whether or not to run Manta. If true the output from Manta will be used as indelCandidates for Strelka. |
+| strelkaGermline.exome | `Boolean` | `false` | Whether or not the data is exome (or targeted) sequencing data. Only used if no control BAM is given. |
 | strelkaGermline.rna | `Boolean` | `false` | Whether or not the data is RNAseq data. Only used if no control BAM is given. |
-| strelkaSomatic.exome | `Boolean` | `false` | Whether or not the data is exome (or targeted) sequecing data. Only used if a control BAM is given. |
+| strelkaSomatic.exome | `Boolean` | `false` | Whether or not the data is exome (or targeted) sequencing data. Only used if a control BAM is given. |
 | controlBam | `File?` | | The BAM file containing the aligned sequencing data for the control/normal sample. If this is not given Strelka's germline analysis is used. |
 | controlIndex | `File?` | | The index for the control BAM file. |
 
->All inputs have to be preceded by with `Strelka.`.
+>All inputs have to be preceded by `Strelka.`.
 Type is indicated according to the WDL data types: `File` should be indicators
 of file location (a string in JSON). Types ending in `?` indicate the input is
 optional, types ending in `+` indicate they require at least one element.
@@ -98,18 +101,19 @@ available inputs.
 
 | field | type | default | |
 |-|-|-|-|
-| refDict | `File` | | The reference dict file. |
+| refDict | `File` | | The reference Dict file. |
 | refFasta | `File` | | The reference fasta file. |
 | refFastaIndex | `File` | | The index for the reference fasta file. |
 | tumorBam | `File` | | The BAM file containing the aligned sequencing data for the tumor sample. |
 | tumorIndex | `File` | | The index for the tumor BAM file. |
 | tumorSample | `String` | | The name/identifier of the tumor sample. |
 | vcfPath | `String` | | The output VCF file. |
+| varDict.useJavaVersion | `Boolean` | `true` | Whether or not to use the java version or VarDict. |
 | controlBam | `File?` | | The BAM file containing the aligned sequencing data for the control/normal sample. |
 | controlIndex | `File?` | | The index for the control BAM file. |
 | controlSample | `String?` | | The name/identifier for the control sample. |
 
->All inputs have to be preceded by with `VarDict.`.
+>All inputs have to be preceded by `VarDict.`.
 Type is indicated according to the WDL data types: `File` should be indicators
 of file location (a string in JSON). Types ending in `?` indicate the input is
 optional, types ending in `+` indicate they require at least one element.
@@ -130,16 +134,18 @@ available inputs.
 
 | field | type | default | |
 |-|-|-|-|
-| outputDir | `String` | | The outpur directory. |
-| refDict | `File` | | The reference dict file. |
+| outputDir | `String` | | The output directory. |
+| refDict | `File` | | The reference Dict file. |
 | refFasta | `File` | | The reference fasta file. |
 | refFastaIndex | `File` | | The index for the reference fasta file. |
 | tumorBam | `File` | | The BAM file containing the aligned sequencing data for the tumor sample. |
 | tumorIndex | `File` | | The index for the tumor BAM file. |
 | tumorSample | `String` | | The name/identifier of the tumor sample. |
-| strelka.Strelka.<br />strelkaGermline.exome | `Boolean` | `false` | Whether or not the data is exome (or targeted) sequecing data. Only used if no control BAM is given. |
+| strelka.Strelka.mantaSomatic.<br />exome | `Boolean` | `false` | Whether or not the data is exome (or targeted) sequencing data. |
+| strelka.Strelka.<br />strelkaGermline.exome | `Boolean` | `false` | Whether or not the data is exome (or targeted) sequencing data. Only used if no control BAM is given. |
 | strelka.Strelka.<br />strelkaGermline.rna | `Boolean` | `false` | Whether or not the data is RNAseq data. Only used if no control BAM is given. |
-| strelka.Strelka.<br />strelkaSomatic.exome | `Boolean` | `false` | Whether or not the data is exome (or targeted) sequecing data. Only used if a control BAM is given. |
+| strelka.Strelka.<br />strelkaSomatic.exome | `Boolean` | `false` | Whether or not the data is exome (or targeted) sequencing data. Only used if a control BAM is given. |
+| strelka.runManta | `Boolean` | `true` | Whether or not to run Manta. |
 | controlBam | `File?` | | The BAM file containing the aligned sequencing data for the control/normal sample. If this is not given Strelka's germline analysis is used. |
 | controlIndex | `File?` | | The index for the control BAM file. |
 | controlSample | `String?` | | The name/identifier for the control sample. |
@@ -159,7 +165,7 @@ this file to create an environment with all the correct tools.
 A VCF file and its index.
 
 ### `strelka.wdl`
-A VCF file and its index.
+A VCF file and its index for indels and SNVs (and SVs if Manta is run).
 
 ### `vardict.wdl`
 A VCF file and its index.
