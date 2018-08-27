@@ -1,8 +1,8 @@
 organization := "com.github.biopet"
 organizationName := "Biowdl"
-name := "pipeline-template"
+name := "SomaticVariantcalling"
 
-biopetUrlName := "pipeline-template"
+biopetUrlName := "SomaticVariantcalling"
 
 startYear := Some(2018)
 
