@@ -2,6 +2,7 @@ version 1.0
 
 import "mutect2.wdl" as mutect2Workflow
 import "tasks/common.wdl" as common
+import "tasks/samtools.wdl" as samtools
 import "tasks/somaticseq.wdl" as somaticSeqTask
 import "strelka.wdl" as strelkaWorkflow
 import "vardict.wdl" as vardictWorkflow
@@ -100,7 +101,27 @@ workflow SomaticVariantcalling {
         }
     }
 
+    call samtools.BgzipAndIndex as snvIndex {
+        input:
+            inputFile = select_first([if defined(controlBam)
+                then somaticSeq.consensusSNV
+                else ssSomaticSeq.consensusSNV]),
+            outputDir = somaticSeqDir
+    }
+
+    call samtools.BgzipAndIndex as indelIndex {
+        input:
+            inputFile = select_first([if defined(controlBam)
+                then somaticSeq.consensusIndels
+                else ssSomaticSeq.consensusIndels]),
+            outputDir = somaticSeqDir
+    }
+
     output {
+        File consensusSnvVcf = snvIndex.compressed
+        File consensusSnvIndex = snvIndex.index
+        File consensusIndelVcf = indelIndex.compressed
+        File consensusIndelIndex = indelIndex.index
         File mutect2Vcf = mutect2.outputVCF
         File mutect2Index = mutect2.outputVCFindex
         File vardictVcf = vardict.outputVCF

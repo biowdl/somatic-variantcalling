@@ -29,6 +29,7 @@ import nl.biopet.utils.biowdl.references.TestReference
 class SomaticVariantcallingTestUnpaired
     extends SomaticVariantcallingSuccess
     with TestReference {
+  override def truth: File = fixtureFile("samples", "wgs2", "wgs2.vcf.gz")
   def tumorSample: String = "wgs2"
   def tumorBam: File = fixtureFile("samples", "wgs2", "wgs2.realign.bam")
 }

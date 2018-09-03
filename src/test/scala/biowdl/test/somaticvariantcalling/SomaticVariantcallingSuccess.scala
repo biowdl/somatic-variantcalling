@@ -24,11 +24,14 @@ package biowdl.test.somaticvariantcalling
 import java.io.File
 
 import nl.biopet.utils.biowdl.PipelineSuccess
-import nl.biopet.utils.ngs.vcf.getVcfIndexFile
+import nl.biopet.utils.ngs.intervals.BedRecord
+import nl.biopet.utils.ngs.vcf.{getVcfIndexFile, loadRegion}
+import org.testng.annotations.Test
 
 trait SomaticVariantcallingSuccess
     extends SomaticVariantcalling
     with PipelineSuccess {
+  def truth: File
 
   // Mutect2
   val mutect2Vcf: File = controlBam match {
@@ -81,5 +84,40 @@ trait SomaticVariantcallingSuccess
   } else {
     addMustNotHaveFile(indelVCF)
     addMustNotHaveFile(getVcfIndexFile(indelVCF))
+  }
+
+  // SomaticSeq
+  def consensusSnvVCF: File =
+    new File(
+      outputDir,
+      s"somaticSeq/Consensus.${if (!controlBam.isDefined) "s" else ""}sSNV.vcf.gz")
+
+  def consensusIndelVCF: File =
+    new File(
+      outputDir,
+      s"somaticSeq/Consensus.${if (!controlBam.isDefined) "s" else ""}sINDEL.vcf.gz")
+
+  addMustHaveFile(consensusSnvVCF)
+  addMustHaveFile(consensusIndelVCF)
+  addMustHaveFile(
+    new File(
+      outputDir,
+      s"somaticSeq/Ensemble.${if (!controlBam.isDefined) "s" else ""}sSNV.tsv"))
+  addMustHaveFile(new File(
+    outputDir,
+    s"somaticSeq/Ensemble.${if (!controlBam.isDefined) "s" else ""}sINDEL.tsv"))
+
+  @Test
+  def testVariantStatus(): Unit = {
+    val truthVariants = loadRegion(truth, BedRecord("chr1", 1, 16000))
+    val outputVariants =
+      loadRegion(consensusSnvVCF, BedRecord("chr1", 1, 16000))
+    truthVariants.foreach(v => {
+      val exists = outputVariants.exists(
+        v2 =>
+          v.getStart == v2.getStart & v.getEnd == v2.getEnd & v.getAlleles
+            .equals(v2.getAlleles) & v2.hasAttribute("SOMATIC"))
+      assert(exists)
+    })
   }
 }
