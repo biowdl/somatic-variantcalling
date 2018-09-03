@@ -8,13 +8,15 @@ pipeline {
         jdk 'JDK 8u162'
     }
     environment {
-        CROMWELL_JAR    = credentials('cromwell-jar')
-        CROMWELL_CONFIG = credentials('cromwell-config')
-        CROMWELL_BACKEND = credentials('cromwell-backend')
-        FIXTURE_DIR     = credentials('fixture-dir')
-        CONDA_PREFIX    = credentials('conda-prefix')
-        THREADS         = credentials('threads')
-        OUTPUT_DIR      = credentials('output-dir')
+        CROMWELL_JAR      = credentials('cromwell-jar')
+        CROMWELL_CONFIG   = credentials('cromwell-config')
+        CROMWELL_BACKEND  = credentials('cromwell-backend')
+        FIXTURE_DIR       = credentials('fixture-dir')
+        CONDA_PREFIX      = credentials('conda-prefix')
+        THREADS           = credentials('threads')
+        OUTPUT_DIR        = credentials('output-dir')
+        FUNCTIONAL_TESTS  = credentials('functional-tests')
+        INTEGRATION_TESTS = credentials('integration-tests')
     }
     stages {
         stage('Init') {
@@ -26,12 +28,28 @@ pipeline {
                     def sbtHome = tool 'sbt 1.0.4'
                     env.outputDir= "${OUTPUT_DIR}/${JOB_NAME}/${BUILD_NUMBER}"
                     env.condaEnv= "${outputDir}/conda_env"
-                    env.sbt= "${sbtHome}/bin/sbt -Dbiowdl.outputDir=${outputDir} -Dcromwell.jar=${CROMWELL_JAR} -Dcromwell.config=${CROMWELL_CONFIG} -Dcromwell.extraOptions=-Dbackend.providers.${CROMWELL_BACKEND}.config.root=${outputDir}/cromwell-executions -Dbiowdl.fixtureDir=${FIXTURE_DIR} -Dbiowdl.threads=${THREADS} -no-colors -batch"
+                    env.sbt= "${sbtHome}/bin/sbt -Dbiowdl.functionalTests=${FUNCTIONAL_TESTS} -Dbiowdl.integrationTests=${INTEGRATION_TESTS} -Dbiowdl.outputDir=${outputDir} -Dcromwell.jar=${CROMWELL_JAR} -Dcromwell.config=${CROMWELL_CONFIG} -Dcromwell.extraOptions=-Dbackend.providers.${CROMWELL_BACKEND}.config.root=${outputDir}/cromwell-executions -Dbiowdl.fixtureDir=${FIXTURE_DIR} -Dbiowdl.threads=${THREADS} -no-colors -batch"
                     env.activateEnv= "source ${CONDA_PREFIX}/activate \$(readlink -f ${condaEnv})"
                     env.createEnv= "${CONDA_PREFIX}/conda-env create -f environment.yml -p ${condaEnv}"
                 }
                 sh "rm -rf ${outputDir}"
                 sh "mkdir -p ${outputDir}"
+
+                sh "#!/bin/bash\n" +
+                        "set -e -v -o pipefail\n" +
+                        "${sbt} clean evicted scalafmt headerCreate | tee sbt.log"
+                sh 'n=`grep -ce "\\* com.github.biopet" sbt.log || true`; if [ "$n" -ne \"0\" ]; then echo "ERROR: Found conflicting dependencies inside biopet"; exit 1; fi'
+                sh "git diff --exit-code || (echo \"ERROR: Git changes detected, please regenerate the readme, create license headers and run scalafmt: sbt biopetGenerateReadme headerCreate scalafmt\" && exit 1)"
+            }
+        }
+
+        stage('Submodules develop') {
+            when {
+                branch 'develop'
+            }
+            steps {
+                sh 'git submodule foreach --recursive git checkout develop'
+                sh 'git submodule foreach --recursive git pull'
             }
         }
 
@@ -46,11 +64,9 @@ pipeline {
         stage('Build & Test') {
             steps {
                 sh "#!/bin/bash\n" +
-                        "set -e -v -o pipefail\n" +
+                        "set -e -v\n" +
                         "${activateEnv}\n" +
-                        "${sbt} clean evicted scalafmt headerCreate test | tee sbt.log"
-                sh 'n=`grep -ce "\\* com.github.biopet" sbt.log || true`; if [ "$n" -ne \"0\" ]; then echo "ERROR: Found conflicting dependencies inside biopet"; exit 1; fi'
-                sh "git diff --exit-code || (echo \"ERROR: Git changes detected, please regenerate the readme, create license headers and run scalafmt: sbt biopetGenerateReadme headerCreate scalafmt\" && exit 1)"
+                        "${sbt} test"
             }
         }
     }
