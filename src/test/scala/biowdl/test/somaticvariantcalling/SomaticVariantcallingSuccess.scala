@@ -116,7 +116,10 @@ trait SomaticVariantcallingSuccess
       val exists = outputVariants.exists(
         v2 =>
           v.getStart == v2.getStart & v.getEnd == v2.getEnd & v.getAlleles
-            .equals(v2.getAlleles) & v2.hasAttribute("SOMATIC"))
+            .equals(v2.getAlleles) & {
+            if (controlBam.isDefined) v2.hasAttribute("SOMATIC")
+            else true
+        })
       assert(exists)
     })
   }
