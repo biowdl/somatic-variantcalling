@@ -30,32 +30,33 @@ trait SomaticVariantcalling extends Pipeline with Reference {
 
   def tumorSample: String
   def tumorBam: File
-  def tumorIndex: File = getBamIndex(tumorBam)
   def runManta: Boolean = false
 
   def controlSample: Option[String] = None
   def controlBam: Option[File] = None
-  def controlIndex: Option[File] = controlBam match {
-    case Some(_) =>
-      Option(getBamIndex(controlBam.getOrElse(throw new IllegalStateException)))
-    case _ => None
-  }
 
   override def inputs: Map[String, Any] =
     super.inputs ++
       Map(
         "SomaticVariantcalling.strelka.runManta" -> runManta,
         "SomaticVariantcalling.tumorSample" -> tumorSample,
-        "SomaticVariantcalling.tumorBam" -> tumorBam.getAbsolutePath,
-        "SomaticVariantcalling.tumorIndex" -> tumorIndex.getAbsolutePath,
+        "SomaticVariantcalling.tumorBam" -> Map(
+          "file" -> tumorBam.getAbsolutePath,
+          "index" -> getBamIndex(tumorBam)
+        ),
         "SomaticVariantcalling.outputDir" -> outputDir.getAbsolutePath,
-        "SomaticVariantcalling.refFasta" -> referenceFasta.getAbsolutePath,
-        "SomaticVariantcalling.refFastaIndex" -> referenceFastaIndexFile.getAbsolutePath,
-        "SomaticVariantcalling.refDict" -> referenceFastaDictFile.getAbsolutePath
+        "SomaticVariantcalling.reference" -> Map(
+          "fasta" -> referenceFasta.getAbsolutePath,
+          "fai" -> referenceFastaIndexFile.getAbsolutePath,
+          "dict" -> referenceFastaDictFile.getAbsolutePath
+        )
       ) ++
-      controlBam.map("SomaticVariantcalling.controlBam" -> _.getAbsolutePath) ++
-      controlIndex.map(
-        "SomaticVariantcalling.controlIndex" -> _.getAbsolutePath) ++
+      controlBam.map(
+        c =>
+          "SomaticVariantcalling.controlBam" -> Map(
+            "file" -> c.getAbsolutePath,
+            "index" -> getBamIndex(c).getAbsolutePath
+        )) ++
       controlSample.map("SomaticVariantcalling.controlSample" -> _)
 
   def startFile: File = new File("./somatic-variantcalling.wdl")

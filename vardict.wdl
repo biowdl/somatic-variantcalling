@@ -9,14 +9,10 @@ import "tasks/common.wdl" as common
 workflow VarDict{
     input {
         String tumorSample
-        File tumorBam
-        File tumorIndex
+        IndexedBamFile tumorBam
         String? controlSample
-        File? controlBam
-        File? controlIndex
-        File refFasta
-        File refFastaIndex
-        File refDict
+        IndexedBamFile? controlBam
+        Reference reference
         String vcfPath
     }
 
@@ -24,8 +20,7 @@ workflow VarDict{
 
     call biopet.ScatterRegions as scatterList {
         input:
-            refFasta = refFasta,
-            refDict = refDict,
+            reference = reference,
             outputDirPath = scatterDir
     }
 
@@ -34,26 +29,24 @@ workflow VarDict{
             input:
                 tumorSampleName = tumorSample,
                 tumorBam = tumorBam,
-                tumorIndex = tumorIndex,
                 normalSampleName = controlSample,
                 normalBam = controlBam,
-                normalIndex = controlIndex,
-                refFasta = refFasta,
-                refFastaIndex = refFastaIndex,
+                reference = reference,
                 bedFile = bed,
                 outputVcf = scatterDir + "/" + basename(bed) + ".vcf.gz"
         }
+
+        File vardictFiles = varDict.vcfFile.file
     }
 
     call picard.SortVcf as gatherVcfs {
         input:
-            vcfFiles = varDict.vcfFile,
-            outputVcf = vcfPath,
-            sequenceDict = refDict
+            vcfFiles = vardictFiles,
+            outputVcfPath = vcfPath,
+            dict = reference.dict
     }
 
     output {
-        File outputVCF = gatherVcfs.vcfFile
-        File outputVCFindex = gatherVcfs.vcfIndex
+        IndexedVcfFile outputVCF = gatherVcfs.outputVcf
     }
 }

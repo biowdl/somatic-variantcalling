@@ -30,30 +30,32 @@ trait Mutect2 extends Pipeline with Reference {
 
   def tumorSample: String
   def tumorBam: File
-  def tumorIndex: File = getBamIndex(tumorBam)
   def outputVcf: File
 
   def controlSample: Option[String] = None
   def controlBam: Option[File] = None
-  def controlIndex: Option[File] = controlBam match {
-    case Some(_) =>
-      Option(getBamIndex(controlBam.getOrElse(throw new IllegalStateException)))
-    case _ => None
-  }
 
   override def inputs: Map[String, Any] =
     super.inputs ++
       Map(
         "Mutect2.tumorSample" -> tumorSample,
-        "Mutect2.tumorBam" -> tumorBam.getAbsolutePath,
-        "Mutect2.tumorIndex" -> tumorIndex.getAbsolutePath,
-        "Mutect2.vcfPath" -> outputVcf.getAbsolutePath,
-        "Mutect2.refFasta" -> referenceFasta.getAbsolutePath,
-        "Mutect2.refFastaIndex" -> referenceFastaIndexFile.getAbsolutePath,
-        "Mutect2.refDict" -> referenceFastaDictFile.getAbsolutePath
+        "Mutect2.tumorBam" -> Map(
+          "file" -> tumorBam.getAbsolutePath,
+          "index" -> getBamIndex(tumorBam)
+        ),
+        "Mutect2.outputDir" -> outputDir.getAbsolutePath,
+        "Mutect2.reference" -> Map(
+          "fasta" -> referenceFasta.getAbsolutePath,
+          "fai" -> referenceFastaIndexFile.getAbsolutePath,
+          "dict" -> referenceFastaDictFile.getAbsolutePath
+        )
       ) ++
-      controlBam.map("Mutect2.controlBam" -> _.getAbsolutePath) ++
-      controlIndex.map("Mutect2.controlIndex" -> _.getAbsolutePath) ++
+      controlBam.map(
+        c =>
+          "Mutect2.controlBam" -> Map(
+            "file" -> c.getAbsolutePath,
+            "index" -> getBamIndex(c).getAbsolutePath
+        )) ++
       controlSample.map("Mutect2.controlSample" -> _)
 
   def startFile: File = new File("./mutect2.wdl")

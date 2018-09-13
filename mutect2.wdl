@@ -33,6 +33,7 @@ workflow Mutect2 {
         call gatk.MuTect2 as mutect2 {
             input:
                 inputBams = bamFiles,
+                inputBamsIndex = indexFiles,
                 reference = reference,
                 outputVcf = scatterDir + "/" + basename(bed) + ".vcf.gz",
                 tumorSample = tumorSample,
@@ -47,6 +48,7 @@ workflow Mutect2 {
     call picard.MergeVCFs as gatherVcfs {
         input:
             inputVCFs = mutectFiles,
+            inputVCFsIndexes = mutectIndexFiles,
             outputVcfPath = vcfPath
     }
 
