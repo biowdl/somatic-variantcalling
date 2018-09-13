@@ -1,9 +1,10 @@
 version 1.0
 
-import "tasks/biopet.wdl" as biopet
+import "tasks/biopet/biopet.wdl" as biopet
 import "tasks/picard.wdl" as picard
 import "tasks/samtools.wdl" as samtools
 import "tasks/vardict.wdl" as vardict
+import "tasks/common.wdl" as common
 
 workflow VarDict{
     input {
