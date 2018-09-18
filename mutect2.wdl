@@ -13,10 +13,11 @@ workflow Mutect2 {
         IndexedBamFile? controlBam
         Reference reference
 
-        String vcfPath
+        String outputDir
     }
 
-    String scatterDir = vcfPath + "_scatters/"
+    String prefix = if (defined(controlSample)) then tumorSample + "-~{controlSample}" else tumorSample
+    String scatterDir = outputDir + "/scatters/"
 
     call biopet.ScatterRegions as scatterList {
         input:
@@ -35,7 +36,7 @@ workflow Mutect2 {
                 inputBams = bamFiles,
                 inputBamsIndex = indexFiles,
                 reference = reference,
-                outputVcf = scatterDir + "/" + basename(bed) + ".vcf.gz",
+                outputVcf = scatterDir + "/" + prefix + "-" + basename(bed) + ".vcf.gz",
                 tumorSample = tumorSample,
                 normalSample = controlSample,
                 intervals = [bed]
@@ -49,7 +50,7 @@ workflow Mutect2 {
         input:
             inputVCFs = mutectFiles,
             inputVCFsIndexes = mutectIndexFiles,
-            outputVcfPath = vcfPath
+            outputVcfPath = outputDir + "/" + prefix + ".vcf.gz"
     }
 
     output {

@@ -27,9 +27,7 @@ workflow SomaticVariantcalling {
             controlSample = controlSample,
             controlBam = controlBam,
             reference = reference,
-            vcfPath = if defined(controlBam)
-                then "${mutect2Dir}/${tumorSample}-${controlSample}.vcf.gz"
-                else "${mutect2Dir}/${tumorSample}.vcf.gz"
+            outputDir = mutect2Dir
     }
 
     call strelkaWorkflow.Strelka as strelka {
@@ -50,9 +48,7 @@ workflow SomaticVariantcalling {
             controlSample = controlSample,
             controlBam = controlBam,
             reference = reference,
-            vcfPath = if defined(controlBam)
-                then "${vardictDir}/${tumorSample}-${controlSample}.vcf.gz"
-                else "${vardictDir}/${tumorSample}.vcf.gz"
+            outputDir = vardictDir
     }
 
     #TODO some kind of merging (SomaticSeq?)

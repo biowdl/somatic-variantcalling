@@ -13,10 +13,11 @@ workflow VarDict{
         String? controlSample
         IndexedBamFile? controlBam
         Reference reference
-        String vcfPath
+        String outputDir
     }
 
-    String scatterDir = vcfPath + "_scatters/"
+    String prefix = if (defined(controlSample)) then tumorSample + "-~{controlSample}" else tumorSample
+    String scatterDir = outputDir + "/scatters/"
 
     call biopet.ScatterRegions as scatterList {
         input:
@@ -33,7 +34,7 @@ workflow VarDict{
                 normalBam = controlBam,
                 reference = reference,
                 bedFile = bed,
-                outputVcf = scatterDir + "/" + basename(bed) + ".vcf.gz"
+                outputVcf = scatterDir + "/" + prefix + "-" + basename(bed) + ".vcf.gz"
         }
 
         File vardictFiles = varDict.vcfFile.file
@@ -42,7 +43,7 @@ workflow VarDict{
     call picard.SortVcf as gatherVcfs {
         input:
             vcfFiles = vardictFiles,
-            outputVcfPath = vcfPath,
+            outputVcfPath = outputDir + "/" + prefix + ".vcf.gz",
             dict = reference.dict
     }
 

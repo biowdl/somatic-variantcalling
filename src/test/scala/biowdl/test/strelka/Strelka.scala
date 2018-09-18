@@ -30,7 +30,7 @@ trait Strelka extends Pipeline with Reference {
 
   def tumorBam: File
   def basename: String = "strelka"
-  def runManta: Boolean = false
+  def runManta: Option[Boolean] = None
 
   def controlBam: Option[File] = None
 
@@ -38,7 +38,6 @@ trait Strelka extends Pipeline with Reference {
     super.inputs ++
       Map(
         "Strelka.basename" -> basename,
-        "Strelka.strelka.runManta" -> runManta,
         "Strelka.tumorBam" -> Map(
           "file" -> tumorBam.getAbsolutePath,
           "index" -> getBamIndex(tumorBam)
@@ -49,13 +48,13 @@ trait Strelka extends Pipeline with Reference {
           "fai" -> referenceFastaIndexFile.getAbsolutePath,
           "dict" -> referenceFastaDictFile.getAbsolutePath
         )
-      ) ++
-      controlBam.map(
-        c =>
-          "Strelka.controlBam" -> Map(
-            "file" -> c.getAbsolutePath,
-            "index" -> getBamIndex(c).getAbsolutePath
-        ))
+      ) ++ runManta.map("Strelka.runManta" -> _)
+  controlBam.map(
+    c =>
+      "Strelka.controlBam" -> Map(
+        "file" -> c.getAbsolutePath,
+        "index" -> getBamIndex(c).getAbsolutePath
+    ))
 
   def startFile: File = new File("./strelka.wdl")
 
