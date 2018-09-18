@@ -36,7 +36,7 @@ trait StrelkaSuccess extends Strelka with PipelineSuccess {
   addMustHaveFile(snvVCF)
   addMustHaveFile(getVcfIndexFile(snvVCF))
 
-  if (runManta) {
+  if (runManta.getOrElse(true)) {
     addMustHaveFile(mantaVCF)
     addMustHaveFile(getVcfIndexFile(mantaVCF))
   } else {
