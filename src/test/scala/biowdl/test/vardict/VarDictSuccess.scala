@@ -29,12 +29,15 @@ import nl.biopet.utils.ngs.vcf.{getVcfIndexFile, loadRegion}
 import org.testng.annotations.Test
 
 trait VarDictSuccess extends VarDict with PipelineSuccess {
-  val outputVcf: File = new File(outputDir, {
-    controlSample match {
-      case Some(_) => s"$tumorSample-${controlSample.get}.vcf.gz"
-      case _       => s"$tumorSample.vcf.gz"
+  val outputVcf: File = new File(
+    outputDir, {
+      controlSample match {
+        case Some(_) =>
+          s"$tumorSample-${controlSample.getOrElse(new IllegalStateException())}.vcf.gz"
+        case _ => s"$tumorSample.vcf.gz"
+      }
     }
-  })
+  )
 
   addMustHaveFile(outputVcf)
   addMustHaveFile(getVcfIndexFile(outputVcf))
