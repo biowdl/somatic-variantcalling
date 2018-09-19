@@ -29,6 +29,13 @@ import nl.biopet.utils.ngs.vcf.{getVcfIndexFile, loadRegion}
 import org.testng.annotations.Test
 
 trait Mutect2Success extends Mutect2 with PipelineSuccess {
+  val outputVcf: File = new File(outputDir, {
+    controlSample match {
+      case Some(_) => s"$tumorSample-${controlSample.get}.vcf.gz"
+      case _       => s"$tumorSample.vcf.gz"
+    }
+  })
+
   addMustHaveFile(outputVcf)
   addMustHaveFile(getVcfIndexFile(outputVcf))
 

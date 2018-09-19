@@ -30,7 +30,6 @@ trait Mutect2 extends Pipeline with Reference {
 
   def tumorSample: String
   def tumorBam: File
-  def outputVcf: File
 
   def controlSample: Option[String] = None
   def controlBam: Option[File] = None

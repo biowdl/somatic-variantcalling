@@ -48,13 +48,13 @@ trait Strelka extends Pipeline with Reference {
           "fai" -> referenceFastaIndexFile.getAbsolutePath,
           "dict" -> referenceFastaDictFile.getAbsolutePath
         )
-      ) ++ runManta.map("Strelka.runManta" -> _)
-  controlBam.map(
-    c =>
-      "Strelka.controlBam" -> Map(
-        "file" -> c.getAbsolutePath,
-        "index" -> getBamIndex(c).getAbsolutePath
-    ))
+      ) ++ runManta.map("Strelka.runManta" -> _) ++
+      controlBam.map(
+        c =>
+          "Strelka.controlBam" -> Map(
+            "file" -> c.getAbsolutePath,
+            "index" -> getBamIndex(c).getAbsolutePath
+        ))
 
   def startFile: File = new File("./strelka.wdl")
 

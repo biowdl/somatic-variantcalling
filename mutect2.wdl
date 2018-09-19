@@ -16,7 +16,9 @@ workflow Mutect2 {
         String outputDir
     }
 
-    String prefix = if (defined(controlSample)) then tumorSample + "-~{controlSample}" else tumorSample
+    String prefix = if (defined(controlSample))
+        then "~{tumorSample}-~{controlSample}"
+        else tumorSample
     String scatterDir = outputDir + "/scatters/"
 
     call biopet.ScatterRegions as scatterList {
