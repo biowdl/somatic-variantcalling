@@ -1,57 +1,61 @@
 version 1.0
 
-import "tasks/biopet.wdl" as biopet
+import "tasks/biopet/biopet.wdl" as biopet
 import "tasks/gatk.wdl" as gatk
 import "tasks/picard.wdl" as picard
+import "tasks/common.wdl" as common
 
 workflow Mutect2 {
     input {
         String tumorSample
-        File tumorBam
-        File tumorIndex
+        IndexedBamFile tumorBam
         String? controlSample
-        File? controlBam
-        File? controlIndex
-        File refFasta
-        File refFastaIndex
-        File refDict
+        IndexedBamFile? controlBam
+        Reference reference
 
-        String vcfPath
+        String outputDir
     }
 
-    String scatterDir = vcfPath + "_scatters/"
+    String prefix = if (defined(controlSample))
+        then "~{tumorSample}-~{controlSample}"
+        else tumorSample
+    String scatterDir = outputDir + "/scatters/"
 
     call biopet.ScatterRegions as scatterList {
         input:
-            refFasta = refFasta,
-            refDict = refDict,
+            reference = reference,
             outputDirPath = scatterDir
+    }
+
+    scatter (bam in select_all([tumorBam, controlBam])) {
+        File bamFiles = bam.file
+        File indexFiles = bam.index
     }
 
     scatter (bed in scatterList.scatters) {
         call gatk.MuTect2 as mutect2 {
             input:
-                inputBams = select_all([tumorBam, controlBam]),
-                inputBamIndex = select_all([tumorIndex, controlIndex]),
-                refFasta = refFasta,
-                refFastaIndex = refFastaIndex,
-                refDict = refDict,
-                outputVcf = scatterDir + "/" + basename(bed) + ".vcf.gz",
+                inputBams = bamFiles,
+                inputBamsIndex = indexFiles,
+                reference = reference,
+                outputVcf = scatterDir + "/" + prefix + "-" + basename(bed) + ".vcf.gz",
                 tumorSample = tumorSample,
                 normalSample = controlSample,
                 intervals = [bed]
         }
+
+        File mutectFiles = mutect2.vcfFile.file
+        File mutectIndexFiles = mutect2.vcfFile.index
     }
 
     call picard.MergeVCFs as gatherVcfs {
         input:
-            inputVCFs = mutect2.vcfFile,
-            inputVCFsIndexes = mutect2.vcfIndex,
-            outputVCFpath = vcfPath
+            inputVCFs = mutectFiles,
+            inputVCFsIndexes = mutectIndexFiles,
+            outputVcfPath = outputDir + "/" + prefix + ".vcf.gz"
     }
 
     output {
-        File outputVCF = gatherVcfs.outputVCF
-        File outputVCFindex = gatherVcfs.outputVCFindex
+        IndexedVcfFile outputVCF = gatherVcfs.outputVcf
     }
 }

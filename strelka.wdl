@@ -1,20 +1,17 @@
 version 1.0
 
-import "tasks/biopet.wdl" as biopet
+import "tasks/biopet/biopet.wdl" as biopet
 import "tasks/manta.wdl" as manta
 import "tasks/picard.wdl" as picard
 import "tasks/samtools.wdl" as samtools
 import "tasks/strelka.wdl" as strelka
+import "tasks/common.wdl" as common
 
 workflow Strelka {
     input {
-        File? controlBam
-        File? controlIndex
-        File tumorBam
-        File tumorIndex
-        File refFasta
-        File refFastaIndex
-        File refDict
+        IndexedBamFile tumorBam
+        IndexedBamFile? controlBam
+        Reference reference
         String outputDir
         String basename = "strelka"
 
@@ -25,8 +22,7 @@ workflow Strelka {
 
     call biopet.ScatterRegions as scatterList {
         input:
-            refFasta = refFasta,
-            refDict = refDict,
+            reference = reference,
             outputDirPath = scatterDir
     }
 
@@ -43,11 +39,8 @@ workflow Strelka {
                 input:
                     runDir = scatterDir + "/" + basename(bed) + "_runManta",
                     normalBam = controlBam,
-                    normalIndex = controlIndex,
                     tumorBam = tumorBam,
-                    tumorIndex = tumorIndex,
-                    refFasta = refFasta,
-                    refFastaIndex = refFastaIndex,
+                    reference = reference,
                     callRegions = bedPrepare.compressed,
                     callRegionsIndex = bedPrepare.index
             }
@@ -57,6 +50,9 @@ workflow Strelka {
                     runDir = mantaSomatic.runDirectory,
                     paired = defined(controlBam)
             }
+
+            File mantaTumorSV = mantaSomaticRun.tumorSV.file
+            File mantaTumorSVIndex = mantaSomaticRun.tumorSV.index
         }
 
         if (defined(controlBam)){
@@ -64,15 +60,11 @@ workflow Strelka {
                 input:
                     runDir = scatterDir + "/" + basename(bed) + "_runStrelka",
                     normalBam = select_first([controlBam]),
-                    normalIndex = select_first([controlIndex]),
                     tumorBam = tumorBam,
-                    tumorIndex = tumorIndex,
-                    refFasta = refFasta,
-                    refFastaIndex = refFastaIndex,
+                    reference = reference,
                     callRegions = bedPrepare.compressed,
                     callRegionsIndex = bedPrepare.index,
                     indelCandidates = mantaSomaticRun.condidateSmallIndels,
-                    indelCandidatesIndex = mantaSomaticRun.condidateSmallIndelsIndex
             }
         }
 
@@ -80,10 +72,9 @@ workflow Strelka {
             call strelka.ConfigureGermline as strelkaGermline {
                 input:
                     runDir = scatterDir + "/" + basename(bed) + "_runStrelka",
-                    bams = [tumorBam],
-                    indexes = [tumorIndex],
-                    refFasta = refFasta,
-                    refFastaIndex = refFastaIndex,
+                    bams = [tumorBam.file],
+                    indexes= [tumorBam.index],
+                    reference = reference,
                     callRegions = bedPrepare.compressed,
                     callRegionsIndex = bedPrepare.index
             }
@@ -101,9 +92,9 @@ workflow Strelka {
     if (runManta) {
         call picard.MergeVCFs as gatherSVs {
             input:
-                inputVCFs = select_all(mantaSomaticRun.tumorSV),
-                inputVCFsIndexes = select_all(mantaSomaticRun.tumorSVindex),
-                outputVCFpath = outputDir + "/" + basename + "_manta.vcf.gz"
+                inputVCFs = select_all(mantaTumorSV),
+                inputVCFsIndexes = select_all(mantaTumorSVIndex),
+                outputVcfPath = outputDir + "/" + basename + "_manta.vcf.gz"
         }
     }
 
@@ -112,7 +103,7 @@ workflow Strelka {
             input:
                 inputVCFs = select_all(strelkaRun.indelsVcf),
                 inputVCFsIndexes = select_all(strelkaRun.indelsIndex),
-                outputVCFpath = outputDir + "/" + basename + "_indels.vcf.gz"
+                outputVcfPath = outputDir + "/" + basename + "_indels.vcf.gz"
 
         }
     }
@@ -121,17 +112,14 @@ workflow Strelka {
         input:
             inputVCFs = strelkaRun.variants,
             inputVCFsIndexes = strelkaRun.variantsIndex,
-            outputVCFpath = outputDir + "/" + basename + "_variants.vcf.gz"
+            outputVcfPath = outputDir + "/" + basename + "_variants.vcf.gz"
     }
 
     output {
-        File? mantaVCF = gatherSVs.outputVCF
-        File? mantaVCFindex = gatherSVs.outputVCFindex
-        File? indelsVCF = gatherIndels.outputVCF
-        File? indelsVCFindex = gatherIndels.outputVCFindex
+        IndexedVcfFile? mantaVCF = gatherSVs.outputVcf
+        IndexedVcfFile? indelsVCF = gatherIndels.outputVcf
 
-        File variantsVCF = gatherVariants.outputVCF
-        File variantsVCFindex = gatherVariants.outputVCFindex
+        IndexedVcfFile variantsVCF = gatherVariants.outputVcf
     }
 }
 

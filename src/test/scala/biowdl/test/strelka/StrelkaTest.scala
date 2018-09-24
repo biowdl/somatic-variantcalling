@@ -38,11 +38,19 @@ class StrelkaTestPaired extends StrelkaTestUnpaired {
 }
 
 class StrelkaTestUnpairedWithManta extends StrelkaTestUnpaired {
-  override def runManta: Boolean = true
+  override def runManta: Option[Boolean] = Some(true)
 }
 
 class StrelkaTestPairedWithManta extends StrelkaTestPaired {
-  override def runManta: Boolean = true
+  override def runManta: Option[Boolean] = Some(true)
+}
+
+class StrelkaTestUnpairedWithoutManta extends StrelkaTestUnpaired {
+  override def runManta: Option[Boolean] = Some(false)
+}
+
+class StrelkaTestPairedWithoutManta extends StrelkaTestPaired {
+  override def runManta: Option[Boolean] = Some(false)
 }
 
 /* Strelka detects the fact that the same BAM is given twice

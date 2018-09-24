@@ -3,18 +3,15 @@ version 1.0
 import "mutect2.wdl" as mutect2Workflow
 import "strelka.wdl" as strelkaWorkflow
 import "vardict.wdl" as vardictWorkflow
+import "tasks/common.wdl" as common
 
 workflow SomaticVariantcalling {
     input {
         String tumorSample
-        File tumorBam
-        File tumorIndex
+        IndexedBamFile tumorBam
         String? controlSample
-        File? controlBam
-        File? controlIndex
-        File refFasta
-        File refFastaIndex
-        File refDict
+        IndexedBamFile? controlBam
+        Reference reference
 
         String outputDir
     }
@@ -27,27 +24,17 @@ workflow SomaticVariantcalling {
         input:
             tumorSample = tumorSample,
             tumorBam = tumorBam,
-            tumorIndex = tumorIndex,
             controlSample = controlSample,
             controlBam = controlBam,
-            controlIndex = controlIndex,
-            refFasta = refFasta,
-            refFastaIndex = refFastaIndex,
-            refDict = refDict,
-            vcfPath = if defined(controlBam)
-                then "${mutect2Dir}/${tumorSample}-${controlSample}.vcf.gz"
-                else "${mutect2Dir}/${tumorSample}.vcf.gz"
+            reference = reference,
+            outputDir = mutect2Dir
     }
 
     call strelkaWorkflow.Strelka as strelka {
         input:
             controlBam = controlBam,
-            controlIndex = controlIndex,
             tumorBam = tumorBam,
-            tumorIndex = tumorIndex,
-            refFasta = refFasta,
-            refFastaIndex = refFastaIndex,
-            refDict = refDict,
+            reference = reference,
             outputDir = strelkaDir,
             basename = if defined(controlBam)
                 then "${tumorSample}-${controlSample}"
@@ -58,31 +45,20 @@ workflow SomaticVariantcalling {
         input:
             tumorSample = tumorSample,
             tumorBam = tumorBam,
-            tumorIndex = tumorIndex,
             controlSample = controlSample,
             controlBam = controlBam,
-            controlIndex = controlIndex,
-            refFasta = refFasta,
-            refFastaIndex = refFastaIndex,
-            refDict = refDict,
-            vcfPath = if defined(controlBam)
-                then "${vardictDir}/${tumorSample}-${controlSample}.vcf.gz"
-                else "${vardictDir}/${tumorSample}.vcf.gz"
+            reference = reference,
+            outputDir = vardictDir
     }
 
     #TODO some kind of merging (SomaticSeq?)
     #TODO metrics?
 
     output{
-        File mutect2Vcf = mutect2.outputVCF
-        File mutect2Index = mutect2.outputVCFindex
-        File vardictVcf = vardict.outputVCF
-        File vardictIndex = vardict.outputVCFindex
-        File strelkaSnvsVcf = strelka.variantsVCF
-        File strelkaSnvsIndex = strelka.variantsVCFindex
-        File? strelkaIndelsVcf = strelka.indelsVCF
-        File? strelkaIndelsIndex = strelka.indelsVCFindex
-        File? mantaVcf = strelka.mantaVCF
-        File? mantaIndex = strelka.mantaVCFindex
+        IndexedVcfFile mutect2Vcf = mutect2.outputVCF
+        IndexedVcfFile vardictVcf = vardict.outputVCF
+        IndexedVcfFile strelkaSnvsVcf = strelka.variantsVCF
+        IndexedVcfFile? strelkaIndelsVcf = strelka.indelsVCF
+        IndexedVcfFile? mantaVcf = strelka.mantaVCF
     }
 }

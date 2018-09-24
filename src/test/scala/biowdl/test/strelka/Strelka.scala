@@ -29,31 +29,32 @@ import nl.biopet.utils.biowdl.references.Reference
 trait Strelka extends Pipeline with Reference {
 
   def tumorBam: File
-  def tumorIndex: File = getBamIndex(tumorBam)
   def basename: String = "strelka"
-  def runManta: Boolean = false
+  def runManta: Option[Boolean] = None
 
   def controlBam: Option[File] = None
-  def controlIndex: Option[File] = controlBam match {
-    case Some(_) =>
-      Option(getBamIndex(controlBam.getOrElse(throw new IllegalStateException)))
-    case _ => None
-  }
 
   override def inputs: Map[String, Any] =
     super.inputs ++
       Map(
-        "Strelka.runManta" -> runManta,
         "Strelka.basename" -> basename,
-        "Strelka.tumorBam" -> tumorBam.getAbsolutePath,
-        "Strelka.tumorIndex" -> tumorIndex.getAbsolutePath,
+        "Strelka.tumorBam" -> Map(
+          "file" -> tumorBam.getAbsolutePath,
+          "index" -> getBamIndex(tumorBam)
+        ),
         "Strelka.outputDir" -> outputDir.getAbsolutePath,
-        "Strelka.refFasta" -> referenceFasta.getAbsolutePath,
-        "Strelka.refFastaIndex" -> referenceFastaIndexFile.getAbsolutePath,
-        "Strelka.refDict" -> referenceFastaDictFile.getAbsolutePath
-      ) ++
-      controlBam.map("Strelka.controlBam" -> _.getAbsolutePath) ++
-      controlIndex.map("Strelka.controlIndex" -> _.getAbsolutePath)
+        "Strelka.reference" -> Map(
+          "fasta" -> referenceFasta.getAbsolutePath,
+          "fai" -> referenceFastaIndexFile.getAbsolutePath,
+          "dict" -> referenceFastaDictFile.getAbsolutePath
+        )
+      ) ++ runManta.map("Strelka.runManta" -> _) ++
+      controlBam.map(
+        c =>
+          "Strelka.controlBam" -> Map(
+            "file" -> c.getAbsolutePath,
+            "index" -> getBamIndex(c).getAbsolutePath
+        ))
 
   def startFile: File = new File("./strelka.wdl")
 
