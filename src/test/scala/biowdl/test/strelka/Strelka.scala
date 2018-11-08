@@ -42,7 +42,6 @@ trait Strelka extends Pipeline with Reference {
         "Strelka.strelkaSomatic.preCommand" -> "source activate strelka",
         "Strelka.strelkaGermline.preCommand" -> "source activate strelka",
         "Strelka.strelkaRun.preCommand" -> "source activate strelka",
-        "Strelka.runManta" -> runManta,
         "Strelka.basename" -> basename,
         "Strelka.tumorBam" -> Map(
           "file" -> tumorBam.getAbsolutePath,
@@ -54,7 +53,11 @@ trait Strelka extends Pipeline with Reference {
           "fai" -> referenceFastaIndexFile.getAbsolutePath,
           "dict" -> referenceFastaDictFile.getAbsolutePath
         )
-      ) ++ runManta.map("Strelka.runManta" -> _) ++
+      ) ++ {
+      if (runManta.isDefined)
+        Map("Strelka.runManta" -> runManta.getOrElse(throw new IllegalStateException()))
+      else Map()
+    } ++
       controlBam.map(
         c =>
           "Strelka.controlBam" -> Map(

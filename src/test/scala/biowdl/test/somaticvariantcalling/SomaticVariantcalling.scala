@@ -38,6 +38,11 @@ trait SomaticVariantcalling extends Pipeline with Reference {
   override def inputs: Map[String, Any] =
     super.inputs ++
       Map(
+        "SomaticVariantcalling.strelka.Strelka.mantaSomatic.preCommand" -> "source activate strelka", //TODO remove these conda workarounds
+        "SomaticVariantcalling.strelka.Strelka.mantaSomaticRun.preCommand" -> "source activate strelka",
+        "SomaticVariantcalling.strelka.Strelka.strelkaSomatic.preCommand" -> "source activate strelka",
+        "SomaticVariantcalling.strelka.Strelka.strelkaGermline.preCommand" -> "source activate strelka",
+        "SomaticVariantcalling.strelka.Strelka.strelkaRun.preCommand" -> "source activate strelka",
         "SomaticVariantcalling.strelka.runManta" -> runManta,
         "SomaticVariantcalling.tumorSample" -> tumorSample,
         "SomaticVariantcalling.tumorBam" -> Map(

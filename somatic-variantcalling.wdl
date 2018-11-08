@@ -30,9 +30,7 @@ workflow SomaticVariantcalling {
             controlSample = controlSample,
             controlBam = controlBam,
             reference = reference,
-            vcfPath = if defined(controlBam)
-                then "${mutect2Dir}/${tumorSample}-${controlSample}.vcf.gz"
-                else "${mutect2Dir}/${tumorSample}.vcf.gz"
+            outputDir = mutect2Dir
     }
 
     call strelkaWorkflow.Strelka as strelka {
@@ -53,24 +51,22 @@ workflow SomaticVariantcalling {
             controlSample = controlSample,
             controlBam = controlBam,
             reference = reference,
-            vcfPath = if defined(controlBam)
-                then "${vardictDir}/${tumorSample}-${controlSample}.vcf.gz"
-                else "${vardictDir}/${tumorSample}.vcf.gz"
+            outputDir = vardictDir
     }
 
     if (defined(controlBam)) {
+        IndexedVcfFile strelkaIndel = select_first([strelka.indelsVCF])
+
         call somaticSeqTask.SomaticSeqWrapper as somaticSeq {
             input:
                 outputDir = somaticSeqDir,
                 tumorBam = tumorBam,
-                tumorIndex = tumorIndex,
                 normalBam = select_first([controlBam]),
-                normalIndex = select_first([controlIndex]),
-                ref = ref,
-                mutect2VCF = mutect2.outputVCF,
-                vardictVCF = vardict.outputVCF,
-                strelkaSNV = strelka.variantsVCF,
-                strelkaIndel = strelka.indelsVCF
+                reference = reference,
+                mutect2VCF = mutect2.outputVCF.file,
+                vardictVCF = vardict.outputVCF.file,
+                strelkaSNV = strelka.variantsVCF.file,
+                strelkaIndel = strelkaIndel.file
         }
     }
 
@@ -79,11 +75,10 @@ workflow SomaticVariantcalling {
             input:
                 outputDir = somaticSeqDir,
                 bam = tumorBam,
-                bamIndex = tumorIndex,
-                ref = ref,
-                mutect2VCF = mutect2.outputVCF,
-                vardictVCF = vardict.outputVCF,
-                strelkaVCF = strelka.variantsVCF,
+                reference = reference,
+                mutect2VCF = mutect2.outputVCF.file,
+                vardictVCF = vardict.outputVCF.file,
+                strelkaVCF = strelka.variantsVCF.file,
         }
     }
 
@@ -104,6 +99,14 @@ workflow SomaticVariantcalling {
     }
 
     output{
+        IndexedVcfFile somaticSeqSnvVcf =  object {
+            file: snvIndex.compressed,
+            index: snvIndex.index
+        }
+        IndexedVcfFile somaticSeqIndelVcf =  object {
+            file: indelIndex.compressed,
+            index: indelIndex.index
+        }
         IndexedVcfFile mutect2Vcf = mutect2.outputVCF
         IndexedVcfFile vardictVcf = vardict.outputVCF
         IndexedVcfFile strelkaSnvsVcf = strelka.variantsVCF
