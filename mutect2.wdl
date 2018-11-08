@@ -24,8 +24,7 @@ workflow Mutect2 {
     call biopet.ScatterRegions as scatterList {
         input:
             reference = reference,
-            outputDirPath = scatterDir,
-            regions = regions
+            outputDirPath = scatterDir
     }
 
     scatter (bam in select_all([tumorBam, controlBam])) {

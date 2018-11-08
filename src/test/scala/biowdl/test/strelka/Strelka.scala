@@ -55,7 +55,9 @@ trait Strelka extends Pipeline with Reference {
         )
       ) ++ {
       if (runManta.isDefined)
-        Map("Strelka.runManta" -> runManta.getOrElse(throw new IllegalStateException()))
+        Map(
+          "Strelka.runManta" -> runManta.getOrElse(
+            throw new IllegalStateException()))
       else Map()
     } ++
       controlBam.map(
