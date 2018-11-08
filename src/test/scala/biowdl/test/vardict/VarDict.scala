@@ -30,30 +30,31 @@ trait VarDict extends Pipeline with Reference {
 
   def tumorSample: String
   def tumorBam: File
-  def tumorIndex: File = getBamIndex(tumorBam)
-  def outputVcf: File
 
   def controlSample: Option[String] = None
   def controlBam: Option[File] = None
-  def controlIndex: Option[File] = controlBam match {
-    case Some(_) =>
-      Option(getBamIndex(controlBam.getOrElse(throw new IllegalStateException)))
-    case _ => None
-  }
 
   override def inputs: Map[String, Any] =
     super.inputs ++
       Map(
         "VarDict.tumorSample" -> tumorSample,
-        "VarDict.tumorBam" -> tumorBam.getAbsolutePath,
-        "VarDict.tumorIndex" -> tumorIndex.getAbsolutePath,
-        "VarDict.vcfPath" -> outputVcf.getAbsolutePath,
-        "VarDict.refFasta" -> referenceFasta.getAbsolutePath,
-        "VarDict.refFastaIndex" -> referenceFastaIndexFile.getAbsolutePath,
-        "VarDict.refDict" -> referenceFastaDictFile.getAbsolutePath
+        "VarDict.tumorBam" -> Map(
+          "file" -> tumorBam.getAbsolutePath,
+          "index" -> getBamIndex(tumorBam)
+        ),
+        "VarDict.outputDir" -> outputDir.getAbsolutePath,
+        "VarDict.reference" -> Map(
+          "fasta" -> referenceFasta.getAbsolutePath,
+          "fai" -> referenceFastaIndexFile.getAbsolutePath,
+          "dict" -> referenceFastaDictFile.getAbsolutePath
+        )
       ) ++
-      controlBam.map("VarDict.controlBam" -> _.getAbsolutePath) ++
-      controlIndex.map("VarDict.controlIndex" -> _.getAbsolutePath) ++
+      controlBam.map(
+        c =>
+          "VarDict.controlBam" -> Map(
+            "file" -> c.getAbsolutePath,
+            "index" -> getBamIndex(c).getAbsolutePath
+        )) ++
       controlSample.map("VarDict.controlSample" -> _)
 
   def startFile: File = new File("./vardict.wdl")

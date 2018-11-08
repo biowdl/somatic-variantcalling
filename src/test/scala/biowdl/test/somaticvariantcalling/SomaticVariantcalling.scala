@@ -30,39 +30,33 @@ trait SomaticVariantcalling extends Pipeline with Reference {
 
   def tumorSample: String
   def tumorBam: File
-  def tumorIndex: File = getBamIndex(tumorBam)
   def runManta: Boolean = false
 
   def controlSample: Option[String] = None
   def controlBam: Option[File] = None
-  def controlIndex: Option[File] = controlBam match {
-    case Some(_) =>
-      Option(getBamIndex(controlBam.getOrElse(throw new IllegalStateException)))
-    case _ => None
-  }
 
   override def inputs: Map[String, Any] =
     super.inputs ++
       Map(
-        "SomaticVariantcalling.strelka.Strelka.mantaSomatic.preCommand" -> "source activate strelka", //TODO remove these conda workarounds
-        "SomaticVariantcalling.strelka.Strelka.mantaSomaticRun.preCommand" -> "source activate strelka",
-        "SomaticVariantcalling.strelka.Strelka.strelkaSomatic.preCommand" -> "source activate strelka",
-        "SomaticVariantcalling.strelka.Strelka.strelkaGermline.preCommand" -> "source activate strelka",
-        "SomaticVariantcalling.strelka.Strelka.strelkaRun.preCommand" -> "source activate strelka",
         "SomaticVariantcalling.strelka.runManta" -> runManta,
         "SomaticVariantcalling.tumorSample" -> tumorSample,
-        "SomaticVariantcalling.tumorBam" -> tumorBam.getAbsolutePath,
-        "SomaticVariantcalling.tumorIndex" -> tumorIndex.getAbsolutePath,
+        "SomaticVariantcalling.tumorBam" -> Map(
+          "file" -> tumorBam.getAbsolutePath,
+          "index" -> getBamIndex(tumorBam)
+        ),
         "SomaticVariantcalling.outputDir" -> outputDir.getAbsolutePath,
-        "SomaticVariantcalling.ref" -> Map(
+        "SomaticVariantcalling.reference" -> Map(
           "fasta" -> referenceFasta.getAbsolutePath,
           "fai" -> referenceFastaIndexFile.getAbsolutePath,
           "dict" -> referenceFastaDictFile.getAbsolutePath
         )
       ) ++
-      controlBam.map("SomaticVariantcalling.controlBam" -> _.getAbsolutePath) ++
-      controlIndex.map(
-        "SomaticVariantcalling.controlIndex" -> _.getAbsolutePath) ++
+      controlBam.map(
+        c =>
+          "SomaticVariantcalling.controlBam" -> Map(
+            "file" -> c.getAbsolutePath,
+            "index" -> getBamIndex(c).getAbsolutePath
+        )) ++
       controlSample.map("SomaticVariantcalling.controlSample" -> _)
 
   def startFile: File = new File("./somatic-variantcalling.wdl")
