@@ -5,6 +5,7 @@ import "tasks/common.wdl" as common
 import "tasks/samtools.wdl" as samtools
 import "tasks/somaticseq.wdl" as somaticSeqTask
 import "strelka.wdl" as strelkaWorkflow
+import "structs.wdl" as structs
 import "vardict.wdl" as vardictWorkflow
 
 workflow SomaticVariantcalling {
@@ -14,6 +15,8 @@ workflow SomaticVariantcalling {
         String? controlSample
         IndexedBamFile? controlBam
         Reference reference
+        TrainingSet? trainingSet
+        File? regions #TODO
 
         String outputDir
     }
@@ -54,28 +57,79 @@ workflow SomaticVariantcalling {
             outputDir = vardictDir
     }
 
-    if (defined(controlBam)) {
-        IndexedVcfFile strelkaIndel = select_first([strelka.indelsVCF])
+    if (defined(trainingSet) && defined(controlBam)) {
+        TrainingSet trainSetPaired = select_first([trainingSet]) #FIXME workaround 'no such field'
 
-        call somaticSeqTask.SomaticSeqWrapper as somaticSeq {
+        call somaticSeqTask.SomaticSeqParallelPairedTrain as pairedTraining {
             input:
-                outputDir = somaticSeqDir,
-                tumorBam = tumorBam,
-                normalBam = select_first([controlBam]),
+                truthSNV = trainSetPaired.truthSNV,
+                truthIndel = trainSetPaired.truthIndel,
+                outputDir = somaticSeqDir + "/train",
                 reference = reference,
-                mutect2VCF = mutect2.outputVCF.file,
-                vardictVCF = vardict.outputVCF.file,
-                strelkaSNV = strelka.variantsVCF.file,
-                strelkaIndel = strelkaIndel.file
+                inclusionRegion = regions,
+                tumorBam = trainSetPaired.tumorBam,
+                normalBam = select_first([trainSetPaired.normalBam]),
+                mutect2VCF = trainSetPaired.mutect2VCF,
+                varscanSNV = trainSetPaired.varscanSNV,
+                varscanIndel = trainSetPaired.varscanIndel,
+                jsmVCF = trainSetPaired.jsmVCF,
+                somaticsniperVCF = trainSetPaired.somaticsniperVCF,
+                vardictVCF = trainSetPaired.vardictVCF,
+                museVCF = trainSetPaired.museVCF,
+                lofreqSNV = trainSetPaired.lofreqSNV,
+                lofreqIndel = trainSetPaired.lofreqIndel,
+                scalpelVCF = trainSetPaired.scalpelVCF,
+                strelkaSNV = trainSetPaired.strelkaSNV,
+                strelkaIndel = trainSetPaired.strelkaIndel
         }
     }
 
-    if (! defined(controlBam)) {
-        call somaticSeqTask.SsSomaticSeqWrapper as ssSomaticSeq {
+    if (defined(controlBam)) {
+        call somaticSeqTask.SomaticSeqParallelPaired as pairedSomaticSeq {
             input:
+                classifierSNV = pairedTraining.ensembleSNVClassifier,
+                classifierIndel = pairedTraining.ensembleIndelsClassifier,
                 outputDir = somaticSeqDir,
-                bam = tumorBam,
                 reference = reference,
+                inclusionRegion = regions,
+                tumorBam = tumorBam,
+                normalBam = select_first([controlBam]),
+                mutect2VCF = mutect2.outputVCF.file,
+                vardictVCF = vardict.outputVCF.file,
+                strelkaSNV = strelka.variantsVCF.file,
+                strelkaIndel = select_first([strelka.indelsVCF]).file
+        }
+    }
+
+    if (defined(trainingSet) && !defined(controlBam)) {
+        TrainingSet trainSetSingle = select_first([trainingSet]) #FIXME workaround 'no such field'
+
+        call somaticSeqTask.SomaticSeqParallelSingleTrain as singleTraining {
+            input:
+                truthSNV = trainSetSingle.truthSNV,
+                truthIndel = trainSetSingle.truthIndel,
+                outputDir = somaticSeqDir + "/train",
+                reference = reference,
+                inclusionRegion = regions,
+                bam = trainSetSingle.tumorBam,
+                mutect2VCF = trainSetSingle.mutect2VCF,
+                varscanVCF = trainSetSingle.varscanSNV,
+                vardictVCF = trainSetSingle.vardictVCF,
+                lofreqVCF = trainSetSingle.lofreqSNV,
+                scalpelVCF = trainSetSingle.scalpelVCF,
+                strelkaVCF = trainSetSingle.strelkaSNV
+        }
+    }
+
+    if (!defined(controlBam)) {
+        call somaticSeqTask.SomaticSeqParallelSingle as singleSomaticSeq {
+            input:
+                classifierSNV = singleTraining.ensembleSNVClassifier,
+                classifierIndel = singleTraining.ensembleIndelsClassifier,
+                outputDir = somaticSeqDir,
+                reference = reference,
+                inclusionRegion = regions,
+                bam = tumorBam,
                 mutect2VCF = mutect2.outputVCF.file,
                 vardictVCF = vardict.outputVCF.file,
                 strelkaVCF = strelka.variantsVCF.file,
@@ -85,16 +139,16 @@ workflow SomaticVariantcalling {
     call samtools.BgzipAndIndex as snvIndex {
         input:
             inputFile = select_first([if defined(controlBam)
-                then somaticSeq.consensusSNV
-                else ssSomaticSeq.consensusSNV]),
+                then pairedSomaticSeq.snvs
+                else singleSomaticSeq.snvs]),
             outputDir = somaticSeqDir
     }
 
     call samtools.BgzipAndIndex as indelIndex {
         input:
             inputFile = select_first([if defined(controlBam)
-                then somaticSeq.consensusIndels
-                else ssSomaticSeq.consensusIndels]),
+                then pairedSomaticSeq.indels
+                else singleSomaticSeq.indels]),
             outputDir = somaticSeqDir
     }
 
