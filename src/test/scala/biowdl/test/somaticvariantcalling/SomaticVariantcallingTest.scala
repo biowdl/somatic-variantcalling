@@ -26,27 +26,58 @@ import java.io.File
 import nl.biopet.utils.biowdl.fixtureFile
 import nl.biopet.utils.biowdl.references.TestReference
 
-class SomaticVariantcallingTestUnpaired
+trait SomaticVariantcallingTest
     extends SomaticVariantcallingSuccess
     with TestReference {
-  override def truth: File = fixtureFile("samples", "wgs2", "wgs2.vcf.gz")
-  def tumorSample: String = "wgs2"
-  def tumorBam: File = fixtureFile("samples", "wgs2", "wgs2.realign.bam")
+  override def snvTruth: File =
+    fixtureFile("samples", "wgs3", "wgs3_snv.vcf.gz")
+  override def indelTruth: File =
+    fixtureFile("samples", "wgs3", "wgs3_indel.vcf.gz")
 }
 
-class SomaticVariantcallingTestPaired
-    extends SomaticVariantcallingTestUnpaired {
+// no training, no manta, no control
+class SomaticVariantcallingTestUnpairedConsensus
+    extends SomaticVariantcallingTest {
+  def tumorSample: String = "wgs3"
+  def tumorBam: File = fixtureFile("samples", "wgs3", "wgs3.bam")
+}
+
+// no training, no manta, control
+class SomaticVariantcallingTestPairedConsensus
+    extends SomaticVariantcallingTestUnpairedConsensus {
   override def controlSample: Option[String] = Option("wgs1")
   override def controlBam: Option[File] =
     Option(fixtureFile("samples", "wgs1", "wgs1.bam"))
 }
 
-class SomaticVariantcallingTestUnpairedWithManta
-    extends SomaticVariantcallingTestUnpaired {
+// training, manta, no control
+class SomaticVariantcallingTestUnpairedConsensusWithManta
+    extends SomaticVariantcallingTestUnpairedConsensus {
   override def runManta: Boolean = true
+  override def inputs: Map[String, Any] = super.inputs ++ Map(
+    "SomaticVariantcalling.trainingSet" -> Map(
+      "truthIndel" -> "/home/dcats/Desktop/wgs3/wgs3_indel.vcf",
+      "truthSNV" -> "/home/dcats/Desktop/wgs3/wgs3_snv.vcf",
+      "tumorBam" -> Map(
+        "file" -> "/home/dcats/Desktop/wgs3/wgs3.bam",
+        "index" -> "/home/dcats/Desktop/wgs3/wgs3.bai"
+      ),
+      "normalBam" -> Map(
+        "file" -> "/home/dcats/Desktop/wgs1/wgs1.bam",
+        "index" -> "/home/dcats/Desktop/wgs1/wgs1.bai"
+      ),
+      "mutect2VCF" -> "/home/dcats/Desktop/wgs3/somatic_variantcalling_vcfs/mutect2_wgs3-wgs1.vcf.gz",
+      "vardictVCF" -> "/home/dcats/Desktop/wgs3/somatic_variantcalling_vcfs/vardict_wgs3-wgs1.vcf.gz",
+      "strelkaSNV" -> "/home/dcats/Desktop/wgs3/somatic_variantcalling_vcfs/strelka_wgs3-wgs1_variants.vcf.gz",
+      "strelkaIndel" -> "/home/dcats/Desktop/wgs3/somatic_variantcalling_vcfs/strelka_wgs3-wgs1_indels.vcf.gz"
+    )
+  )
 }
 
-class SomaticVariantcallingTestPairedWithManta
-    extends SomaticVariantcallingTestPaired {
-  override def runManta: Boolean = true
+// training, manta, control
+class SomaticVariantcallingTestPairedConsensusWithManta
+    extends SomaticVariantcallingTestUnpairedConsensusWithManta {
+  override def controlSample: Option[String] = Option("wgs1")
+  override def controlBam: Option[File] =
+    Option(fixtureFile("samples", "wgs1", "wgs1.bam"))
 }

@@ -31,7 +31,8 @@ import org.testng.annotations.Test
 trait SomaticVariantcallingSuccess
     extends SomaticVariantcalling
     with PipelineSuccess {
-  def truth: File
+  def indelTruth: File
+  def snvTruth: File
 
   // Mutect2
   val mutect2Vcf: File = controlBam match {
@@ -88,30 +89,50 @@ trait SomaticVariantcallingSuccess
 
   // SomaticSeq
   def consensusSnvVCF: File =
-    new File(
-      outputDir,
-      s"somaticSeq/Consensus.${if (!controlBam.isDefined) "s" else ""}sSNV.vcf.gz")
-
+    new File(outputDir, "somaticSeq/Consensus.sSNV.vcf.gz")
   def consensusIndelVCF: File =
-    new File(
-      outputDir,
-      s"somaticSeq/Consensus.${if (!controlBam.isDefined) "s" else ""}sINDEL.vcf.gz")
+    new File(outputDir, "somaticSeq/Consensus.sINDEL.vcf.gz")
+  def snvClassifier: File =
+    new File(outputDir,
+             "somaticSeq/train/Ensemble.sSNV.tsv.ntChange.Classifier.RData")
+  def indelsClassifier: File =
+    new File(outputDir,
+             "somaticSeq/train/Ensemble.sINDEL.tsv.ntChange.Classifier.RData")
+  def snvPredictionVCF: File =
+    new File(outputDir, "somaticSeq/Consensus.sSNV.vcf.gz")
+  def indelsPredictionVCF: File =
+    new File(outputDir, "somaticSeq/SSeq.Classified.sINDEL.vcf.gz")
 
-  addMustHaveFile(consensusSnvVCF)
-  addMustHaveFile(consensusIndelVCF)
-  addMustHaveFile(
-    new File(
-      outputDir,
-      s"somaticSeq/Ensemble.${if (!controlBam.isDefined) "s" else ""}sSNV.tsv"))
-  addMustHaveFile(new File(
-    outputDir,
-    s"somaticSeq/Ensemble.${if (!controlBam.isDefined) "s" else ""}sINDEL.tsv"))
+  addConditionalFile(trainingSet.isEmpty, consensusSnvVCF.getAbsolutePath)
+  addConditionalFile(trainingSet.isEmpty,
+                     getVcfIndexFile(consensusSnvVCF).getAbsolutePath)
+  addConditionalFile(trainingSet.isEmpty, consensusIndelVCF.getAbsolutePath)
+  addConditionalFile(trainingSet.isEmpty,
+                     getVcfIndexFile(consensusIndelVCF).getAbsolutePath)
+  addConditionalFile(trainingSet.isDefined, indelsClassifier.getAbsolutePath)
+  addConditionalFile(trainingSet.isDefined, snvClassifier.getAbsolutePath)
+  addConditionalFile(trainingSet.isDefined, snvPredictionVCF.getAbsolutePath)
+  addConditionalFile(trainingSet.isDefined,
+                     getVcfIndexFile(snvPredictionVCF).getAbsolutePath)
+  addConditionalFile(trainingSet.isDefined, indelsPredictionVCF.getAbsolutePath)
+  addConditionalFile(trainingSet.isDefined,
+                     getVcfIndexFile(indelsPredictionVCF).getAbsolutePath)
 
   @Test
-  def testVariantStatus(): Unit = {
+  def testSnvStatus(): Unit = {
+    if (trainingSet.isDefined) testVarinatStatus(snvTruth, snvPredictionVCF)
+  }
+
+  @Test
+  def testIndelStatus(): Unit = {
+    if (trainingSet.isDefined)
+      testVarinatStatus(indelTruth, indelsPredictionVCF)
+  }
+
+  def testVarinatStatus(truth: File, output: File): Unit = {
     val truthVariants = loadRegion(truth, BedRecord("chr1", 1, 16000))
     val outputVariants =
-      loadRegion(consensusSnvVCF, BedRecord("chr1", 1, 16000))
+      loadRegion(output, BedRecord("chr1", 1, 16000))
     truthVariants.foreach(v => {
       val exists = outputVariants.exists(
         v2 =>
