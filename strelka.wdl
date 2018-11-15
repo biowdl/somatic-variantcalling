@@ -14,6 +14,7 @@ workflow Strelka {
         Reference reference
         String outputDir
         String basename = "strelka"
+        File? regions
 
         Boolean runManta = true
     }
@@ -23,7 +24,8 @@ workflow Strelka {
     call biopet.ScatterRegions as scatterList {
         input:
             reference = reference,
-            outputDirPath = scatterDir
+            outputDirPath = scatterDir,
+            regions = regions
     }
 
     scatter (bed in scatterList.scatters) {

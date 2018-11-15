@@ -37,11 +37,6 @@ trait Strelka extends Pipeline with Reference {
   override def inputs: Map[String, Any] =
     super.inputs ++
       Map(
-        "Strelka.mantaSomatic.preCommand" -> "source activate strelka", //TODO remove these conda workarounds
-        "Strelka.mantaSomaticRun.preCommand" -> "source activate strelka",
-        "Strelka.strelkaSomatic.preCommand" -> "source activate strelka",
-        "Strelka.strelkaGermline.preCommand" -> "source activate strelka",
-        "Strelka.strelkaRun.preCommand" -> "source activate strelka",
         "Strelka.basename" -> basename,
         "Strelka.tumorBam" -> Map(
           "file" -> tumorBam.getAbsolutePath,

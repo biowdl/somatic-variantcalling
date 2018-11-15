@@ -16,7 +16,7 @@ workflow SomaticVariantcalling {
         IndexedBamFile? controlBam
         Reference reference
         TrainingSet? trainingSet
-        File? regions #TODO
+        File? regions
 
         String outputDir
     }
@@ -33,7 +33,8 @@ workflow SomaticVariantcalling {
             controlSample = controlSample,
             controlBam = controlBam,
             reference = reference,
-            outputDir = mutect2Dir
+            outputDir = mutect2Dir,
+            regions = regions
     }
 
     call strelkaWorkflow.Strelka as strelka {
@@ -44,7 +45,8 @@ workflow SomaticVariantcalling {
             outputDir = strelkaDir,
             basename = if defined(controlBam)
                 then "${tumorSample}-${controlSample}"
-                else tumorSample
+                else tumorSample,
+            regions = regions
     }
 
     call vardictWorkflow.VarDict as vardict {
@@ -54,7 +56,8 @@ workflow SomaticVariantcalling {
             controlSample = controlSample,
             controlBam = controlBam,
             reference = reference,
-            outputDir = vardictDir
+            outputDir = vardictDir,
+            regions = regions
     }
 
     if (defined(trainingSet) && defined(controlBam)) {

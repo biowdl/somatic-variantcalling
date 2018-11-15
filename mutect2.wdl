@@ -12,6 +12,7 @@ workflow Mutect2 {
         String? controlSample
         IndexedBamFile? controlBam
         Reference reference
+        File? regions
 
         String outputDir
     }
@@ -24,7 +25,8 @@ workflow Mutect2 {
     call biopet.ScatterRegions as scatterList {
         input:
             reference = reference,
-            outputDirPath = scatterDir
+            outputDirPath = scatterDir,
+            regions = regions
     }
 
     scatter (bam in select_all([tumorBam, controlBam])) {

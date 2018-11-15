@@ -14,6 +14,7 @@ workflow VarDict{
         IndexedBamFile? controlBam
         Reference reference
         String outputDir
+        File? regions
     }
 
     String prefix = if (defined(controlSample))
@@ -24,7 +25,8 @@ workflow VarDict{
     call biopet.ScatterRegions as scatterList {
         input:
             reference = reference,
-            outputDirPath = scatterDir
+            outputDirPath = scatterDir,
+            regions = regions
     }
 
     scatter (bed in scatterList.scatters){

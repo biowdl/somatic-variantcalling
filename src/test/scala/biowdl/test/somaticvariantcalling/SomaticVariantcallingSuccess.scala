@@ -88,45 +88,32 @@ trait SomaticVariantcallingSuccess
   }
 
   // SomaticSeq
-  def consensusSnvVCF: File =
-    new File(outputDir, "somaticSeq/Consensus.sSNV.vcf.gz")
-  def consensusIndelVCF: File =
-    new File(outputDir, "somaticSeq/Consensus.sINDEL.vcf.gz")
-  def snvClassifier: File =
-    new File(outputDir,
-             "somaticSeq/train/Ensemble.sSNV.tsv.ntChange.Classifier.RData")
-  def indelsClassifier: File =
-    new File(outputDir,
-             "somaticSeq/train/Ensemble.sINDEL.tsv.ntChange.Classifier.RData")
-  def snvPredictionVCF: File =
-    new File(outputDir, "somaticSeq/Consensus.sSNV.vcf.gz")
-  def indelsPredictionVCF: File =
-    new File(outputDir, "somaticSeq/SSeq.Classified.sINDEL.vcf.gz")
+  def consensusSnvVCF = "somaticSeq/Consensus.sSNV.vcf.gz"
+  def consensusIndelVCF = "somaticSeq/Consensus.sINDEL.vcf.gz"
+  def snvClassifier = "somaticSeq/train/Ensemble.sSNV.tsv.ntChange.Classifier.RData"
+  def indelsClassifier = "somaticSeq/train/Ensemble.sINDEL.tsv.ntChange.Classifier.RData"
+  def snvPredictionVCF = "somaticSeq/Consensus.sSNV.vcf.gz"
+  def indelsPredictionVCF = "somaticSeq/SSeq.Classified.sINDEL.vcf.gz"
 
-  addConditionalFile(trainingSet.isEmpty, consensusSnvVCF.getAbsolutePath)
-  addConditionalFile(trainingSet.isEmpty,
-                     getVcfIndexFile(consensusSnvVCF).getAbsolutePath)
-  addConditionalFile(trainingSet.isEmpty, consensusIndelVCF.getAbsolutePath)
-  addConditionalFile(trainingSet.isEmpty,
-                     getVcfIndexFile(consensusIndelVCF).getAbsolutePath)
-  addConditionalFile(trainingSet.isDefined, indelsClassifier.getAbsolutePath)
-  addConditionalFile(trainingSet.isDefined, snvClassifier.getAbsolutePath)
-  addConditionalFile(trainingSet.isDefined, snvPredictionVCF.getAbsolutePath)
-  addConditionalFile(trainingSet.isDefined,
-                     getVcfIndexFile(snvPredictionVCF).getAbsolutePath)
-  addConditionalFile(trainingSet.isDefined, indelsPredictionVCF.getAbsolutePath)
-  addConditionalFile(trainingSet.isDefined,
-                     getVcfIndexFile(indelsPredictionVCF).getAbsolutePath)
+  addConditionalFile(trainingSet.isEmpty, consensusSnvVCF)
+  addConditionalFile(trainingSet.isEmpty, s"$consensusSnvVCF.tbi")
+  addConditionalFile(trainingSet.isEmpty, consensusIndelVCF)
+  addConditionalFile(trainingSet.isEmpty, s"$consensusIndelVCF.tbi")
+  addConditionalFile(trainingSet.isDefined, indelsClassifier)
+  addConditionalFile(trainingSet.isDefined, snvClassifier)
+  addConditionalFile(trainingSet.isDefined, snvPredictionVCF)
+  addConditionalFile(trainingSet.isDefined, s"$snvPredictionVCF.tbi")
+  addConditionalFile(trainingSet.isDefined, indelsPredictionVCF)
+  addConditionalFile(trainingSet.isDefined, s"$indelsPredictionVCF.tbi")
 
   @Test
   def testSnvStatus(): Unit = {
-    if (trainingSet.isDefined) testVarinatStatus(snvTruth, snvPredictionVCF)
+    if (trainingSet.isDefined) testVarinatStatus(snvTruth, new File(outputDir, snvPredictionVCF))
   }
 
   @Test
   def testIndelStatus(): Unit = {
-    if (trainingSet.isDefined)
-      testVarinatStatus(indelTruth, indelsPredictionVCF)
+    if (trainingSet.isDefined) testVarinatStatus(indelTruth, new File(outputDir, indelsPredictionVCF))
   }
 
   def testVarinatStatus(truth: File, output: File): Unit = {
