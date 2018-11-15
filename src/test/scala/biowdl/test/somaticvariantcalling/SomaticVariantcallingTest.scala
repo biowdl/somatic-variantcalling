@@ -63,17 +63,17 @@ class SomaticVariantcallingTestUnpairedTrainedWithManta
         "index" -> getBamIndex(tumorBam).getAbsolutePath
       ),
       "mutect2VCF" -> fixtureFile("samples",
-        "wgs3",
-        "somatic_variantcalling_vcfs",
-        "mutect2_wgs3.vcf.gz"),
+                                  "wgs3",
+                                  "somatic_variantcalling_vcfs",
+                                  "mutect2_wgs3.vcf.gz"),
       "vardictVCF" -> fixtureFile("samples",
-        "wgs3",
-        "somatic_variantcalling_vcfs",
-        "vardict_wgs3.vcf.gz"),
+                                  "wgs3",
+                                  "somatic_variantcalling_vcfs",
+                                  "vardict_wgs3.vcf.gz"),
       "strelkaSNV" -> fixtureFile("samples",
-        "wgs3",
-        "somatic_variantcalling_vcfs",
-        "strelka_wgs3_variants.vcf.gz")
+                                  "wgs3",
+                                  "somatic_variantcalling_vcfs",
+                                  "strelka_wgs3_variants.vcf.gz")
     )
   )
 }
@@ -95,21 +95,21 @@ class SomaticVariantcallingTestPairedTrainedWithManta
         "index" -> getBamIndex(fixtureFile("samples", "wgs1", "wgs1.bam")).getAbsolutePath
       ),
       "mutect2VCF" -> fixtureFile("samples",
-        "wgs3",
-        "somatic_variantcalling_vcfs",
-        "mutect2_wgs3-wgs1.vcf.gz"),
+                                  "wgs3",
+                                  "somatic_variantcalling_vcfs",
+                                  "mutect2_wgs3-wgs1.vcf.gz"),
       "vardictVCF" -> fixtureFile("samples",
-        "wgs3",
-        "somatic_variantcalling_vcfs",
-        "vardict_wgs3-wgs1.vcf.gz"),
+                                  "wgs3",
+                                  "somatic_variantcalling_vcfs",
+                                  "vardict_wgs3-wgs1.vcf.gz"),
       "strelkaSNV" -> fixtureFile("samples",
-        "wgs3",
-        "somatic_variantcalling_vcfs",
-        "strelka_wgs3-wgs1_variants.vcf.gz"),
+                                  "wgs3",
+                                  "somatic_variantcalling_vcfs",
+                                  "strelka_wgs3-wgs1_variants.vcf.gz"),
       "strelkaIndel" -> fixtureFile("samples",
-        "wgs3",
-        "somatic_variantcalling_vcfs",
-        "strelka_wgs3-wgs1_indels.vcf.gz")
+                                    "wgs3",
+                                    "somatic_variantcalling_vcfs",
+                                    "strelka_wgs3-wgs1_indels.vcf.gz")
     )
   )
 }
