@@ -90,8 +90,10 @@ trait SomaticVariantcallingSuccess
   // SomaticSeq
   def consensusSnvVCF = "somaticSeq/Consensus.sSNV.vcf.gz"
   def consensusIndelVCF = "somaticSeq/Consensus.sINDEL.vcf.gz"
-  def snvClassifier = "somaticSeq/train/Ensemble.sSNV.tsv.ntChange.Classifier.RData"
-  def indelsClassifier = "somaticSeq/train/Ensemble.sINDEL.tsv.ntChange.Classifier.RData"
+  def snvClassifier =
+    "somaticSeq/train/Ensemble.sSNV.tsv.ntChange.Classifier.RData"
+  def indelsClassifier =
+    "somaticSeq/train/Ensemble.sINDEL.tsv.ntChange.Classifier.RData"
   def snvPredictionVCF = "somaticSeq/Consensus.sSNV.vcf.gz"
   def indelsPredictionVCF = "somaticSeq/SSeq.Classified.sINDEL.vcf.gz"
 
@@ -108,12 +110,14 @@ trait SomaticVariantcallingSuccess
 
   @Test
   def testSnvStatus(): Unit = {
-    if (trainingSet.isDefined) testVarinatStatus(snvTruth, new File(outputDir, snvPredictionVCF))
+    if (trainingSet.isDefined)
+      testVarinatStatus(snvTruth, new File(outputDir, snvPredictionVCF))
   }
 
   @Test
   def testIndelStatus(): Unit = {
-    if (trainingSet.isDefined) testVarinatStatus(indelTruth, new File(outputDir, indelsPredictionVCF))
+    if (trainingSet.isDefined)
+      testVarinatStatus(indelTruth, new File(outputDir, indelsPredictionVCF))
   }
 
   def testVarinatStatus(truth: File, output: File): Unit = {
