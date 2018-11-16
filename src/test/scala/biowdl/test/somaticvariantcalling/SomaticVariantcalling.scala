@@ -32,7 +32,7 @@ trait SomaticVariantcalling extends Pipeline with Reference {
   def tumorBam: File
   def runManta: Boolean = false
 
-  def trainingSet: Option[Map[String, String]] = None
+  def trainingSet: Option[Map[String, Any]] = None
   def controlSample: Option[String] = None
   def controlBam: Option[File] = None
 
@@ -58,7 +58,8 @@ trait SomaticVariantcalling extends Pipeline with Reference {
             "file" -> c.getAbsolutePath,
             "index" -> getBamIndex(c).getAbsolutePath
         )) ++
-      controlSample.map("SomaticVariantcalling.controlSample" -> _)
+      controlSample.map("SomaticVariantcalling.controlSample" -> _) ++
+      trainingSet.map("SomaticVariantcalling.trainingSet" -> _)
 
   def startFile: File = new File("./somatic-variantcalling.wdl")
 

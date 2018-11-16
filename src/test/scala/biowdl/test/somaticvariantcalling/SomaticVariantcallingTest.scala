@@ -54,62 +54,62 @@ class SomaticVariantcallingTestPairedConsensus
 class SomaticVariantcallingTestUnpairedTrainedWithManta
     extends SomaticVariantcallingTestUnpairedConsensus {
   override def runManta: Boolean = true
-  override def inputs: Map[String, Any] = super.inputs ++ Map(
-    "SomaticVariantcalling.trainingSet" -> Map(
-      "truthIndel" -> indelTruth.getAbsolutePath,
-      "truthSNV" -> snvTruth.getAbsolutePath,
-      "tumorBam" -> Map(
-        "file" -> tumorBam.getAbsolutePath,
-        "index" -> getBamIndex(tumorBam).getAbsolutePath
-      ),
-      "mutect2VCF" -> fixtureFile("samples",
-                                  "wgs3",
-                                  "somatic_variantcalling_vcfs",
-                                  "mutect2_wgs3.vcf.gz"),
-      "vardictVCF" -> fixtureFile("samples",
-                                  "wgs3",
-                                  "somatic_variantcalling_vcfs",
-                                  "vardict_wgs3.vcf.gz"),
-      "strelkaSNV" -> fixtureFile("samples",
-                                  "wgs3",
-                                  "somatic_variantcalling_vcfs",
-                                  "strelka_wgs3_variants.vcf.gz")
-    )
-  )
+  override def trainingSet: Option[Map[String, Any]] =
+    Option(
+      Map(
+        "truthIndel" -> indelTruth.getAbsolutePath,
+        "truthSNV" -> snvTruth.getAbsolutePath,
+        "tumorBam" -> Map(
+          "file" -> tumorBam.getAbsolutePath,
+          "index" -> getBamIndex(tumorBam).getAbsolutePath
+        ),
+        "mutect2VCF" -> fixtureFile("samples",
+                                    "wgs3",
+                                    "somatic_variantcalling_vcfs",
+                                    "mutect2_wgs3.vcf.gz"),
+        "vardictVCF" -> fixtureFile("samples",
+                                    "wgs3",
+                                    "somatic_variantcalling_vcfs",
+                                    "vardict_wgs3.vcf.gz"),
+        "strelkaSNV" -> fixtureFile("samples",
+                                    "wgs3",
+                                    "somatic_variantcalling_vcfs",
+                                    "strelka_wgs3_variants.vcf.gz")
+      ))
 }
 
 // training, manta, control
 class SomaticVariantcallingTestPairedTrainedWithManta
     extends SomaticVariantcallingTestPairedConsensus {
   override def runManta: Boolean = true
-  override def inputs: Map[String, Any] = super.inputs ++ Map(
-    "SomaticVariantcalling.trainingSet" -> Map(
-      "truthIndel" -> indelTruth.getAbsolutePath,
-      "truthSNV" -> snvTruth.getAbsolutePath,
-      "tumorBam" -> Map(
-        "file" -> tumorBam.getAbsolutePath,
-        "index" -> getBamIndex(tumorBam).getAbsolutePath
-      ),
-      "normalBam" -> Map(
-        "file" -> fixtureFile("samples", "wgs1", "wgs1.bam").getAbsolutePath,
-        "index" -> getBamIndex(fixtureFile("samples", "wgs1", "wgs1.bam")).getAbsolutePath
-      ),
-      "mutect2VCF" -> fixtureFile("samples",
-                                  "wgs3",
-                                  "somatic_variantcalling_vcfs",
-                                  "mutect2_wgs3-wgs1.vcf.gz"),
-      "vardictVCF" -> fixtureFile("samples",
-                                  "wgs3",
-                                  "somatic_variantcalling_vcfs",
-                                  "vardict_wgs3-wgs1.vcf.gz"),
-      "strelkaSNV" -> fixtureFile("samples",
-                                  "wgs3",
-                                  "somatic_variantcalling_vcfs",
-                                  "strelka_wgs3-wgs1_variants.vcf.gz"),
-      "strelkaIndel" -> fixtureFile("samples",
+  override def trainingSet: Option[Map[String, Any]] =
+    Option(
+      Map(
+        "truthIndel" -> indelTruth.getAbsolutePath,
+        "truthSNV" -> snvTruth.getAbsolutePath,
+        "tumorBam" -> Map(
+          "file" -> tumorBam.getAbsolutePath,
+          "index" -> getBamIndex(tumorBam).getAbsolutePath
+        ),
+        "normalBam" -> Map(
+          "file" -> fixtureFile("samples", "wgs1", "wgs1.bam").getAbsolutePath,
+          "index" -> getBamIndex(fixtureFile("samples", "wgs1", "wgs1.bam")).getAbsolutePath
+        ),
+        "mutect2VCF" -> fixtureFile("samples",
                                     "wgs3",
                                     "somatic_variantcalling_vcfs",
-                                    "strelka_wgs3-wgs1_indels.vcf.gz")
-    )
-  )
+                                    "mutect2_wgs3-wgs1.vcf.gz"),
+        "vardictVCF" -> fixtureFile("samples",
+                                    "wgs3",
+                                    "somatic_variantcalling_vcfs",
+                                    "vardict_wgs3-wgs1.vcf.gz"),
+        "strelkaSNV" -> fixtureFile("samples",
+                                    "wgs3",
+                                    "somatic_variantcalling_vcfs",
+                                    "strelka_wgs3-wgs1_variants.vcf.gz"),
+        "strelkaIndel" -> fixtureFile("samples",
+                                      "wgs3",
+                                      "somatic_variantcalling_vcfs",
+                                      "strelka_wgs3-wgs1_indels.vcf.gz")
+      ))
 }
