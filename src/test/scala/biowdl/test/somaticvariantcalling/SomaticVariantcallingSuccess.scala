@@ -94,7 +94,7 @@ trait SomaticVariantcallingSuccess
     "somaticSeq/train/Ensemble.sSNV.tsv.ntChange.Classifier.RData"
   def indelsClassifier =
     "somaticSeq/train/Ensemble.sINDEL.tsv.ntChange.Classifier.RData"
-  def snvPredictionVCF = "somaticSeq/Consensus.sSNV.vcf.gz"
+  def snvPredictionVCF = "somaticSeq/SSeq.Classified.sSNV.vcf.gz"
   def indelsPredictionVCF = "somaticSeq/SSeq.Classified.sINDEL.vcf.gz"
 
   addConditionalFile(trainingSet.isEmpty, consensusSnvVCF)
@@ -129,7 +129,7 @@ trait SomaticVariantcallingSuccess
         v2 =>
           v.getStart == v2.getStart & v.getEnd == v2.getEnd & v.getAlleles
             .equals(v2.getAlleles) & {
-            if (controlBam.isDefined) v2.hasAttribute("SOMATIC")
+            if (controlBam.isDefined || trainingSet.isDefined) v2.hasAttribute("SOMATIC")
             else true
         })
       assert(exists)
