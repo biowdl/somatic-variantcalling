@@ -129,7 +129,8 @@ trait SomaticVariantcallingSuccess
         v2 =>
           v.getStart == v2.getStart & v.getEnd == v2.getEnd & v.getAlleles
             .equals(v2.getAlleles) & {
-            if (controlBam.isDefined || trainingSet.isDefined) v2.hasAttribute("SOMATIC")
+            if (controlBam.isDefined || trainingSet.isDefined)
+              v2.hasAttribute("SOMATIC")
             else true
         })
       assert(exists)
