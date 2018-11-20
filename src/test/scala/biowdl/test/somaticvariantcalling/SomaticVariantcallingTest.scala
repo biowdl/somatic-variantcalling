@@ -30,9 +30,9 @@ trait SomaticVariantcallingTest
     extends SomaticVariantcallingSuccess
     with TestReference {
   override def snvTruth: File =
-    fixtureFile("samples", "wgs3", "wgs3_snv.vcf.gz")
+    fixtureFile("samples", "wgs3", "wgs3_snv_subset.vcf.gz") // use a subset to ensure both TP and FP are present
   override def indelTruth: File =
-    fixtureFile("samples", "wgs3", "wgs3_indel.vcf.gz")
+    fixtureFile("samples", "wgs3", "wgs3_indel_subset.vcf.gz")
 }
 
 // no training, no manta, no control
