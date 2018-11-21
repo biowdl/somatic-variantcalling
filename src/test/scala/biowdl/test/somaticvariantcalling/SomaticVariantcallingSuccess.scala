@@ -23,6 +23,7 @@ package biowdl.test.somaticvariantcalling
 
 import java.io.File
 
+import htsjdk.variant.variantcontext.VariantContext
 import nl.biopet.utils.biowdl.PipelineSuccess
 import nl.biopet.utils.ngs.intervals.BedRecord
 import nl.biopet.utils.ngs.vcf.{getVcfIndexFile, loadRegion}
@@ -120,17 +121,18 @@ trait SomaticVariantcallingSuccess
       testVariantExists(indelTruth, new File(outputDir, indelsPredictionVCF))
   }
 
+  // Check if the true variants exist in the output, allows for one to be missing
   def testVariantExists(truth: File, output: File): Unit = {
     val truthVariants = loadRegion(truth, BedRecord("chr1", 1, 16000))
     val outputVariants =
       loadRegion(output, BedRecord("chr1", 1, 16000))
-    truthVariants.foreach(v => {
-      val exists = outputVariants.exists(
+    val notFound = truthVariants.filter(v => {
+      !outputVariants.exists(
         v2 =>
           v.getStart == v2.getStart & v.getEnd == v2.getEnd & v.getAlleles
             .equals(v2.getAlleles)
       )
-      assert(exists)
     })
+    assert(notFound.length <= 1)
   }
 }
