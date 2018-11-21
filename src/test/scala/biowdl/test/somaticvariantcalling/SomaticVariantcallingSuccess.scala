@@ -109,18 +109,18 @@ trait SomaticVariantcallingSuccess
   addConditionalFile(trainingSet.isDefined, s"$indelsPredictionVCF.tbi")
 
   @Test
-  def testSnvStatus(): Unit = {
+  def testSnvsExist(): Unit = {
     if (trainingSet.isDefined)
-      testVarinatStatus(snvTruth, new File(outputDir, snvPredictionVCF))
+      testVariantExists(snvTruth, new File(outputDir, snvPredictionVCF))
   }
 
   @Test
-  def testIndelStatus(): Unit = {
+  def testIndelsExist(): Unit = {
     if (trainingSet.isDefined)
-      testVarinatStatus(indelTruth, new File(outputDir, indelsPredictionVCF))
+      testVariantExists(indelTruth, new File(outputDir, indelsPredictionVCF))
   }
 
-  def testVarinatStatus(truth: File, output: File): Unit = {
+  def testVariantExists(truth: File, output: File): Unit = {
     val truthVariants = loadRegion(truth, BedRecord("chr1", 1, 16000))
     val outputVariants =
       loadRegion(output, BedRecord("chr1", 1, 16000))
@@ -128,11 +128,8 @@ trait SomaticVariantcallingSuccess
       val exists = outputVariants.exists(
         v2 =>
           v.getStart == v2.getStart & v.getEnd == v2.getEnd & v.getAlleles
-            .equals(v2.getAlleles) & {
-            if (controlBam.isDefined || trainingSet.isDefined)
-              v2.hasAttribute("SOMATIC")
-            else true
-        })
+            .equals(v2.getAlleles)
+      )
       assert(exists)
     })
   }
