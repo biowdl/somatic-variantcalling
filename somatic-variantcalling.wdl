@@ -61,7 +61,8 @@ workflow SomaticVariantcalling {
     }
 
     if (defined(trainingSet) && defined(controlBam)) {
-        TrainingSet trainSetPaired = select_first([trainingSet]) #FIXME workaround 'no such field'
+        #FIXME workaround for faulty 'no such field' errors which occur when a Struct is optional
+        TrainingSet trainSetPaired = select_first([trainingSet])
 
         call somaticSeqTask.SomaticSeqParallelPairedTrain as pairedTraining {
             input:
@@ -105,7 +106,8 @@ workflow SomaticVariantcalling {
     }
 
     if (defined(trainingSet) && !defined(controlBam)) {
-        TrainingSet trainSetSingle = select_first([trainingSet]) #FIXME workaround 'no such field'
+        #FIXME workaround for faulty 'no such field' errors which occur when a Struct is optional
+        TrainingSet trainSetSingle = select_first([trainingSet])
 
         call somaticSeqTask.SomaticSeqParallelSingleTrain as singleTraining {
             input:
