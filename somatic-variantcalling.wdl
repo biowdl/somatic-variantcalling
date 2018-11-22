@@ -64,7 +64,7 @@ workflow SomaticVariantcalling {
         #FIXME workaround for faulty 'no such field' errors which occur when a Struct is optional
         TrainingSet trainSetPaired = select_first([trainingSet])
 
-        call somaticSeqTask.SomaticSeqParallelPairedTrain as pairedTraining {
+        call somaticSeqTask.ParallelPairedTrain as pairedTraining {
             input:
                 truthSNV = trainSetPaired.truthSNV,
                 truthIndel = trainSetPaired.truthIndel,
@@ -89,7 +89,7 @@ workflow SomaticVariantcalling {
     }
 
     if (defined(controlBam)) {
-        call somaticSeqTask.SomaticSeqParallelPaired as pairedSomaticSeq {
+        call somaticSeqTask.ParallelPaired as pairedSomaticSeq {
             input:
                 classifierSNV = pairedTraining.ensembleSNVClassifier,
                 classifierIndel = pairedTraining.ensembleIndelsClassifier,
@@ -109,7 +109,7 @@ workflow SomaticVariantcalling {
         #FIXME workaround for faulty 'no such field' errors which occur when a Struct is optional
         TrainingSet trainSetSingle = select_first([trainingSet])
 
-        call somaticSeqTask.SomaticSeqParallelSingleTrain as singleTraining {
+        call somaticSeqTask.ParallelSingleTrain as singleTraining {
             input:
                 truthSNV = trainSetSingle.truthSNV,
                 truthIndel = trainSetSingle.truthIndel,
@@ -127,7 +127,7 @@ workflow SomaticVariantcalling {
     }
 
     if (!defined(controlBam)) {
-        call somaticSeqTask.SomaticSeqParallelSingle as singleSomaticSeq {
+        call somaticSeqTask.ParallelSingle as singleSomaticSeq {
             input:
                 classifierSNV = singleTraining.ensembleSNVClassifier,
                 classifierIndel = singleTraining.ensembleIndelsClassifier,
