@@ -7,6 +7,7 @@ biopetUrlName := "SomaticVariantcalling"
 startYear := Some(2018)
 
 biopetIsTool := false
+biopetIsPipeline := true
 
 developers ++= List(
   Developer(id = "ffinfo",
