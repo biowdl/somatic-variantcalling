@@ -26,26 +26,104 @@ import java.io.File
 import nl.biopet.utils.biowdl.fixtureFile
 import nl.biopet.utils.biowdl.references.TestReference
 
-class SomaticVariantcallingTestUnpaired
+trait SomaticVariantcallingTest
     extends SomaticVariantcallingSuccess
     with TestReference {
-  def tumorSample: String = "wgs2"
-  def tumorBam: File = fixtureFile("samples", "wgs2", "wgs2.realign.bam")
+  override def snvTruth: File =
+    fixtureFile("samples", "wgs3", "wgs3_snv_subset.vcf.gz") // use a subset to ensure both TP and FP are present
+  override def indelTruth: File =
+    fixtureFile("samples", "wgs3", "wgs3_indel_subset.vcf.gz")
 }
 
-class SomaticVariantcallingTestPaired
-    extends SomaticVariantcallingTestUnpaired {
+// no training, no manta, no control
+class SomaticVariantcallingTestUnpairedConsensus
+    extends SomaticVariantcallingTest {
+  def tumorSample: String = "wgs3"
+  def tumorBam: File = fixtureFile("samples", "wgs3", "wgs3.bam")
+}
+
+// no training, no manta, control
+class SomaticVariantcallingTestPairedConsensus
+    extends SomaticVariantcallingTestUnpairedConsensus {
   override def controlSample: Option[String] = Option("wgs1")
   override def controlBam: Option[File] =
     Option(fixtureFile("samples", "wgs1", "wgs1.bam"))
 }
 
-class SomaticVariantcallingTestUnpairedWithManta
-    extends SomaticVariantcallingTestUnpaired {
+// training, manta, no control
+class SomaticVariantcallingTestUnpairedTrainedWithManta
+    extends SomaticVariantcallingTestUnpairedConsensus {
   override def runManta: Boolean = true
+  override def trainingSet: Option[Map[String, Any]] =
+    Option(
+      Map(
+        "truthIndel" -> indelTruth.getAbsolutePath,
+        "truthSNV" -> snvTruth.getAbsolutePath,
+        "tumorBam" -> Map(
+          "file" -> tumorBam.getAbsolutePath,
+          "index" -> getBamIndex(tumorBam).getAbsolutePath
+        ),
+        "mutect2VCF" -> fixtureFile("samples",
+                                    "wgs3",
+                                    "somatic_variantcalling_vcfs",
+                                    "single",
+                                    "mutect2",
+                                    "wgs3.vcf.gz"),
+        "vardictVCF" -> fixtureFile("samples",
+                                    "wgs3",
+                                    "somatic_variantcalling_vcfs",
+                                    "single",
+                                    "vardict",
+                                    "wgs3.vcf.gz"),
+        "strelkaSNV" -> fixtureFile("samples",
+                                    "wgs3",
+                                    "somatic_variantcalling_vcfs",
+                                    "single",
+                                    "strelka",
+                                    "wgs3_variants.vcf.gz")
+      ))
 }
 
-class SomaticVariantcallingTestPairedWithManta
-    extends SomaticVariantcallingTestPaired {
+// training, manta, control
+class SomaticVariantcallingTestPairedTrainedWithManta
+    extends SomaticVariantcallingTestPairedConsensus {
   override def runManta: Boolean = true
+  override def trainingSet: Option[Map[String, Any]] =
+    Option(
+      Map(
+        "truthIndel" -> indelTruth.getAbsolutePath,
+        "truthSNV" -> snvTruth.getAbsolutePath,
+        "tumorBam" -> Map(
+          "file" -> tumorBam.getAbsolutePath,
+          "index" -> getBamIndex(tumorBam).getAbsolutePath
+        ),
+        "normalBam" -> Map(
+          "file" -> fixtureFile("samples", "wgs1", "wgs1.bam").getAbsolutePath,
+          "index" -> getBamIndex(fixtureFile("samples", "wgs1", "wgs1.bam")).getAbsolutePath
+        ),
+        "mutect2VCF" -> fixtureFile("samples",
+                                    "wgs3",
+                                    "somatic_variantcalling_vcfs",
+                                    "paired",
+                                    "mutect2",
+                                    "wgs3-wgs1.vcf.gz"),
+        "vardictVCF" -> fixtureFile("samples",
+                                    "wgs3",
+                                    "somatic_variantcalling_vcfs",
+                                    "paired",
+                                    "vardict",
+                                    "wgs3-wgs1.vcf.gz"),
+        "strelkaSNV" -> fixtureFile("samples",
+                                    "wgs3",
+                                    "somatic_variantcalling_vcfs",
+                                    "paired",
+                                    "strelka",
+                                    "wgs3-wgs1_variants.vcf.gz"),
+        "strelkaIndel" -> fixtureFile("samples",
+                                      "wgs3",
+                                      "somatic_variantcalling_vcfs",
+                                      "paired",
+                                      "strelka",
+                                      "wgs3-wgs1_indels.vcf.gz")
+      ))
 }

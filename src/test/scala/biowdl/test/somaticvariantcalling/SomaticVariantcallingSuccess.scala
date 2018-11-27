@@ -23,12 +23,17 @@ package biowdl.test.somaticvariantcalling
 
 import java.io.File
 
+import htsjdk.variant.variantcontext.VariantContext
 import nl.biopet.utils.biowdl.PipelineSuccess
-import nl.biopet.utils.ngs.vcf.getVcfIndexFile
+import nl.biopet.utils.ngs.intervals.BedRecord
+import nl.biopet.utils.ngs.vcf.{getVcfIndexFile, loadRegion}
+import org.testng.annotations.Test
 
 trait SomaticVariantcallingSuccess
     extends SomaticVariantcalling
     with PipelineSuccess {
+  def indelTruth: File
+  def snvTruth: File
 
   // Mutect2
   val mutect2Vcf: File = controlBam match {
@@ -81,5 +86,53 @@ trait SomaticVariantcallingSuccess
   } else {
     addMustNotHaveFile(indelVCF)
     addMustNotHaveFile(getVcfIndexFile(indelVCF))
+  }
+
+  // SomaticSeq
+  def consensusSnvVCF = "somaticSeq/Consensus.sSNV.vcf.gz"
+  def consensusIndelVCF = "somaticSeq/Consensus.sINDEL.vcf.gz"
+  def snvClassifier =
+    "somaticSeq/train/Ensemble.sSNV.tsv.ntChange.Classifier.RData"
+  def indelsClassifier =
+    "somaticSeq/train/Ensemble.sINDEL.tsv.ntChange.Classifier.RData"
+  def snvPredictionVCF = "somaticSeq/SSeq.Classified.sSNV.vcf.gz"
+  def indelsPredictionVCF = "somaticSeq/SSeq.Classified.sINDEL.vcf.gz"
+
+  addConditionalFile(trainingSet.isEmpty, consensusSnvVCF)
+  addConditionalFile(trainingSet.isEmpty, s"$consensusSnvVCF.tbi")
+  addConditionalFile(trainingSet.isEmpty, consensusIndelVCF)
+  addConditionalFile(trainingSet.isEmpty, s"$consensusIndelVCF.tbi")
+  addConditionalFile(trainingSet.isDefined, indelsClassifier)
+  addConditionalFile(trainingSet.isDefined, snvClassifier)
+  addConditionalFile(trainingSet.isDefined, snvPredictionVCF)
+  addConditionalFile(trainingSet.isDefined, s"$snvPredictionVCF.tbi")
+  addConditionalFile(trainingSet.isDefined, indelsPredictionVCF)
+  addConditionalFile(trainingSet.isDefined, s"$indelsPredictionVCF.tbi")
+
+  @Test
+  def testSnvsExist(): Unit = {
+    if (trainingSet.isDefined)
+      testVariantExists(snvTruth, new File(outputDir, snvPredictionVCF))
+  }
+
+  @Test
+  def testIndelsExist(): Unit = {
+    if (trainingSet.isDefined)
+      testVariantExists(indelTruth, new File(outputDir, indelsPredictionVCF))
+  }
+
+  // Check if the true variants exist in the output, allows for one to be missing
+  def testVariantExists(truth: File, output: File): Unit = {
+    val truthVariants = loadRegion(truth, BedRecord("chr1", 1, 16000))
+    val outputVariants =
+      loadRegion(output, BedRecord("chr1", 1, 16000))
+    val notFound = truthVariants.filter(v => {
+      !outputVariants.exists(
+        v2 =>
+          v.getStart == v2.getStart & v.getEnd == v2.getEnd & v.getAlleles
+            .equals(v2.getAlleles)
+      )
+    })
+    assert(notFound.length <= 1)
   }
 }
