@@ -1,0 +1,45 @@
+- name: Mutect2Paired
+  tags:
+    - integration
+  command: >-
+    bash -c '
+    TEST_JSON=tests/integration/Mutect2Paired.json ;
+    sed -i "2i\"Mutect2.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
+    cromwell run -i $TEST_JSON mutect2.wdl'
+  files:
+    - path: "test-output/wgs3-wgs1.vcf.gz"
+      contains:
+        - "chr1	500	.	C	T"
+        - "chr1	1500	.	G	A"
+        - "chr1	2500	.	A	G"
+        - "chr1	3500	.	G	T"
+        - "chr1	4500	.	A	C"
+        - "chr1	5500	.	C	T"
+        - "chr1	6500	.	C	T"
+        - "chr1	7500	.	G	C"
+        - "chr1	8500	.	T	A"
+        - "chr1	9500	.	G	A"
+    - path: "test-output/wgs3-wgs1.vcf.gz.tbi"
+
+- name: Mutect2Unpaired
+  tags:
+    - integration
+  command: >-
+    bash -c '
+    TEST_JSON=tests/integration/Mutect2Unpaired.json ;
+    sed -i "2i\"Mutect2.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
+    cromwell run -i $TEST_JSON mutect2.wdl'
+  files:
+    - path: "test-output/wgs3.vcf.gz"
+      contains:
+        - "chr1	500	.	C	T"
+        - "chr1	1500	.	G	A"
+        - "chr1	2500	.	A	G"
+        - "chr1	3500	.	G	T"
+        - "chr1	4500	.	A	C"
+        - "chr1	5500	.	C	T"
+        - "chr1	6500	.	C	T"
+        - "chr1	7500	.	G	C"
+        - "chr1	8500	.	T	A"
+        - "chr1	9500	.	G	A"
+    - path: "test-output/wgs3.vcf.gz.tbi"
