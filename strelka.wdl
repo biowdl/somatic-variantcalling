@@ -19,12 +19,9 @@ workflow Strelka {
         Boolean runManta = true
     }
 
-    String scatterDir = outputDir + "/scatters/"
-
     call biopet.ScatterRegions as scatterList {
         input:
             reference = reference,
-            outputDirPath = scatterDir,
             regions = regions
     }
 
@@ -32,14 +29,14 @@ workflow Strelka {
         call samtools.BgzipAndIndex as bedPrepare {
             input:
                 inputFile = bed,
-                outputDir = scatterDir,
+                outputDir = ".",
                 type = "bed"
         }
 
         if (runManta) {
-            call manta.ConfigureSomatic as mantaSomatic {
+            call manta.Somatic as mantaSomatic {
                 input:
-                    runDir = scatterDir + "/" + basename(bed) + "_runManta",
+                    runDir = basename(bed) + "_runManta",
                     normalBam = controlBam,
                     tumorBam = tumorBam,
                     reference = reference,
@@ -47,47 +44,33 @@ workflow Strelka {
                     callRegionsIndex = bedPrepare.index
             }
 
-            call manta.RunSomatic as mantaSomaticRun {
-                input:
-                    runDir = mantaSomatic.runDirectory,
-                    paired = defined(controlBam)
-            }
-
-            File mantaTumorSV = mantaSomaticRun.tumorSV.file
-            File mantaTumorSVIndex = mantaSomaticRun.tumorSV.index
+            File mantaTumorSV = mantaSomatic.tumorSV.file
+            File mantaTumorSVIndex = mantaSomatic.tumorSV.index
         }
 
         if (defined(controlBam)){
-            call strelka.ConfigureSomatic as strelkaSomatic {
+            call strelka.Somatic as strelkaSomatic {
                 input:
-                    runDir = scatterDir + "/" + basename(bed) + "_runStrelka",
+                    runDir = basename(bed) + "_runStrelka",
                     normalBam = select_first([controlBam]),
                     tumorBam = tumorBam,
                     reference = reference,
                     callRegions = bedPrepare.compressed,
                     callRegionsIndex = bedPrepare.index,
-                    indelCandidates = mantaSomaticRun.condidateSmallIndels,
+                    indelCandidates = mantaSomatic.candidateSmallIndels,
             }
         }
 
         if (! defined(controlBam)) {
-            call strelka.ConfigureGermline as strelkaGermline {
+            call strelka.Germline as strelkaGermline {
                 input:
-                    runDir = scatterDir + "/" + basename(bed) + "_runStrelka",
+                    runDir = basename(bed) + "_runStrelka",
                     bams = [tumorBam.file],
                     indexes= [tumorBam.index],
                     reference = reference,
                     callRegions = bedPrepare.compressed,
                     callRegionsIndex = bedPrepare.index
             }
-        }
-
-        call strelka.Run as strelkaRun {
-            input:
-                runDir = if defined(controlBam)
-                    then select_first([strelkaSomatic.runDirectory])
-                    else select_first([strelkaGermline.runDirectory]),
-                somatic = defined(controlBam)
         }
     }
 
@@ -103,25 +86,27 @@ workflow Strelka {
     if (defined(controlBam)){
         call picard.MergeVCFs as gatherIndels {
             input:
-                inputVCFs = select_all(strelkaRun.indelsVcf),
-                inputVCFsIndexes = select_all(strelkaRun.indelsIndex),
+                inputVCFs = select_all(strelkaSomatic.indelsVcf),
+                inputVCFsIndexes = select_all(strelkaSomatic.indelsIndex),
                 outputVcfPath = outputDir + "/" + basename + "_indels.vcf.gz"
-
         }
     }
 
     call picard.MergeVCFs as gatherVariants {
         input:
-            inputVCFs = strelkaRun.variants,
-            inputVCFsIndexes = strelkaRun.variantsIndex,
+            inputVCFs = if defined(controlBam)
+                then select_all(strelkaSomatic.variants)
+                else select_all(strelkaGermline.variants),
+            inputVCFsIndexes = if defined(controlBam)
+                then select_all(strelkaSomatic.variantsIndex)
+                else select_all(strelkaGermline.variantsIndex),
             outputVcfPath = outputDir + "/" + basename + "_variants.vcf.gz"
     }
 
     output {
+        IndexedVcfFile variantsVCF = gatherVariants.outputVcf
         IndexedVcfFile? mantaVCF = gatherSVs.outputVcf
         IndexedVcfFile? indelsVCF = gatherIndels.outputVcf
-
-        IndexedVcfFile variantsVCF = gatherVariants.outputVcf
     }
 }
 

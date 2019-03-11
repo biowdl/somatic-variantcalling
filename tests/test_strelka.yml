@@ -1,0 +1,115 @@
+- name: StrelkaPaired
+  tags:
+    - integration
+  command: >-
+    bash -c '
+    TEST_JSON=tests/integration/StrelkaPaired.json ;
+    sed -i "2i\"Strelka.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
+    cromwell run -i $TEST_JSON strelka.wdl'
+  files:
+    - path: "test-output/strelka_variants.vcf.gz"
+      contains:
+        - "chr1	500	.	C	T"
+        - "chr1	1500	.	G	A"
+        - "chr1	2500	.	A	G"
+        - "chr1	3500	.	G	T"
+        - "chr1	4500	.	A	C"
+        - "chr1	5500	.	C	T"
+        - "chr1	6500	.	C	T"
+        - "chr1	7500	.	G	C"
+        - "chr1	8500	.	T	A"
+        - "chr1	9500	.	G	A"
+    - path: "test-output/strelka_variants.vcf.gz.tbi"
+    - path: "test-output/strelka_indels.vcf.gz"
+    - path: "test-output/strelka_indels.vcf.gz.tbi"
+    - path: "test-output/strelka_manta.vcf.gz"
+    - path: "test-output/strelka_manta.vcf.gz.tbi"
+
+- name: StrelkaUnpaired
+  tags:
+    - integration
+  command: >-
+    bash -c '
+    TEST_JSON=tests/integration/StrelkaUnpaired.json ;
+    sed -i "2i\"Strelka.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
+    cromwell run -i $TEST_JSON strelka.wdl'
+  files:
+    - path: "test-output/strelka_variants.vcf.gz"
+      contains:
+        - "chr1	500	.	C	T"
+        - "chr1	1500	.	G	A"
+        - "chr1	2500	.	A	G"
+        - "chr1	3500	.	G	T"
+        - "chr1	4500	.	A	C"
+        - "chr1	5500	.	C	T"
+        - "chr1	6500	.	C	T"
+        - "chr1	7500	.	G	C"
+        - "chr1	8500	.	T	A"
+        - "chr1	9500	.	G	A"
+    - path: "test-output/strelka_variants.vcf.gz.tbi"
+    - path: "test-output/strelka_indels.vcf.gz"
+      should_exist: false
+    - path: "test-output/strelka_indels.vcf.gz.tbi"
+      should_exist: false
+    - path: "test-output/strelka_manta.vcf.gz"
+    - path: "test-output/strelka_manta.vcf.gz.tbi"
+
+- name: StrelkaPairedWithoutManta
+  tags:
+    - integration
+  command: >-
+    bash -c '
+    TEST_JSON=tests/integration/StrelkaPairedWithoutManta.json ;
+    sed -i "2i\"Strelka.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
+    cromwell run -i $TEST_JSON strelka.wdl'
+  files:
+    - path: "test-output/strelka_variants.vcf.gz"
+      contains:
+        - "chr1	500	.	C	T"
+        - "chr1	1500	.	G	A"
+        - "chr1	2500	.	A	G"
+        - "chr1	3500	.	G	T"
+        - "chr1	4500	.	A	C"
+        - "chr1	5500	.	C	T"
+        - "chr1	6500	.	C	T"
+        - "chr1	7500	.	G	C"
+        - "chr1	8500	.	T	A"
+        - "chr1	9500	.	G	A"
+    - path: "test-output/strelka_variants.vcf.gz.tbi"
+    - path: "test-output/strelka_indels.vcf.gz"
+    - path: "test-output/strelka_indels.vcf.gz.tbi"
+    - path: "test-output/strelka_manta.vcf.gz"
+      should_exist: false
+    - path: "test-output/strelka_manta.vcf.gz.tbi"
+      should_exist: false
+
+- name: StrelkaUnpairedWithoutManta
+  tags:
+    - integration
+  command: >-
+    bash -c '
+    TEST_JSON=tests/integration/StrelkaUnpairedWithoutManta.json ;
+    sed -i "2i\"Strelka.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
+    cromwell run -i $TEST_JSON strelka.wdl'
+  files:
+    - path: "test-output/strelka_variants.vcf.gz"
+      contains:
+        - "chr1	500	.	C	T"
+        - "chr1	1500	.	G	A"
+        - "chr1	2500	.	A	G"
+        - "chr1	3500	.	G	T"
+        - "chr1	4500	.	A	C"
+        - "chr1	5500	.	C	T"
+        - "chr1	6500	.	C	T"
+        - "chr1	7500	.	G	C"
+        - "chr1	8500	.	T	A"
+        - "chr1	9500	.	G	A"
+    - path: "test-output/strelka_variants.vcf.gz.tbi"
+    - path: "test-output/strelka_indels.vcf.gz"
+      should_exist: false
+    - path: "test-output/strelka_indels.vcf.gz.tbi"
+      should_exist: false
+    - path: "test-output/strelka_manta.vcf.gz"
+      should_exist: false
+    - path: "test-output/strelka_manta.vcf.gz.tbi"
+      should_exist: false
