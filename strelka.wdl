@@ -14,15 +14,23 @@ workflow Strelka {
         Reference reference
         String outputDir
         String basename = "strelka"
+        Boolean runManta = true
         File? regions
 
-        Boolean runManta = true
+        Map[String, String] dockerTags = {
+            "picard":"2.18.26--0",
+            "biopet-scatterregions": "0.2--0",
+            "tabix": "0.2.6--ha92aebf_0",
+            "manta": "1.4.0--py27_1",
+            "strelka": "2.9.7--0"
+        }
     }
 
     call biopet.ScatterRegions as scatterList {
         input:
             reference = reference,
-            regions = regions
+            regions = regions,
+            dockerTag = dockerTags["biopet-scatterregions"]
     }
 
     scatter (bed in scatterList.scatters) {
@@ -30,7 +38,8 @@ workflow Strelka {
             input:
                 inputFile = bed,
                 outputDir = ".",
-                type = "bed"
+                type = "bed",
+                dockerTag = dockerTags["tabix"]
         }
 
         if (runManta) {
@@ -41,7 +50,8 @@ workflow Strelka {
                     tumorBam = tumorBam,
                     reference = reference,
                     callRegions = bedPrepare.compressed,
-                    callRegionsIndex = bedPrepare.index
+                    callRegionsIndex = bedPrepare.index,
+                    dockerTag = dockerTags["manta"]
             }
 
             File mantaTumorSV = mantaSomatic.tumorSV.file
@@ -58,6 +68,7 @@ workflow Strelka {
                     callRegions = bedPrepare.compressed,
                     callRegionsIndex = bedPrepare.index,
                     indelCandidates = mantaSomatic.candidateSmallIndels,
+                    dockerTag = dockerTags["strelka"]
             }
         }
 
@@ -69,7 +80,8 @@ workflow Strelka {
                     indexes= [tumorBam.index],
                     reference = reference,
                     callRegions = bedPrepare.compressed,
-                    callRegionsIndex = bedPrepare.index
+                    callRegionsIndex = bedPrepare.index,
+                    dockerTag = dockerTags["strelka"]
             }
         }
     }
@@ -79,7 +91,8 @@ workflow Strelka {
             input:
                 inputVCFs = select_all(mantaTumorSV),
                 inputVCFsIndexes = select_all(mantaTumorSVIndex),
-                outputVcfPath = outputDir + "/" + basename + "_manta.vcf.gz"
+                outputVcfPath = outputDir + "/" + basename + "_manta.vcf.gz",
+                dockerTag = dockerTags["picard"]
         }
     }
 
@@ -88,7 +101,8 @@ workflow Strelka {
             input:
                 inputVCFs = select_all(strelkaSomatic.indelsVcf),
                 inputVCFsIndexes = select_all(strelkaSomatic.indelsIndex),
-                outputVcfPath = outputDir + "/" + basename + "_indels.vcf.gz"
+                outputVcfPath = outputDir + "/" + basename + "_indels.vcf.gz",
+                dockerTag = dockerTags["picard"]
         }
     }
 
@@ -100,7 +114,8 @@ workflow Strelka {
             inputVCFsIndexes = if defined(controlBam)
                 then select_all(strelkaSomatic.variantsIndex)
                 else select_all(strelkaGermline.variantsIndex),
-            outputVcfPath = outputDir + "/" + basename + "_variants.vcf.gz"
+            outputVcfPath = outputDir + "/" + basename + "_variants.vcf.gz",
+            dockerTag = dockerTags["picard"]
     }
 
     output {

@@ -10,15 +10,24 @@ import "vardict.wdl" as vardictWorkflow
 
 workflow SomaticVariantcalling {
     input {
+        String outputDir
+        Reference reference
         String tumorSample
         IndexedBamFile tumorBam
         String? controlSample
         IndexedBamFile? controlBam
-        Reference reference
         TrainingSet? trainingSet
         File? regions
 
-        String outputDir
+        Map[String, String] dockerTags = {
+            "picard":"2.18.26--0",
+            "biopet-scatterregions": "0.2--0",
+            "tabix": "0.2.6--ha92aebf_0",
+            "manta": "1.4.0--py27_1",
+            "strelka": "2.9.7--0",
+            "gatk": "4.1.0.0--0",
+            "vardict": "1.5.8--1"
+        }
     }
 
     String mutect2Dir = outputDir + "/mutect2"
@@ -34,7 +43,8 @@ workflow SomaticVariantcalling {
             controlBam = controlBam,
             reference = reference,
             outputDir = mutect2Dir,
-            regions = regions
+            regions = regions,
+            dockerTags = dockerTags
     }
 
     call strelkaWorkflow.Strelka as strelka {
@@ -46,7 +56,8 @@ workflow SomaticVariantcalling {
             basename = if defined(controlBam)
                 then "${tumorSample}-${controlSample}"
                 else tumorSample,
-            regions = regions
+            regions = regions,
+            dockerTags = dockerTags
     }
 
     call vardictWorkflow.VarDict as vardict {
@@ -57,7 +68,8 @@ workflow SomaticVariantcalling {
             controlBam = controlBam,
             reference = reference,
             outputDir = vardictDir,
-            regions = regions
+            regions = regions,
+            dockerTags = dockerTags
     }
 
     if (defined(trainingSet) && defined(controlBam)) {
@@ -146,7 +158,8 @@ workflow SomaticVariantcalling {
             inputFile = select_first([if defined(controlBam)
                 then pairedSomaticSeq.snvs
                 else singleSomaticSeq.snvs]),
-            outputDir = somaticSeqDir
+            outputDir = somaticSeqDir,
+            dockerTag = dockerTags["tabix"]
     }
 
     call samtools.BgzipAndIndex as indelIndex {
@@ -154,7 +167,9 @@ workflow SomaticVariantcalling {
             inputFile = select_first([if defined(controlBam)
                 then pairedSomaticSeq.indels
                 else singleSomaticSeq.indels]),
-            outputDir = somaticSeqDir
+            outputDir = somaticSeqDir,
+            dockerTag = dockerTags["tabix"]
+
     }
 
     output{

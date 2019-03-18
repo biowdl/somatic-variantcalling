@@ -15,6 +15,12 @@ workflow VarDict{
         Reference reference
         String outputDir
         File? regions
+
+        Map[String, String] dockerTags = {
+            "picard":"2.18.26--0",
+            "biopet-scatterregions": "0.2--0",
+            "vardict": "1.5.8--1"
+        }
     }
 
     String prefix = if (defined(controlSample))
@@ -24,7 +30,9 @@ workflow VarDict{
     call biopet.ScatterRegions as scatterList {
         input:
             reference = reference,
-            regions = regions
+            regions = regions,
+            bamFile = tumorBam.file,
+            dockerTag = dockerTags["biopet-scatterregions"]
     }
 
     scatter (bed in scatterList.scatters){
@@ -36,7 +44,8 @@ workflow VarDict{
                 normalBam = controlBam,
                 reference = reference,
                 bedFile = bed,
-                outputVcf = prefix + "-" + basename(bed) + ".vcf"
+                outputVcf = prefix + "-" + basename(bed) + ".vcf",
+                dockerTag = dockerTags["vardict"]
         }
     }
 
@@ -44,7 +53,8 @@ workflow VarDict{
         input:
             vcfFiles = varDict.vcfFile,
             outputVcfPath = outputDir + "/" + prefix + ".vcf.gz",
-            dict = reference.dict
+            dict = reference.dict,
+            dockerTag = dockerTags["picard"]
     }
 
     output {
