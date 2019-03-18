@@ -32,7 +32,7 @@ workflow VarDict{
             reference = reference,
             regions = regions,
             bamFile = tumorBam.file,
-            bamindex = tumorBam.index,
+            bamIndex = tumorBam.index,
             dockerTag = dockerTags["biopet-scatterregions"]
     }
 
