@@ -7,14 +7,19 @@ import "tasks/common.wdl" as common
 
 workflow Mutect2 {
     input {
+        String outputDir
+        Reference reference
         String tumorSample
         IndexedBamFile tumorBam
         String? controlSample
         IndexedBamFile? controlBam
-        Reference reference
         File? regions
 
-        String outputDir
+        Map[String, String] dockerTags = {
+            "picard":"2.18.26--0",
+            "biopet-scatterregions": "0.2--0",
+            "gatk": "4.1.0.0--0"
+        }
     }
 
     String prefix = if (defined(controlSample))
@@ -24,7 +29,9 @@ workflow Mutect2 {
     call biopet.ScatterRegions as scatterList {
         input:
             reference = reference,
-            regions = regions
+            regions = regions,
+            dockerTag = dockerTags["biopet-scatterregions"]
+
     }
 
     scatter (bam in select_all([tumorBam, controlBam])) {
@@ -41,7 +48,8 @@ workflow Mutect2 {
                 outputVcf = prefix + "-" + basename(bed) + ".vcf.gz",
                 tumorSample = tumorSample,
                 normalSample = controlSample,
-                intervals = [bed]
+                intervals = [bed],
+                dockerTag = dockerTags["gatk"]
         }
 
         File mutectFiles = mutect2.vcfFile.file
@@ -52,7 +60,8 @@ workflow Mutect2 {
         input:
             inputVCFs = mutectFiles,
             inputVCFsIndexes = mutectIndexFiles,
-            outputVcfPath = outputDir + "/" + prefix + ".vcf.gz"
+            outputVcfPath = outputDir + "/" + prefix + ".vcf.gz",
+            dockerTag = dockerTags["picard"]
     }
 
     output {
