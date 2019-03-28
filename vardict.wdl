@@ -29,7 +29,9 @@ workflow VarDict{
     call chunkedScatter as scatterList {
         input:
             inputIsBed = defined(regions),
-            fastaDict = reference.dict
+            inputFile = if defined(regions)
+             then select_first([regions])
+             else reference.dict
     }
 
     scatter (bed in scatterList.scatters){
@@ -65,7 +67,7 @@ task chunkedScatter {
         Int minimumSizePerFile = 45000000
         Int overlap = 150
         Boolean inputIsBed = false
-        File fastaDict
+        File inputFile
 
         String dockerTag = "3.7-slim"
     }
@@ -81,7 +83,7 @@ task chunkedScatter {
         minimum_size_per_file = ~{minimumSizePerFile}
         overlap = ~{overlap}
         out_dir = "~{outDir}"
-        in_path = Path("~{fastaDict}")
+        in_path = Path("~{inputFile}")
         bed_input = ~{true="True" false="False" inputIsBed}
 
         def dict_chunker(f):
