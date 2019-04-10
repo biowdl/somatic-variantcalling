@@ -26,7 +26,7 @@ workflow SomaticVariantcalling {
             "manta": "1.4.0--py27_1",
             "strelka": "2.9.7--0",
             "gatk4": "4.1.0.0--0",
-            "vardict": "1.5.8--1"
+            "vardict-java": "1.5.8--1"
         }
     }
 

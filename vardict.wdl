@@ -18,7 +18,7 @@ workflow VarDict{
         Map[String, String] dockerTags = {
             "picard":"2.18.26--0",
             "biopet-scatterregions": "0.2--0",
-            "vardict": "1.5.8--1"
+            "vardict-java": "1.5.8--1"
         }
     }
 
@@ -44,7 +44,7 @@ workflow VarDict{
                 reference = reference,
                 bedFile = bed,
                 outputVcf = prefix + "-" + basename(bed) + ".vcf",
-                dockerTag = dockerTags["vardict"]
+                dockerTag = dockerTags["vardict-java"]
         }
     }
 
