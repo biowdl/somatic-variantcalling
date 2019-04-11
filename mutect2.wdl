@@ -18,7 +18,7 @@ workflow Mutect2 {
         Map[String, String] dockerTags = {
             "picard":"2.18.26--0",
             "biopet-scatterregions": "0.2--0",
-            "gatk": "4.1.0.0--0"
+            "gatk4": "4.1.0.0--0"
         }
     }
 
@@ -49,7 +49,7 @@ workflow Mutect2 {
                 tumorSample = tumorSample,
                 normalSample = controlSample,
                 intervals = [bed],
-                dockerTag = dockerTags["gatk"]
+                dockerTag = dockerTags["gatk4"]
         }
 
         File mutectFiles = mutect2.vcfFile.file

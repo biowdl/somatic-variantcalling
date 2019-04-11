@@ -25,8 +25,8 @@ workflow SomaticVariantcalling {
             "tabix": "0.2.6--ha92aebf_0",
             "manta": "1.4.0--py27_1",
             "strelka": "2.9.7--0",
-            "gatk": "4.1.0.0--0",
-            "vardict": "1.5.8--1"
+            "gatk4": "4.1.0.0--0",
+            "vardict-java": "1.5.8--1"
         }
     }
 
