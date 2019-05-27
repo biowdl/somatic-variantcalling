@@ -175,3 +175,35 @@
         - "chr1	13500	.	G	GCC"
         - "chr1	14500	.	AAT	A"
     - path: "test-output/somaticSeq/SSeq.Classified.sINDEL.vcf.gz.tbi"
+
+- name: SomaticVariantcallingOneCaller
+  tags:
+    - integration
+  command: >-
+    bash -c '
+    TEST_JSON=tests/integration/SomaticVariantcallingOneCaller.json ;
+    sed -i "2i\"SomaticVariantcalling.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
+    cromwell run -i $TEST_JSON somatic-variantcalling.wdl'
+  files:
+    - path: "test-output/mutect2/wgs3-wgs1.vcf.gz"
+    - path: "test-output/mutect2/wgs3-wgs1.vcf.gz.tbi"
+    - path: "test-output/vardict/wgs3-wgs1.vcf.gz"
+      should_exist: false
+    - path: "test-output/vardict/wgs3-wgs1.vcf.gz.tbi"
+      should_exist: false
+    - path: "test-output/strelka/wgs3-wgs1_variants.vcf.gz"
+      should_exist: false
+    - path: "test-output/strelka/wgs3-wgs1_variants.vcf.gz.tbi"
+      should_exist: false
+    - path: "test-output/strelka/wgs3-wgs1_indels.vcf.gz"
+      should_exist: false
+    - path: "test-output/strelka/wgs3-wgs1_indels.vcf.gz.tbi"
+      should_exist: false
+    - path: "test-output/strelka/wgs3-wgs1_manta.vcf.gz"
+      should_exist: false
+    - path: "test-output/strelka/wgs3-wgs1_manta.vcf.gz.tbi"
+      should_exist: false
+    - path: "test-output/somaticSeq/Consensus.sSNV.vcf.gz"
+    - path: "test-output/somaticSeq/Consensus.sSNV.vcf.gz.tbi"
+    - path: "test-output/somaticSeq/Consensus.sINDEL.vcf.gz"
+    - path: "test-output/somaticSeq/Consensus.sINDEL.vcf.gz.tbi"
