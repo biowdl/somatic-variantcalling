@@ -19,6 +19,10 @@ workflow SomaticVariantcalling {
         TrainingSet? trainingSet
         File? regions
 
+        Boolean runStrelka = true
+        Boolean runVardict = true
+        Boolean runMutect2 = true
+
         Map[String, String] dockerTags = {
             "picard":"2.18.26--0",
             "biopet-scatterregions": "0.2--0",
@@ -28,6 +32,8 @@ workflow SomaticVariantcalling {
             "gatk4": "4.1.0.0--0",
             "vardict-java": "1.5.8--1"
         }
+
+        IndexedVcfFile? DONOTDEFINETHIS #FIXME
     }
 
     String mutect2Dir = outputDir + "/mutect2"
@@ -35,41 +41,47 @@ workflow SomaticVariantcalling {
     String vardictDir = outputDir + "/vardict"
     String somaticSeqDir = outputDir + "/somaticSeq"
 
-    call mutect2Workflow.Mutect2 as mutect2 {
-        input:
-            tumorSample = tumorSample,
-            tumorBam = tumorBam,
-            controlSample = controlSample,
-            controlBam = controlBam,
-            reference = reference,
-            outputDir = mutect2Dir,
-            regions = regions,
-            dockerTags = dockerTags
+    if (runMutect2) {
+        call mutect2Workflow.Mutect2 as mutect2 {
+            input:
+                tumorSample = tumorSample,
+                tumorBam = tumorBam,
+                controlSample = controlSample,
+                controlBam = controlBam,
+                reference = reference,
+                outputDir = mutect2Dir,
+                regions = regions,
+                dockerTags = dockerTags
+        }
     }
 
-    call strelkaWorkflow.Strelka as strelka {
-        input:
-            controlBam = controlBam,
-            tumorBam = tumorBam,
-            reference = reference,
-            outputDir = strelkaDir,
-            basename = if defined(controlBam)
-                then "${tumorSample}-${controlSample}"
-                else tumorSample,
-            regions = regions,
-            dockerTags = dockerTags
+    if (runStrelka) {
+        call strelkaWorkflow.Strelka as strelka {
+            input:
+                controlBam = controlBam,
+                tumorBam = tumorBam,
+                reference = reference,
+                outputDir = strelkaDir,
+                basename = if defined(controlBam)
+                    then "${tumorSample}-${controlSample}"
+                    else tumorSample,
+                regions = regions,
+                dockerTags = dockerTags
+        }
     }
 
-    call vardictWorkflow.VarDict as vardict {
-        input:
-            tumorSample = tumorSample,
-            tumorBam = tumorBam,
-            controlSample = controlSample,
-            controlBam = controlBam,
-            reference = reference,
-            outputDir = vardictDir,
-            regions = regions,
-            dockerTags = dockerTags
+    if (runVardict) {
+        call vardictWorkflow.VarDict as vardict {
+            input:
+                tumorSample = tumorSample,
+                tumorBam = tumorBam,
+                controlSample = controlSample,
+                controlBam = controlBam,
+                reference = reference,
+                outputDir = vardictDir,
+                regions = regions,
+                dockerTags = dockerTags
+        }
     }
 
     if (defined(trainingSet) && defined(controlBam)) {
@@ -110,10 +122,18 @@ workflow SomaticVariantcalling {
                 inclusionRegion = regions,
                 tumorBam = tumorBam,
                 normalBam = select_first([controlBam]),
-                mutect2VCF = mutect2.outputVCF.file,
-                vardictVCF = vardict.outputVCF.file,
-                strelkaSNV = strelka.variantsVCF.file,
-                strelkaIndel = select_first([strelka.indelsVCF]).file
+                mutect2VCF = if defined(mutect2.outputVCF)
+                    then select_first([mutect2.outputVCF]).file
+                    else DONOTDEFINETHIS,
+                vardictVCF = if defined(vardict.outputVCF)
+                    then select_first([vardict.outputVCF]).file
+                    else DONOTDEFINETHIS,
+                strelkaSNV = if defined(strelka.variantsVCF)
+                    then select_first([strelka.variantsVCF]).file
+                    else DONOTDEFINETHIS,
+                strelkaIndel = if defined(strelka.indelsVCF)
+                    then select_first([strelka.indelsVCF]).file
+                    else DONOTDEFINETHIS
         }
     }
 
@@ -147,9 +167,15 @@ workflow SomaticVariantcalling {
                 reference = reference,
                 inclusionRegion = regions,
                 bam = tumorBam,
-                mutect2VCF = mutect2.outputVCF.file,
-                vardictVCF = vardict.outputVCF.file,
-                strelkaVCF = strelka.variantsVCF.file,
+                mutect2VCF = if defined(mutect2.outputVCF)
+                    then select_first([mutect2.outputVCF]).file
+                    else DONOTDEFINETHIS,
+                vardictVCF = if defined(vardict.outputVCF)
+                    then select_first([vardict.outputVCF]).file
+                    else DONOTDEFINETHIS,
+                strelkaVCF = if defined(strelka.variantsVCF)
+                    then select_first([strelka.variantsVCF]).file
+                    else DONOTDEFINETHIS,
         }
     }
 
@@ -181,9 +207,9 @@ workflow SomaticVariantcalling {
             file: indelIndex.compressed,
             index: indelIndex.index
         }
-        IndexedVcfFile mutect2Vcf = mutect2.outputVCF
-        IndexedVcfFile vardictVcf = vardict.outputVCF
-        IndexedVcfFile strelkaSnvsVcf = strelka.variantsVCF
+        IndexedVcfFile? mutect2Vcf = mutect2.outputVCF
+        IndexedVcfFile? vardictVcf = vardict.outputVCF
+        IndexedVcfFile? strelkaSnvsVcf = strelka.variantsVCF
         IndexedVcfFile? strelkaIndelsVcf = strelka.indelsVCF
         IndexedVcfFile? mantaVcf = strelka.mantaVCF
     }
