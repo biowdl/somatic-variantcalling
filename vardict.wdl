@@ -125,9 +125,9 @@ task chunkedScatter {
                             yield [name, position-overlap, position+chunk_size]
                         position += chunk_size
                     if position-overlap <= start:
-                        yield [name, start, position+chunk_size]
+                        yield [name, start, end]
                     else:
-                        yield [name, position-overlap, position+chunk_size]
+                        yield [name, position-overlap, end]
 
 
         current_scatter = 0
