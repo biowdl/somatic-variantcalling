@@ -2,10 +2,8 @@
   tags:
     - integration
   command: >-
-    bash -c '
-    TEST_JSON=tests/integration/Mutect2Paired.json ;
-    sed -i "2i\"Mutect2.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
-    cromwell run -i $TEST_JSON mutect2.wdl'
+    cromwell run -o tests/cromwell_options.json
+    -i tests/integration/Mutect2Paired.json mutect2.wdl
   files:
     - path: "test-output/wgs3-wgs1.vcf.gz"
       contains:
@@ -25,10 +23,8 @@
   tags:
     - integration
   command: >-
-    bash -c '
-    TEST_JSON=tests/integration/Mutect2Unpaired.json ;
-    sed -i "2i\"Mutect2.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
-    cromwell run -i $TEST_JSON mutect2.wdl'
+    cromwell run -o tests/cromwell_options.json
+    -i tests/integration/Mutect2Unpaired.json mutect2.wdl
   files:
     - path: "test-output/wgs3.vcf.gz"
       contains:
