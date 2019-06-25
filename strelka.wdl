@@ -9,9 +9,13 @@ import "tasks/common.wdl" as common
 
 workflow Strelka {
     input {
-        IndexedBamFile tumorBam
-        IndexedBamFile? controlBam
-        Reference reference
+        File tumorBam
+        File tumorBamIndex
+        File? controlBam
+        File? controlBamIndex
+        File referenceFasta
+        File referenceFastaFai
+        File referenceFastaDict
         String outputDir = "."
         String basename = "strelka"
         Boolean runManta = true
@@ -28,8 +32,8 @@ workflow Strelka {
 
     call biopet.ScatterRegions as scatterList {
         input:
-            referenceFasta = reference.fasta,
-            referenceFastaDict = reference.dict,
+            referenceFasta = referenceFasta,
+            referenceFastaDict = referenceFastaDict,
             regions = regions,
             dockerImage = dockerImages["biopet-scatterregions"]
     }
@@ -48,15 +52,15 @@ workflow Strelka {
                 input:
                     runDir = basename(bed) + "_runManta",
                     normalBam = controlBam,
+                    normalBamIndex = controlBamIndex,
                     tumorBam = tumorBam,
-                    reference = reference,
+                    tumorBamIndex = tumorBamIndex,
+                    referenceFasta = referenceFasta,
+                    referenceFastaFai = referenceFastaFai,
                     callRegions = bedPrepare.compressed,
                     callRegionsIndex = bedPrepare.index,
                     dockerImage = dockerImages["manta"]
             }
-
-            File mantaTumorSV = mantaSomatic.tumorSV.file
-            File mantaTumorSVIndex = mantaSomatic.tumorSV.index
         }
 
         if (defined(controlBam)){
@@ -64,11 +68,15 @@ workflow Strelka {
                 input:
                     runDir = basename(bed) + "_runStrelka",
                     normalBam = select_first([controlBam]),
+                    normalBamIndex = select_first([controlBamIndex]),
                     tumorBam = tumorBam,
-                    reference = reference,
+                    tumorBamIndex = tumorBamIndex,
+                    referenceFasta = referenceFasta,
+                    referenceFastaFai = referenceFastaFai,
                     callRegions = bedPrepare.compressed,
                     callRegionsIndex = bedPrepare.index,
-                    indelCandidates = mantaSomatic.candidateSmallIndels,
+                    indelCandidatesVcf = mantaSomatic.candidateSmallIndelsVcf,
+                    indelCandidatesVcfIndex = mantaSomatic.candidateSmallIndelsVcfIndex,
                     dockerImage = dockerImages["strelka"]
             }
         }
@@ -77,9 +85,10 @@ workflow Strelka {
             call strelka.Germline as strelkaGermline {
                 input:
                     runDir = basename(bed) + "_runStrelka",
-                    bams = [tumorBam.file],
-                    indexes= [tumorBam.index],
-                    reference = reference,
+                    bams = [tumorBam],
+                    indexes= [tumorBamIndex],
+                    referenceFasta = referenceFasta,
+                    referenceFastaFai = referenceFastaFai,
                     callRegions = bedPrepare.compressed,
                     callRegionsIndex = bedPrepare.index,
                     dockerImage = dockerImages["strelka"]
@@ -90,8 +99,8 @@ workflow Strelka {
     if (runManta) {
         call picard.MergeVCFs as gatherSVs {
             input:
-                inputVCFs = select_all(mantaTumorSV),
-                inputVCFsIndexes = select_all(mantaTumorSVIndex),
+                inputVCFs = select_all(mantaSomatic.tumorSVVcf),
+                inputVCFsIndexes = select_all(mantaSomatic.tumorSVVcfIndex),
                 outputVcfPath = outputDir + "/" + basename + "_manta.vcf.gz",
                 dockerImage = dockerImages["picard"]
         }
