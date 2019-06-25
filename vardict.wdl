@@ -63,7 +63,7 @@ workflow VarDict{
 
     output {
         File outputVcf = gatherVcfs.outputVcf
-        File outputVcfIndex = gatherVcfs.outputVcfIndex}
+        File outputVcfIndex = gatherVcfs.outputVcfIndex
     }
 }
 
