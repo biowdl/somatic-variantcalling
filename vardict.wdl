@@ -8,10 +8,14 @@ import "tasks/common.wdl" as common
 workflow VarDict{
     input {
         String tumorSample
-        IndexedBamFile tumorBam
+        File tumorBam
+        File tumorBamIndex
         String? controlSample
-        IndexedBamFile? controlBam
-        Reference reference
+        File? controlBam
+        File? controlBamIndex
+        File referenceFasta
+        File referenceFastaFai
+        File referenceFastaDict
         String outputDir = "."
         File? regions
 
@@ -30,7 +34,7 @@ workflow VarDict{
             inputIsBed = defined(regions),
             inputFile = if defined(regions)
              then select_first([regions])
-             else reference.dict
+             else referenceFastaDict
     }
 
     scatter (bed in scatterList.scatters){
@@ -38,9 +42,11 @@ workflow VarDict{
             input:
                 tumorSampleName = tumorSample,
                 tumorBam = tumorBam,
+                tumorBam = tumorBamIndex,
                 normalSampleName = controlSample,
                 normalBam = controlBam,
-                reference = reference,
+                normalBamIndex = controlBamIndex,
+                referenceFasta = referenceFasta,
                 bedFile = bed,
                 outputVcf = prefix + "-" + basename(bed) + ".vcf",
                 dockerImage = dockerImages["vardict-java"]
@@ -51,12 +57,13 @@ workflow VarDict{
         input:
             vcfFiles = varDict.vcfFile,
             outputVcfPath = outputDir + "/" + prefix + ".vcf.gz",
-            dict = reference.dict,
+            dict = referenceFastaDict,
             dockerImage = dockerImages["picard"]
     }
 
     output {
-        IndexedVcfFile outputVCF = object {file: gatherVcfs.outputVcf, index: gatherVcfs.outputVcfIndex}
+        File outputVcf = gatherVcfs.outputVcf
+        File outputVcfIndex = gatherVcfs.outputVcfIndex}
     }
 }
 
