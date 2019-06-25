@@ -68,7 +68,6 @@ workflow Mutect2 {
     }
 
     output {
-        File outputVCF = gatherVcfs.outputVcf
-        File outputVCFIndex = gatherVcfs.outputVcfIndex
+        IndexedVcfFile outputVCF = object {file: gatherVcfs.outputVcf, index: gatherVcfs.outputVcfIndex }
     }
 }

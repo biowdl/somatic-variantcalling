@@ -23,14 +23,14 @@ workflow SomaticVariantcalling {
         Boolean runVardict = true
         Boolean runMutect2 = true
 
-        Map[String, String] dockerTags = {
-            "picard":"2.18.26--0",
-            "biopet-scatterregions": "0.2--0",
-            "tabix": "0.2.6--ha92aebf_0",
-            "manta": "1.4.0--py27_1",
-            "strelka": "2.9.7--0",
-            "gatk4": "4.1.0.0--0",
-            "vardict-java": "1.5.8--1"
+        Map[String, String] dockerImages = {
+            "picard":"quay.io/biocontainers/picard:2.18.26--0",
+            "biopet-scatterregions":"quay.io/biocontainers/biopet-scatterregions:0.2--0",
+            "tabix":"quay.io/biocontainers/tabix:0.2.6--ha92aebf_0",
+            "manta": "quay.io/biocontainers/manta:1.4.0--py27_1",
+            "strelka": "quay.io/biocontainers/strelka:2.9.7--0",
+            "gatk4":"quay.io/biocontainers/gatk4:4.1.0.0--0",
+            "vardict-java": "quay.io/biocontainers/vardict-java:1.5.8--1"
         }
 
         IndexedVcfFile? DONOTDEFINETHIS #FIXME
@@ -51,7 +51,7 @@ workflow SomaticVariantcalling {
                 reference = reference,
                 outputDir = mutect2Dir,
                 regions = regions,
-                dockerTags = dockerTags
+                dockerImages = dockerImages
         }
     }
 
@@ -66,7 +66,7 @@ workflow SomaticVariantcalling {
                     then "${tumorSample}-${controlSample}"
                     else tumorSample,
                 regions = regions,
-                dockerTags = dockerTags
+                dockerImages = dockerImages
         }
     }
 
@@ -80,7 +80,7 @@ workflow SomaticVariantcalling {
                 reference = reference,
                 outputDir = vardictDir,
                 regions = regions,
-                dockerTags = dockerTags
+                dockerImages = dockerImages
         }
     }
 
@@ -108,7 +108,8 @@ workflow SomaticVariantcalling {
                 lofreqIndel = trainSetPaired.lofreqIndel,
                 scalpelVCF = trainSetPaired.scalpelVCF,
                 strelkaSNV = trainSetPaired.strelkaSNV,
-                strelkaIndel = trainSetPaired.strelkaIndel
+                strelkaIndel = trainSetPaired.strelkaIndel,
+                dockerImage = dockerImages["somaticseq"]
         }
     }
 
@@ -133,7 +134,8 @@ workflow SomaticVariantcalling {
                     else DONOTDEFINETHIS,
                 strelkaIndel = if defined(strelka.indelsVCF)
                     then select_first([strelka.indelsVCF]).file
-                    else DONOTDEFINETHIS
+                    else DONOTDEFINETHIS,
+                dockerImage = dockerImages["somaticseq"]
         }
     }
 
@@ -154,7 +156,8 @@ workflow SomaticVariantcalling {
                 vardictVCF = trainSetSingle.vardictVCF,
                 lofreqVCF = trainSetSingle.lofreqSNV,
                 scalpelVCF = trainSetSingle.scalpelVCF,
-                strelkaVCF = trainSetSingle.strelkaSNV
+                strelkaVCF = trainSetSingle.strelkaSNV,
+                dockerImage = dockerImages["somaticseq"]
         }
     }
 
@@ -176,6 +179,7 @@ workflow SomaticVariantcalling {
                 strelkaVCF = if defined(strelka.variantsVCF)
                     then select_first([strelka.variantsVCF]).file
                     else DONOTDEFINETHIS,
+                dockerImage = dockerImages["somaticseq"]
         }
     }
 
@@ -185,7 +189,7 @@ workflow SomaticVariantcalling {
                 then pairedSomaticSeq.snvs
                 else singleSomaticSeq.snvs]),
             outputDir = somaticSeqDir,
-            dockerTag = dockerTags["tabix"]
+            dockerImage = dockerImages["tabix"]
     }
 
     call samtools.BgzipAndIndex as indelIndex {
@@ -194,7 +198,7 @@ workflow SomaticVariantcalling {
                 then pairedSomaticSeq.indels
                 else singleSomaticSeq.indels]),
             outputDir = somaticSeqDir,
-            dockerTag = dockerTags["tabix"]
+            dockerImage = dockerImages["tabix"]
 
     }
 
