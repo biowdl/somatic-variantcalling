@@ -15,10 +15,10 @@ workflow Mutect2 {
         IndexedBamFile? controlBam
         File? regions
 
-        Map[String, String] dockerTags = {
-            "picard":"2.18.26--0",
-            "biopet-scatterregions": "0.2--0",
-            "gatk4": "4.1.0.0--0"
+        Map[String, String] dockerImages = {
+          "picard":"quay.io/biocontainers/picard:2.18.26--0",
+          "gatk4":"quay.io/biocontainers/gatk4:4.1.0.0--0",
+          "biopet-scatterregions":"quay.io/biocontainers/biopet-scatterregions:0.2--0"
         }
     }
 
@@ -28,9 +28,10 @@ workflow Mutect2 {
 
     call biopet.ScatterRegions as scatterList {
         input:
-            reference = reference,
+            referenceFasta = reference.fasta,
+            referenceFastaDict = reference.dict,
             regions = regions,
-            dockerTag = dockerTags["biopet-scatterregions"]
+            dockerImage = dockerImages["biopet-scatterregions"]
 
     }
 
@@ -44,16 +45,18 @@ workflow Mutect2 {
             input:
                 inputBams = bamFiles,
                 inputBamsIndex = indexFiles,
-                reference = reference,
+                referenceFasta = reference.fasta,
+                referenceFastaFai = reference.fai,
+                referenceFastaDict = reference.dict,
                 outputVcf = prefix + "-" + basename(bed) + ".vcf.gz",
                 tumorSample = tumorSample,
                 normalSample = controlSample,
                 intervals = [bed],
-                dockerTag = dockerTags["gatk4"]
+                dockerImage = dockerImages["gatk4"]
         }
 
-        File mutectFiles = mutect2.vcfFile.file
-        File mutectIndexFiles = mutect2.vcfFile.index
+        File mutectFiles = mutect2.vcfFile
+        File mutectIndexFiles = mutect2.vcfFileIndex
     }
 
     call picard.MergeVCFs as gatherVcfs {
@@ -61,10 +64,11 @@ workflow Mutect2 {
             inputVCFs = mutectFiles,
             inputVCFsIndexes = mutectIndexFiles,
             outputVcfPath = outputDir + "/" + prefix + ".vcf.gz",
-            dockerTag = dockerTags["picard"]
+            dockerImage = dockerImages["picard"]
     }
 
     output {
-        IndexedVcfFile outputVCF = gatherVcfs.outputVcf
+        File outputVCF = gatherVcfs.outputVcf
+        File outputVCFIndex = gatherVcfs.outputVcfIndex
     }
 }
