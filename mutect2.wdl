@@ -38,16 +38,11 @@ workflow Mutect2 {
 
     }
 
-    scatter (bam in select_all([tumorBam, controlBam])) {
-        File bamFiles = bam.file
-        File indexFiles = bam.index
-    }
-
     scatter (bed in scatterList.scatters) {
         call gatk.MuTect2 as mutect2 {
             input:
-                inputBams = [tumorBam, controlBam],
-                inputBamsIndex = [tumorBamIndex, controlBamIndex],
+                inputBams = select_all([tumorBam, controlBam]),
+                inputBamsIndex = select_all([tumorBamIndex, controlBamIndex]),
                 referenceFasta = referenceFasta,
                 referenceFastaFai = referenceFastaFai,
                 referenceFastaDict = referenceFastaDict,
@@ -61,8 +56,8 @@ workflow Mutect2 {
 
     call picard.MergeVCFs as gatherVcfs {
         input:
-            inputVCFs = mutectFiles,
-            inputVCFsIndexes = mutectIndexFiles,
+            inputVCFs = mutect2.vcfFile,
+            inputVCFsIndexes = mutect2.vcfFileIndex,
             outputVcfPath = outputDir + "/" + prefix + ".vcf.gz",
             dockerImage = dockerImages["picard"]
     }
