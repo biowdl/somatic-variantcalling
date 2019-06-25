@@ -95,6 +95,7 @@ workflow Strelka {
                 outputVcfPath = outputDir + "/" + basename + "_manta.vcf.gz",
                 dockerImage = dockerImages["picard"]
         }
+        IndexedVcfFile mantaVcf = object {file: gatherSVs.outputVcf, index: gatherSVs.outputVcfIndex}
     }
 
     if (defined(controlBam)){
@@ -105,6 +106,7 @@ workflow Strelka {
                 outputVcfPath = outputDir + "/" + basename + "_indels.vcf.gz",
                 dockerImage = dockerImages["picard"]
         }
+        IndexedVcfFile indelsVcf = object {file: gatherIndels.outputVcf, index: gatherIndels.outputVcfIndex}
     }
 
     call picard.MergeVCFs as gatherVariants {
@@ -121,8 +123,8 @@ workflow Strelka {
 
     output {
         IndexedVcfFile variantsVCF = object {file: gatherVariants.outputVcf, index: gatherVariants.outputVcfIndex}
-        IndexedVcfFile? mantaVCF = object {file: gatherSVs.outputVcf, index: gatherSVs.outputVcfIndex}
-        IndexedVcfFile? indelsVCF = object {file: gatherIndels.outputVcf, index: gatherIndels.outputVcfIndex}
+        IndexedVcfFile? mantaVCF =  mantaVcf
+        IndexedVcfFile? indelsVCF = indelsVcf
     }
 }
 
