@@ -17,20 +17,21 @@ workflow Strelka {
         Boolean runManta = true
         File? regions
 
-        Map[String, String] dockerTags = {
-            "picard":"2.18.26--0",
-            "biopet-scatterregions": "0.2--0",
-            "tabix": "0.2.6--ha92aebf_0",
-            "manta": "1.4.0--py27_1",
-            "strelka": "2.9.7--0"
+        Map[String, String] dockerImages = {
+            "picard":"quay.io/biocontainers/picard:2.18.26--0",
+            "biopet-scatterregions":"quay.io/biocontainers/biopet-scatterregions:0.2--0",
+            "tabix":"quay.io/biocontainers/tabix:0.2.6--ha92aebf_0",
+            "manta": "quay.io/biocontainers/manta:1.4.0--py27_1",
+            "strelka": "quay.io/biocontainers/strelka:2.9.7--0"
         }
     }
 
     call biopet.ScatterRegions as scatterList {
         input:
-            reference = reference,
+            referenceFasta = reference.fasta,
+            referenceFastaDict = reference.dict,
             regions = regions,
-            dockerTag = dockerTags["biopet-scatterregions"]
+            dockerImage = dockerImages["biopet-scatterregions"]
     }
 
     scatter (bed in scatterList.scatters) {
@@ -39,7 +40,7 @@ workflow Strelka {
                 inputFile = bed,
                 outputDir = ".",
                 type = "bed",
-                dockerTag = dockerTags["tabix"]
+                dockerImage = dockerImages["tabix"]
         }
 
         if (runManta) {
@@ -51,7 +52,7 @@ workflow Strelka {
                     reference = reference,
                     callRegions = bedPrepare.compressed,
                     callRegionsIndex = bedPrepare.index,
-                    dockerTag = dockerTags["manta"]
+                    dockerImage = dockerImages["manta"]
             }
 
             File mantaTumorSV = mantaSomatic.tumorSV.file
@@ -68,7 +69,7 @@ workflow Strelka {
                     callRegions = bedPrepare.compressed,
                     callRegionsIndex = bedPrepare.index,
                     indelCandidates = mantaSomatic.candidateSmallIndels,
-                    dockerTag = dockerTags["strelka"]
+                    dockerImage = dockerImages["strelka"]
             }
         }
 
@@ -81,7 +82,7 @@ workflow Strelka {
                     reference = reference,
                     callRegions = bedPrepare.compressed,
                     callRegionsIndex = bedPrepare.index,
-                    dockerTag = dockerTags["strelka"]
+                    dockerImage = dockerImages["strelka"]
             }
         }
     }
@@ -92,7 +93,7 @@ workflow Strelka {
                 inputVCFs = select_all(mantaTumorSV),
                 inputVCFsIndexes = select_all(mantaTumorSVIndex),
                 outputVcfPath = outputDir + "/" + basename + "_manta.vcf.gz",
-                dockerTag = dockerTags["picard"]
+                dockerImage = dockerImages["picard"]
         }
     }
 
@@ -102,7 +103,7 @@ workflow Strelka {
                 inputVCFs = select_all(strelkaSomatic.indelsVcf),
                 inputVCFsIndexes = select_all(strelkaSomatic.indelsIndex),
                 outputVcfPath = outputDir + "/" + basename + "_indels.vcf.gz",
-                dockerTag = dockerTags["picard"]
+                dockerImage = dockerImages["picard"]
         }
     }
 
@@ -115,13 +116,13 @@ workflow Strelka {
                 then select_all(strelkaSomatic.variantsIndex)
                 else select_all(strelkaGermline.variantsIndex),
             outputVcfPath = outputDir + "/" + basename + "_variants.vcf.gz",
-            dockerTag = dockerTags["picard"]
+            dockerImage = dockerImages["picard"]
     }
 
     output {
-        IndexedVcfFile variantsVCF = gatherVariants.outputVcf
-        IndexedVcfFile? mantaVCF = gatherSVs.outputVcf
-        IndexedVcfFile? indelsVCF = gatherIndels.outputVcf
+        IndexedVcfFile variantsVCF = object {file: gatherVariants.outputVcf, index: gatherVariants.outputVcfIndex}
+        IndexedVcfFile? mantaVCF = object {file: gatherSVs.outputVcf, index: gatherSVs.outputVcfIndex}
+        IndexedVcfFile? indelsVCF = object {file: gatherIndels.outputVcf, index: gatherIndels.outputVcfIndex}
     }
 }
 
