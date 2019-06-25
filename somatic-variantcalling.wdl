@@ -10,7 +10,7 @@ import "vardict.wdl" as vardictWorkflow
 
 workflow SomaticVariantcalling {
     input {
-        String outputDir
+        String outputDir = "."
         Reference reference
         String tumorSample
         IndexedBamFile tumorBam

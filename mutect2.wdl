@@ -7,7 +7,7 @@ import "tasks/common.wdl" as common
 
 workflow Mutect2 {
     input {
-        String outputDir
+        String outputDir = "."
         Reference reference
         String tumorSample
         IndexedBamFile tumorBam

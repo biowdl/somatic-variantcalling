@@ -12,7 +12,7 @@ workflow Strelka {
         IndexedBamFile tumorBam
         IndexedBamFile? controlBam
         Reference reference
-        String outputDir
+        String outputDir = "."
         String basename = "strelka"
         Boolean runManta = true
         File? regions

@@ -12,7 +12,7 @@ workflow VarDict{
         String? controlSample
         IndexedBamFile? controlBam
         Reference reference
-        String outputDir
+        String outputDir = "."
         File? regions
 
         Map[String, String] dockerImages = {
