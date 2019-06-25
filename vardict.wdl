@@ -15,10 +15,9 @@ workflow VarDict{
         String outputDir
         File? regions
 
-        Map[String, String] dockerTags = {
-            "picard":"2.18.26--0",
-            "biopet-scatterregions": "0.2--0",
-            "vardict-java": "1.5.8--1"
+        Map[String, String] dockerImages = {
+            "picard":"quay.io/biocontainers/picard:2.18.26--0",
+            "vardict-java": "quay.io/biocontainers/vardict-java:1.5.8--1"
         }
     }
 
@@ -44,7 +43,7 @@ workflow VarDict{
                 reference = reference,
                 bedFile = bed,
                 outputVcf = prefix + "-" + basename(bed) + ".vcf",
-                dockerTag = dockerTags["vardict-java"]
+                dockerImage = dockerImages["vardict-java"]
         }
     }
 
@@ -53,11 +52,11 @@ workflow VarDict{
             vcfFiles = varDict.vcfFile,
             outputVcfPath = outputDir + "/" + prefix + ".vcf.gz",
             dict = reference.dict,
-            dockerTag = dockerTags["picard"]
+            dockerImage = dockerImages["picard"]
     }
 
     output {
-        IndexedVcfFile outputVCF = gatherVcfs.outputVcf
+        IndexedVcfFile outputVCF = object {file: gatherVcfs.outputVcf, index: gatherVcfs.outputVcfIndex}
     }
 }
 
@@ -69,7 +68,7 @@ task chunkedScatter {
         Boolean inputIsBed = false
         File inputFile
 
-        String dockerTag = "3.7-slim"
+        String dockerImage = "python:3.7-slim"
     }
 
     String outDir = "scatters"
@@ -159,7 +158,7 @@ task chunkedScatter {
     }
 
     runtime {
-        docker: "python:" + dockerTag
+        docker: dockerImage
         # 4 gigs of memory to be able to build the docker image in singularity
         memory: 4
     }
