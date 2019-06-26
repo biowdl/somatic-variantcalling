@@ -42,11 +42,12 @@ workflow VarDict{
             input:
                 tumorSampleName = tumorSample,
                 tumorBam = tumorBam,
-                tumorBam = tumorBamIndex,
+                tumorBamIndex = tumorBamIndex,
                 normalSampleName = controlSample,
                 normalBam = controlBam,
                 normalBamIndex = controlBamIndex,
                 referenceFasta = referenceFasta,
+                referenceFastaFai = referenceFastaFai,
                 bedFile = bed,
                 outputVcf = prefix + "-" + basename(bed) + ".vcf",
                 dockerImage = dockerImages["vardict-java"]
