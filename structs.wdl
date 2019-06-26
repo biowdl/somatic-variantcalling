@@ -5,8 +5,10 @@ import "tasks/common.wdl"
 struct TrainingSet {
     File truthIndel
     File truthSNV
-    IndexedBamFile tumorBam
-    IndexedBamFile? normalBam
+    File tumorBam
+    File tumorBamIndex
+    File? normalBam
+    File? normalBamIndex
     File? mutect2VCF
     File? varscanSNV
     File? varscanIndel
