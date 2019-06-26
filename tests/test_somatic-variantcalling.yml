@@ -2,10 +2,9 @@
   tags:
     - integration
   command: >-
-    bash -c '
-    TEST_JSON=tests/integration/SomaticVariantcallingPairedConsensus.json ;
-    sed -i "2i\"SomaticVariantcalling.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
-    cromwell run -i $TEST_JSON somatic-variantcalling.wdl'
+    cromwell run -o tests/cromwell_options.json
+    -i tests/integration/SomaticVariantcallingPairedConsensus.json
+    somatic-variantcalling.wdl
   files:
     - path: "test-output/mutect2/wgs3-wgs1.vcf.gz"
     - path: "test-output/mutect2/wgs3-wgs1.vcf.gz.tbi"
@@ -38,10 +37,9 @@
   tags:
     - integration
   command: >-
-    bash -c '
-    TEST_JSON=tests/integration/SomaticVariantcallingUnpairedConsensus.json ;
-    sed -i "2i\"SomaticVariantcalling.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
-    cromwell run -i $TEST_JSON somatic-variantcalling.wdl'
+    cromwell run -o tests/cromwell_options.json
+    -i tests/integration/SomaticVariantcallingUnpairedConsensus.json
+    somatic-variantcalling.wdl
   files:
     - path: "test-output/mutect2/wgs3.vcf.gz"
     - path: "test-output/mutect2/wgs3.vcf.gz.tbi"
@@ -76,10 +74,9 @@
   tags:
     - integration
   command: >-
-    bash -c '
-    TEST_JSON=tests/integration/SomaticVariantcallingPairedTrained.json ;
-    sed -i "2i\"SomaticVariantcalling.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
-    cromwell run -i $TEST_JSON somatic-variantcalling.wdl'
+    cromwell run -o tests/cromwell_options.json
+    -i tests/integration/SomaticVariantcallingPairedTrained.json
+    somatic-variantcalling.wdl
   files:
     - path: "test-output/mutect2/wgs3-wgs1.vcf.gz"
     - path: "test-output/mutect2/wgs3-wgs1.vcf.gz.tbi"
@@ -127,10 +124,9 @@
   tags:
     - integration
   command: >-
-    bash -c '
-    TEST_JSON=tests/integration/SomaticVariantcallingUnpairedTrained.json ;
-    sed -i "2i\"SomaticVariantcalling.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
-    cromwell run -i $TEST_JSON somatic-variantcalling.wdl'
+    cromwell run -o tests/cromwell_options.json
+    -i tests/integration/SomaticVariantcallingUnpairedTrained.json
+    somatic-variantcalling.wdl
   files:
     - path: "test-output/mutect2/wgs3.vcf.gz"
     - path: "test-output/mutect2/wgs3.vcf.gz.tbi"
@@ -180,10 +176,9 @@
   tags:
     - integration
   command: >-
-    bash -c '
-    TEST_JSON=tests/integration/SomaticVariantcallingOneCaller.json ;
-    sed -i "2i\"SomaticVariantcalling.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
-    cromwell run -i $TEST_JSON somatic-variantcalling.wdl'
+    cromwell run -o tests/cromwell_options.json
+    -i tests/integration/SomaticVariantcallingOneCaller.json
+    somatic-variantcalling.wdl
   files:
     - path: "test-output/mutect2/wgs3-wgs1.vcf.gz"
     - path: "test-output/mutect2/wgs3-wgs1.vcf.gz.tbi"
