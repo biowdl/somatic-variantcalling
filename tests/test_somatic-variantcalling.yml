@@ -73,6 +73,7 @@
 - name: SomaticVariantcallingPairedTrained
   tags:
     - integration
+    - trained
   command: >-
     cromwell run -o tests/cromwell_options.json
     -i tests/integration/SomaticVariantcallingPairedTrained.json
@@ -123,6 +124,7 @@
 - name: SomaticVariantcallingUnpairedTrained
   tags:
     - integration
+    - trained
   command: >-
     cromwell run -o tests/cromwell_options.json
     -i tests/integration/SomaticVariantcallingUnpairedTrained.json

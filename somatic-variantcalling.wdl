@@ -229,5 +229,11 @@ workflow SomaticVariantcalling {
         File? strelkaIndelsVcfIndex = strelka.indelsVcfIndex
         File? mantaVcf = strelka.mantaVcf
         File? mantaVcfIndex = strelka.mantaVcfIndex
+        File? ensembleIndelsClassifier = if defined(controlBam)
+                                         then pairedTraining.ensembleIndelsClassifier
+                                         else singleTraining.ensembleIndelsClassifier
+        File? ensembleSNVClassifier = if defined(controlBam)
+                                      then pairedTraining.ensembleSNVClassifier
+                                      else singleTraining.ensembleSNVClassifier
     }
 }
