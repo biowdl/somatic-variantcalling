@@ -1,7 +1,6 @@
 version 1.0
 
 import "mutect2.wdl" as mutect2Workflow
-import "tasks/common.wdl" as common
 import "tasks/samtools.wdl" as samtools
 import "tasks/somaticseq.wdl" as somaticSeqTask
 import "strelka.wdl" as strelkaWorkflow
@@ -34,7 +33,8 @@ workflow SomaticVariantcalling {
             "manta": "quay.io/biocontainers/manta:1.4.0--py27_1",
             "strelka": "quay.io/biocontainers/strelka:2.9.7--0",
             "gatk4":"quay.io/biocontainers/gatk4:4.1.0.0--0",
-            "vardict-java": "quay.io/biocontainers/vardict-java:1.5.8--1"
+            "vardict-java": "quay.io/biocontainers/vardict-java:1.5.8--1",
+            "somaticseq": "lethalfang/somaticseq:3.1.0"
         }
 
         IndexedVcfFile? DONOTDEFINETHIS #FIXME
@@ -90,7 +90,7 @@ workflow SomaticVariantcalling {
                 tumorBamIndex = tumorBamIndex,
                 controlSample = controlSample,
                 controlBam = controlBam,
-                controlBam = controlBamIndex,
+                controlBamIndex = controlBamIndex,
                 referenceFasta = referenceFasta,
                 referenceFastaFai = referenceFastaFai,
                 referenceFastaDict = referenceFastaDict,
@@ -110,9 +110,12 @@ workflow SomaticVariantcalling {
                 truthIndel = trainSetPaired.truthIndel,
                 outputDir = somaticSeqDir + "/train",
                 referenceFasta = referenceFasta,
+                referenceFastaFai = referenceFastaFai,
                 inclusionRegion = regions,
                 tumorBam = trainSetPaired.tumorBam,
+                tumorBamIndex = trainSetPaired.tumorBamIndex,
                 normalBam = select_first([trainSetPaired.normalBam]),
+                normalBamIndex = select_first([trainSetPaired.normalBamIndex]),
                 mutect2VCF = trainSetPaired.mutect2VCF,
                 varscanSNV = trainSetPaired.varscanSNV,
                 varscanIndel = trainSetPaired.varscanIndel,
@@ -136,6 +139,7 @@ workflow SomaticVariantcalling {
                 classifierIndel = pairedTraining.ensembleIndelsClassifier,
                 outputDir = somaticSeqDir,
                 referenceFasta = referenceFasta,
+                referenceFastaFai = referenceFastaFai,
                 inclusionRegion = regions,
                 tumorBam = tumorBam,
                 tumorBamIndex = tumorBamIndex,
@@ -159,6 +163,7 @@ workflow SomaticVariantcalling {
                 truthIndel = trainSetSingle.truthIndel,
                 outputDir = somaticSeqDir + "/train",
                 referenceFasta = referenceFasta,
+                referenceFastaFai = referenceFastaFai,
                 inclusionRegion = regions,
                 bam = trainSetSingle.tumorBam,
                 bamIndex = trainSetSingle.tumorBamIndex,
@@ -179,6 +184,7 @@ workflow SomaticVariantcalling {
                 classifierIndel = singleTraining.ensembleIndelsClassifier,
                 outputDir = somaticSeqDir,
                 referenceFasta = referenceFasta,
+                referenceFastaFai = referenceFastaFai,
                 inclusionRegion = regions,
                 bam = tumorBam,
                 bamIndex = tumorBamIndex,

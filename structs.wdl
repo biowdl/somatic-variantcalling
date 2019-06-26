@@ -1,7 +1,5 @@
 version 1.0
 
-import "tasks/common.wdl"
-
 struct TrainingSet {
     File truthIndel
     File truthSNV
