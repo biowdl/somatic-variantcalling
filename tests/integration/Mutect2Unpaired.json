@@ -1,12 +1,8 @@
 {
   "Mutect2.tumorSample": "wgs3",
-  "Mutect2.tumorBam": {
-    "file": "tests/data/wgs3/wgs3.bam",
-    "index": "tests/data/wgs3/wgs3.bai"
-  },
-  "Mutect2.reference": {
-    "fasta": "tests/data/reference/reference.fasta",
-    "fai": "tests/data/reference/reference.fasta.fai",
-    "dict": "tests/data/reference/reference.dict"
-  }
+  "Mutect2.tumorBam": "tests/data/wgs3/wgs3.bam",
+  "Mutect2.tumorBamIndex": "tests/data/wgs3/wgs3.bai",
+  "Mutect2.referenceFasta": "tests/data/reference/reference.fasta",
+  "Mutect2.referenceFastaFai": "tests/data/reference/reference.fasta.fai",
+  "Mutect2.referenceFastaDict": "tests/data/reference/reference.dict"
 }

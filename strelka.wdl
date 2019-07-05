@@ -5,32 +5,36 @@ import "tasks/manta.wdl" as manta
 import "tasks/picard.wdl" as picard
 import "tasks/samtools.wdl" as samtools
 import "tasks/strelka.wdl" as strelka
-import "tasks/common.wdl" as common
 
 workflow Strelka {
     input {
-        IndexedBamFile tumorBam
-        IndexedBamFile? controlBam
-        Reference reference
-        String outputDir
+        File tumorBam
+        File tumorBamIndex
+        File? controlBam
+        File? controlBamIndex
+        File referenceFasta
+        File referenceFastaFai
+        File referenceFastaDict
+        String outputDir = "."
         String basename = "strelka"
         Boolean runManta = true
         File? regions
 
-        Map[String, String] dockerTags = {
-            "picard":"2.18.26--0",
-            "biopet-scatterregions": "0.2--0",
-            "tabix": "0.2.6--ha92aebf_0",
-            "manta": "1.4.0--py27_1",
-            "strelka": "2.9.7--0"
+        Map[String, String] dockerImages = {
+            "picard":"quay.io/biocontainers/picard:2.18.26--0",
+            "biopet-scatterregions":"quay.io/biocontainers/biopet-scatterregions:0.2--0",
+            "tabix":"quay.io/biocontainers/tabix:0.2.6--ha92aebf_0",
+            "manta": "quay.io/biocontainers/manta:1.4.0--py27_1",
+            "strelka": "quay.io/biocontainers/strelka:2.9.7--0"
         }
     }
 
     call biopet.ScatterRegions as scatterList {
         input:
-            reference = reference,
+            referenceFasta = referenceFasta,
+            referenceFastaDict = referenceFastaDict,
             regions = regions,
-            dockerTag = dockerTags["biopet-scatterregions"]
+            dockerImage = dockerImages["biopet-scatterregions"]
     }
 
     scatter (bed in scatterList.scatters) {
@@ -39,7 +43,7 @@ workflow Strelka {
                 inputFile = bed,
                 outputDir = ".",
                 type = "bed",
-                dockerTag = dockerTags["tabix"]
+                dockerImage = dockerImages["tabix"]
         }
 
         if (runManta) {
@@ -47,15 +51,15 @@ workflow Strelka {
                 input:
                     runDir = basename(bed) + "_runManta",
                     normalBam = controlBam,
+                    normalBamIndex = controlBamIndex,
                     tumorBam = tumorBam,
-                    reference = reference,
+                    tumorBamIndex = tumorBamIndex,
+                    referenceFasta = referenceFasta,
+                    referenceFastaFai = referenceFastaFai,
                     callRegions = bedPrepare.compressed,
                     callRegionsIndex = bedPrepare.index,
-                    dockerTag = dockerTags["manta"]
+                    dockerImage = dockerImages["manta"]
             }
-
-            File mantaTumorSV = mantaSomatic.tumorSV.file
-            File mantaTumorSVIndex = mantaSomatic.tumorSV.index
         }
 
         if (defined(controlBam)){
@@ -63,12 +67,16 @@ workflow Strelka {
                 input:
                     runDir = basename(bed) + "_runStrelka",
                     normalBam = select_first([controlBam]),
+                    normalBamIndex = select_first([controlBamIndex]),
                     tumorBam = tumorBam,
-                    reference = reference,
+                    tumorBamIndex = tumorBamIndex,
+                    referenceFasta = referenceFasta,
+                    referenceFastaFai = referenceFastaFai,
                     callRegions = bedPrepare.compressed,
                     callRegionsIndex = bedPrepare.index,
-                    indelCandidates = mantaSomatic.candidateSmallIndels,
-                    dockerTag = dockerTags["strelka"]
+                    indelCandidatesVcf = mantaSomatic.candidateSmallIndelsVcf,
+                    indelCandidatesVcfIndex = mantaSomatic.candidateSmallIndelsVcfIndex,
+                    dockerImage = dockerImages["strelka"]
             }
         }
 
@@ -76,12 +84,13 @@ workflow Strelka {
             call strelka.Germline as strelkaGermline {
                 input:
                     runDir = basename(bed) + "_runStrelka",
-                    bams = [tumorBam.file],
-                    indexes= [tumorBam.index],
-                    reference = reference,
+                    bams = [tumorBam],
+                    indexes= [tumorBamIndex],
+                    referenceFasta = referenceFasta,
+                    referenceFastaFai = referenceFastaFai,
                     callRegions = bedPrepare.compressed,
                     callRegionsIndex = bedPrepare.index,
-                    dockerTag = dockerTags["strelka"]
+                    dockerImage = dockerImages["strelka"]
             }
         }
     }
@@ -89,10 +98,10 @@ workflow Strelka {
     if (runManta) {
         call picard.MergeVCFs as gatherSVs {
             input:
-                inputVCFs = select_all(mantaTumorSV),
-                inputVCFsIndexes = select_all(mantaTumorSVIndex),
+                inputVCFs = select_all(mantaSomatic.tumorSVVcf),
+                inputVCFsIndexes = select_all(mantaSomatic.tumorSVVcfIndex),
                 outputVcfPath = outputDir + "/" + basename + "_manta.vcf.gz",
-                dockerTag = dockerTags["picard"]
+                dockerImage = dockerImages["picard"]
         }
     }
 
@@ -102,7 +111,7 @@ workflow Strelka {
                 inputVCFs = select_all(strelkaSomatic.indelsVcf),
                 inputVCFsIndexes = select_all(strelkaSomatic.indelsIndex),
                 outputVcfPath = outputDir + "/" + basename + "_indels.vcf.gz",
-                dockerTag = dockerTags["picard"]
+                dockerImage = dockerImages["picard"]
         }
     }
 
@@ -115,13 +124,16 @@ workflow Strelka {
                 then select_all(strelkaSomatic.variantsIndex)
                 else select_all(strelkaGermline.variantsIndex),
             outputVcfPath = outputDir + "/" + basename + "_variants.vcf.gz",
-            dockerTag = dockerTags["picard"]
+            dockerImage = dockerImages["picard"]
     }
 
     output {
-        IndexedVcfFile variantsVCF = gatherVariants.outputVcf
-        IndexedVcfFile? mantaVCF = gatherSVs.outputVcf
-        IndexedVcfFile? indelsVCF = gatherIndels.outputVcf
+        File variantsVcf = gatherVariants.outputVcf
+        File variantsVcfIndex = gatherVariants.outputVcfIndex
+        File? mantaVcf = gatherSVs.outputVcf
+        File? mantaVcfIndex = gatherSVs.outputVcfIndex
+        File? indelsVcf = gatherIndels.outputVcf
+        File? indelsVcfIndex = gatherIndels.outputVcfIndex
     }
 }
 

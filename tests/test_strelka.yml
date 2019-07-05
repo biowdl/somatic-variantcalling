@@ -2,10 +2,8 @@
   tags:
     - integration
   command: >-
-    bash -c '
-    TEST_JSON=tests/integration/StrelkaPaired.json ;
-    sed -i "2i\"Strelka.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
-    cromwell run -i $TEST_JSON strelka.wdl'
+    cromwell run -o tests/cromwell_options.json
+    -i tests/integration/StrelkaPaired.json strelka.wdl
   files:
     - path: "test-output/strelka_variants.vcf.gz"
       contains:
@@ -29,10 +27,8 @@
   tags:
     - integration
   command: >-
-    bash -c '
-    TEST_JSON=tests/integration/StrelkaUnpaired.json ;
-    sed -i "2i\"Strelka.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
-    cromwell run -i $TEST_JSON strelka.wdl'
+    cromwell run -o tests/cromwell_options.json
+    -i tests/integration/StrelkaUnpaired.json strelka.wdl
   files:
     - path: "test-output/strelka_variants.vcf.gz"
       contains:
@@ -58,10 +54,8 @@
   tags:
     - integration
   command: >-
-    bash -c '
-    TEST_JSON=tests/integration/StrelkaPairedWithoutManta.json ;
-    sed -i "2i\"Strelka.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
-    cromwell run -i $TEST_JSON strelka.wdl'
+    cromwell run -o tests/cromwell_options.json
+    -i tests/integration/StrelkaPairedWithoutManta.json strelka.wdl
   files:
     - path: "test-output/strelka_variants.vcf.gz"
       contains:
@@ -87,10 +81,8 @@
   tags:
     - integration
   command: >-
-    bash -c '
-    TEST_JSON=tests/integration/StrelkaUnpairedWithoutManta.json ;
-    sed -i "2i\"Strelka.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
-    cromwell run -i $TEST_JSON strelka.wdl'
+    cromwell run -o tests/cromwell_options.json
+    -i tests/integration/StrelkaUnpairedWithoutManta.json strelka.wdl
   files:
     - path: "test-output/strelka_variants.vcf.gz"
       contains:
