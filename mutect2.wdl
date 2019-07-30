@@ -19,8 +19,8 @@ workflow Mutect2 {
         File? regions
 
         Map[String, String] dockerImages = {
-          "picard":"quay.io/biocontainers/picard:2.18.26--0",
-          "gatk4":"quay.io/biocontainers/gatk4:4.1.0.0--0",
+          "picard":"quay.io/biocontainers/picard:2.19.0--0",
+          "gatk4":"quay.io/biocontainers/gatk4:4.1.2.0--1",
           "biopet-scatterregions":"quay.io/biocontainers/biopet-scatterregions:0.2--0"
         }
     }
