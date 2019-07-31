@@ -54,6 +54,11 @@ workflow Mutect2 {
         }
     }
 
+    call gatk.LearnReadOrientationModel as learnReadOrientationModel {
+        input:
+            f1r2TarGz = mutect2.f1r2File
+    }
+
     call picard.MergeVCFs as gatherVcfs {
         input:
             inputVCFs = mutect2.vcfFile,
