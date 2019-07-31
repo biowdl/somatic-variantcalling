@@ -59,6 +59,11 @@ workflow Mutect2 {
             f1r2TarGz = mutect2.f1r2File
     }
 
+    call gatk.MergeStats as mergeStats {
+        input:
+            stats = mutect2.stats
+    }
+
     call picard.MergeVCFs as gatherVcfs {
         input:
             inputVCFs = mutect2.vcfFile,
