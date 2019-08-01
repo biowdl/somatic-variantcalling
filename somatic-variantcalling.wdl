@@ -21,6 +21,10 @@ workflow SomaticVariantcalling {
         File? controlBamIndex
         TrainingSet? trainingSet
         File? regions
+        File? variantsForContamination
+        File? variantsForContaminationIndex
+        File? sitesForContamination
+        File? sitesForContaminationIndex
 
         Boolean runStrelka = true
         Boolean runVardict = true
@@ -59,6 +63,10 @@ workflow SomaticVariantcalling {
                 referenceFastaDict = referenceFastaDict,
                 outputDir = mutect2Dir,
                 regions = regions,
+                variantsForContamination = variantsForContamination,
+                variantsForContaminationIndex = variantsForContaminationIndex,
+                sitesForContamination = sitesForContamination,
+                sitesForContaminationIndex = sitesForContaminationIndex,
                 dockerImages = dockerImages
         }
     }

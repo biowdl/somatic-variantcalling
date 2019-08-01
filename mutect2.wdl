@@ -17,6 +17,10 @@ workflow Mutect2 {
         File? controlBam
         File? controlBamIndex
         File? regions
+        File? variantsForContamination
+        File? variantsForContaminationIndex
+        File? sitesForContamination
+        File? sitesForContaminationIndex
 
         Map[String, String] dockerImages = {
           "picard":"quay.io/biocontainers/picard:2.19.0--0",
@@ -54,14 +58,30 @@ workflow Mutect2 {
         }
     }
 
-    call gatk.LearnReadOrientationModel as learnReadOrientationModel {
-        input:
-            f1r2TarGz = mutect2.f1r2File
-    }
-
     call gatk.MergeStats as mergeStats {
         input:
             stats = mutect2.stats
+    }
+
+    # Read orientation artifacts workflow
+    if (defined(variantsForContamination) && defined(variantsForContaminationIndex)
+        && defined(sitesForContamination) && defined(sitesForContaminationIndex)) {
+        call gatk.LearnReadOrientationModel as learnReadOrientationModel {
+            input:
+                f1r2TarGz = mutect2.f1r2File
+        }
+
+        call gatk.GetPileupSummaries as getPileupSummaries {
+            input:
+                sampleName = tumorSample,
+                sampleBam = tumorBam,
+                sampleBamIndex = tumorBamIndex,
+                variantsForContamination = select_first([variantsForContamination]),
+                variantsForContaminationIndex = select_first([variantsForContaminationIndex]),
+                sitesForContamination = select_first([sitesForContamination]),
+                sitesForContaminationIndex = select_first([sitesForContaminationIndex]),
+                dockerImage = dockerImages["gatk4"]
+        }
     }
 
     call picard.MergeVCFs as gatherVcfs {
