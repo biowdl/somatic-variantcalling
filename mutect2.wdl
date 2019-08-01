@@ -60,7 +60,8 @@ workflow Mutect2 {
 
     call gatk.MergeStats as mergeStats {
         input:
-            stats = mutect2.stats
+            stats = mutect2.stats,
+            dockerImage = dockerImages["gatk4"]
     }
 
     # Read orientation artifacts workflow
@@ -68,7 +69,8 @@ workflow Mutect2 {
         && defined(sitesForContamination) && defined(sitesForContaminationIndex)) {
         call gatk.LearnReadOrientationModel as learnReadOrientationModel {
             input:
-                f1r2TarGz = mutect2.f1r2File
+                f1r2TarGz = mutect2.f1r2File,
+                dockerImage = dockerImages["gatk4"]
         }
 
         call gatk.GetPileupSummaries as getPileupSummaries {
