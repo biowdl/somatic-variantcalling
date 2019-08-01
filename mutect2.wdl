@@ -73,17 +73,32 @@ workflow Mutect2 {
                 dockerImage = dockerImages["gatk4"]
         }
 
-        call gatk.GetPileupSummaries as getPileupSummaries {
+        call gatk.GetPileupSummaries as getPileupSummariesTumor {
             input:
-                sampleName = tumorSample,
                 sampleBam = tumorBam,
                 sampleBamIndex = tumorBamIndex,
                 variantsForContamination = select_first([variantsForContamination]),
                 variantsForContaminationIndex = select_first([variantsForContaminationIndex]),
                 sitesForContamination = select_first([sitesForContamination]),
                 sitesForContaminationIndex = select_first([sitesForContaminationIndex]),
+                outputPrefix = prefix + "-tumor",
                 dockerImage = dockerImages["gatk4"]
         }
+
+        if (defined(controlBam)) {
+            call gatk.GetPileupSummaries as getPileupSummariesNormal {
+                input:
+                    sampleBam = select_first([controlBam]),
+                    sampleBamIndex = select_first([controlBamIndex]),
+                    variantsForContamination = select_first([variantsForContamination]),
+                    variantsForContaminationIndex = select_first([variantsForContaminationIndex]),
+                    sitesForContamination = select_first([sitesForContamination]),
+                    sitesForContaminationIndex = select_first([sitesForContaminationIndex]),
+                    outputPrefix = prefix + "-normal",
+                    dockerImage = dockerImages["gatk4"]
+            }
+        }
+
     }
 
     call picard.MergeVCFs as gatherVcfs {
