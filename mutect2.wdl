@@ -99,6 +99,15 @@ workflow Mutect2 {
             }
         }
 
+        if (defined(getPileupSummariesNormal.pileups)) {
+            File normalPileups = select_first([getPileupSummariesNormal.pileups])
+        }
+        call gatk.CalculateContamination as CalculateContamination {
+            input:
+                tumorPileups = getPileupSummariesTumor.pileups,
+                normalPileups = normalPileups,
+                dockerImage = dockerImages["gatk4"]
+        }
     }
 
     call picard.MergeVCFs as gatherVcfs {
