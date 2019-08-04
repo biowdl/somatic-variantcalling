@@ -5,6 +5,7 @@ import "tasks/manta.wdl" as manta
 import "tasks/picard.wdl" as picard
 import "tasks/samtools.wdl" as samtools
 import "tasks/strelka.wdl" as strelka
+import "tasks/somaticseq.wdl" as somaticSeqTask
 
 workflow Strelka {
     input {
@@ -25,7 +26,8 @@ workflow Strelka {
             "biopet-scatterregions":"quay.io/biocontainers/biopet-scatterregions:0.2--0",
             "tabix":"quay.io/biocontainers/tabix:0.2.6--ha92aebf_0",
             "manta": "quay.io/biocontainers/manta:1.4.0--py27_1",
-            "strelka": "quay.io/biocontainers/strelka:2.9.7--0"
+            "strelka": "quay.io/biocontainers/strelka:2.9.7--0",
+            "somaticseq": "lethalfang/somaticseq:3.1.0"
         }
     }
 
@@ -127,13 +129,56 @@ workflow Strelka {
             dockerImage = dockerImages["picard"]
     }
 
+    if (runManta) {
+        call somaticSeqTask.ModifyStrelka as addGTFieldSVs {
+            input:
+                strelkaVCF = select_first([gatherSVs.outputVcf]),
+                dockerImage = dockerImages["somaticseq"]
+        }
+
+        call samtools.BgzipAndIndex as svsIndex {
+            input:
+                inputFile = addGTFieldSVs.outputVcf,
+                outputDir = outputDir,
+                dockerImage = dockerImages["tabix"]
+        }
+    }
+
+    if (defined(controlBam)) {
+        call somaticSeqTask.ModifyStrelka as addGTFieldIndels {
+            input:
+                strelkaVCF = select_first([gatherIndels.outputVcf]),
+                dockerImage = dockerImages["somaticseq"]
+        }
+
+        call samtools.BgzipAndIndex as indelsIndex {
+            input:
+                inputFile = addGTFieldIndels.outputVcf,
+                outputDir = outputDir,
+                dockerImage = dockerImages["tabix"]
+        }
+    }
+
+    call somaticSeqTask.ModifyStrelka as addGTFieldVariants {
+        input:
+            strelkaVCF = gatherVariants.outputVcf,
+            dockerImage = dockerImages["somaticseq"]
+    }
+
+    call samtools.BgzipAndIndex as variantsIndex {
+        input:
+            inputFile = addGTFieldVariants.outputVcf,
+            outputDir = outputDir,
+            dockerImage = dockerImages["tabix"]
+    }
+
     output {
-        File variantsVcf = gatherVariants.outputVcf
-        File variantsVcfIndex = gatherVariants.outputVcfIndex
-        File? mantaVcf = gatherSVs.outputVcf
-        File? mantaVcfIndex = gatherSVs.outputVcfIndex
-        File? indelsVcf = gatherIndels.outputVcf
-        File? indelsVcfIndex = gatherIndels.outputVcfIndex
+        File variantsVcf = variantsIndex.compressed
+        File variantsVcfIndex = variantsIndex.index
+        File? mantaVcf = svsIndex.compressed
+        File? mantaVcfIndex = svsIndex.index
+        File? indelsVcf = indelsIndex.compressed
+        File? indelsVcfIndex = indelsIndex.index
     }
 }
 
