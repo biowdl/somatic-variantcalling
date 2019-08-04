@@ -102,7 +102,7 @@ workflow Mutect2 {
         if (defined(getPileupSummariesNormal.pileups)) {
             File normalPileups = select_first([getPileupSummariesNormal.pileups])
         }
-        call gatk.CalculateContamination as CalculateContamination {
+        call gatk.CalculateContamination as calculateContamination {
             input:
                 tumorPileups = getPileupSummariesTumor.pileups,
                 normalPileups = normalPileups,
@@ -118,8 +118,24 @@ workflow Mutect2 {
             dockerImage = dockerImages["picard"]
     }
 
+    call gatk.FilterMutectCalls as filterMutectCalls {
+        input:
+            referenceFasta = referenceFasta,
+            referenceFastaFai = referenceFastaFai,
+            referenceFastaDict = referenceFastaDict,
+            unfilteredVcf = gatherVcfs.outputVcf,
+            unfilteredVcfIndex = gatherVcfs.outputVcfIndex,
+            outputVcf = prefix + "-filtered.vcf.gz",
+            contaminationTable = calculateContamination.contaminationTable,
+            mafTumorSegments = calculateContamination.mafTumorSegments,
+            artifactPriors= learnReadOrientationModel.artifactPriorsTable,
+            mutect2Stats = mergeStats.mergedStats,
+            dockerImage = dockerImages["gatk4"]
+    }
+
     output {
-        File outputVcf = gatherVcfs.outputVcf
-        File outputVcfIndex= gatherVcfs.outputVcfIndex
+        File outputVcf = filterMutectCalls.filteredVcf
+        File outputVcfIndex = filterMutectCalls.filteredVcfIndex
+        File filteringStats = filterMutectCalls.filteringStats
     }
 }
