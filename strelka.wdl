@@ -1,6 +1,7 @@
 version 1.0
 
 import "tasks/biopet/biopet.wdl" as biopet
+import "tasks/gatk.wdl" as gatk
 import "tasks/manta.wdl" as manta
 import "tasks/picard.wdl" as picard
 import "tasks/samtools.wdl" as samtools
@@ -19,6 +20,7 @@ workflow Strelka {
         String outputDir = "."
         String basename = "strelka"
         Boolean runManta = true
+        Boolean runCombineVariants = true
         File? regions
 
         Map[String, String] dockerImages = {
@@ -172,6 +174,19 @@ workflow Strelka {
             dockerImage = dockerImages["tabix"]
     }
 
+    if (runCombineVariants) {
+        call gatk.CombineVariants as combineVariants {
+            input:
+                referenceFasta = referenceFasta,
+                referenceFastaFai = referenceFastaFai,
+                referenceFastaDict = referenceFastaDict,
+                identifiers = ["variants", "indels", "manta"],
+                variantVcfs  = select_all([variantsIndex.compressed, indelsIndex.compressed, svsIndex.compressed]),
+                variantIndexes = select_all([variantsIndex.index, indelsIndex.index, svsIndex.index]),
+                outputPath = outputDir + "/" + basename + "_combined_vcfs.vcf.gz"
+        }
+    }
+
     output {
         File variantsVcf = variantsIndex.compressed
         File variantsVcfIndex = variantsIndex.index
@@ -179,6 +194,8 @@ workflow Strelka {
         File? mantaVcfIndex = svsIndex.index
         File? indelsVcf = indelsIndex.compressed
         File? indelsVcfIndex = indelsIndex.index
+        File? combinedVcf = combineVariants.combinedVcf
+        File? combinedVcfIndex = combineVariants.combinedVcfIndex
     }
 }
 

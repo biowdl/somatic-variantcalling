@@ -222,7 +222,7 @@ workflow SomaticVariantcalling {
 
     }
 
-    output{
+    output {
         File somaticSeqSnvVcf =  snvIndex.compressed
         File somaticSeqSnvVcfIndex = snvIndex.index
         File somaticSeqIndelVcf = indelIndex.compressed
@@ -235,6 +235,8 @@ workflow SomaticVariantcalling {
         File? strelkaSnvsVcfIndex = strelka.variantsVcfIndex
         File? strelkaIndelsVcf = strelka.indelsVcf
         File? strelkaIndelsVcfIndex = strelka.indelsVcfIndex
+        File? strelkaCombinedVcf = strelka.combinedVcf
+        File? strelkaCombinedVcfIndex = strelka.combinedVcfIndex
         File? mantaVcf = strelka.mantaVcf
         File? mantaVcfIndex = strelka.mantaVcfIndex
         File? ensembleIndelsClassifier = if defined(controlBam)
