@@ -1,6 +1,7 @@
 version 1.0
 
 import "mutect2.wdl" as mutect2Workflow
+import "tasks/gatk.wdl" as gatk
 import "tasks/samtools.wdl" as samtools
 import "tasks/somaticseq.wdl" as somaticSeqTask
 import "strelka.wdl" as strelkaWorkflow
@@ -29,6 +30,8 @@ workflow SomaticVariantcalling {
         Boolean runStrelka = true
         Boolean runVardict = true
         Boolean runMutect2 = true
+        Boolean runCombineVariants = true
+        Boolean runStrelkaCombineVariants = true
 
         Map[String, String] dockerImages = {
             "picard":"quay.io/biocontainers/picard:2.19.0--0",
@@ -85,6 +88,7 @@ workflow SomaticVariantcalling {
                 basename = if defined(controlBam)
                     then "${tumorSample}-${controlSample}"
                     else tumorSample,
+                runCombineVariants = runStrelkaCombineVariants,
                 regions = regions,
                 dockerImages = dockerImages
         }
@@ -105,6 +109,19 @@ workflow SomaticVariantcalling {
                 outputDir = vardictDir,
                 regions = regions,
                 dockerImages = dockerImages
+        }
+    }
+
+    if (runCombineVariants && runStrelkaCombineVariants && runVardict && runStrelka && runMutect2) {
+        call gatk.CombineVariants as combineVariants {
+            input:
+                referenceFasta = referenceFasta,
+                referenceFastaFai = referenceFastaFai,
+                referenceFastaDict = referenceFastaDict,
+                identifiers = ["mutect2", "varDict", "Strelka"],
+                variantVcfs  = select_all([mutect2.outputVcf, vardict.outputVcf, strelka.combinedVcf]),
+                variantIndexes = select_all([mutect2.outputVcfIndex, vardict.outputVcfIndex, strelka.combinedVcfIndex]),
+                outputPath = outputDir + "/combined-VCFs/combined_vcfs.vcf.gz"
         }
     }
 
@@ -239,6 +256,8 @@ workflow SomaticVariantcalling {
         File? strelkaCombinedVcfIndex = strelka.combinedVcfIndex
         File? mantaVcf = strelka.mantaVcf
         File? mantaVcfIndex = strelka.mantaVcfIndex
+        File? combinedVcf = combineVariants.combinedVcf
+        File? combinedVcfIndex = combineVariants.combinedVcfIndex
         File? ensembleIndelsClassifier = if defined(controlBam)
                                          then pairedTraining.ensembleIndelsClassifier
                                          else singleTraining.ensembleIndelsClassifier
