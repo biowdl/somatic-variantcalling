@@ -125,7 +125,7 @@ workflow Mutect2 {
             referenceFastaDict = referenceFastaDict,
             unfilteredVcf = gatherVcfs.outputVcf,
             unfilteredVcfIndex = gatherVcfs.outputVcfIndex,
-            outputVcf = outputDir + "/" + prefix + "-filtered.vcf.gz",
+            outputVcf = outputDir + "/" + prefix + ".vcf.gz",
             contaminationTable = calculateContamination.contaminationTable,
             mafTumorSegments = calculateContamination.mafTumorSegments,
             artifactPriors= learnReadOrientationModel.artifactPriorsTable,
