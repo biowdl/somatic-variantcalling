@@ -30,8 +30,7 @@ workflow SomaticVariantcalling {
         Boolean runStrelka = true
         Boolean runVardict = true
         Boolean runMutect2 = true
-        Boolean runCombineVariants = true
-        Boolean runStrelkaCombineVariants = true
+        Boolean runCombineVariants = false
 
         Map[String, String] dockerImages = {
             "picard":"quay.io/biocontainers/picard:2.19.0--0",
@@ -51,6 +50,8 @@ workflow SomaticVariantcalling {
     String strelkaDir = outputDir + "/strelka"
     String vardictDir = outputDir + "/vardict"
     String somaticSeqDir = outputDir + "/somaticSeq"
+
+    Boolean runStrelkaCombineVariants = if runCombineVariants then true else false
 
     if (runMutect2) {
         call mutect2Workflow.Mutect2 as mutect2 {
@@ -112,7 +113,8 @@ workflow SomaticVariantcalling {
         }
     }
 
-    if (runCombineVariants && runStrelkaCombineVariants && runVardict && runStrelka && runMutect2) {
+    if (runCombineVariants && runStrelkaCombineVariants && runVardict &&
+        runMutect2 && defined(strelka.combinedVcf) && runStrelka) {
         call gatk.CombineVariants as combineVariants {
             input:
                 referenceFasta = referenceFasta,

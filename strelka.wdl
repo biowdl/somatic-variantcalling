@@ -20,7 +20,7 @@ workflow Strelka {
         String outputDir = "."
         String basename = "strelka"
         Boolean runManta = true
-        Boolean runCombineVariants = true
+        Boolean runCombineVariants = false # even if true needs manta, indels and variants to run
         File? regions
 
         Map[String, String] dockerImages = {
@@ -174,7 +174,8 @@ workflow Strelka {
             dockerImage = dockerImages["tabix"]
     }
 
-    if (runCombineVariants) {
+    if (runCombineVariants && defined(variantsIndex.compressed) &&
+        defined(indelsIndex.compressed) && defined(svsIndex.compressed)) {
         call gatk.CombineVariants as combineVariants {
             input:
                 referenceFasta = referenceFasta,
