@@ -1,6 +1,7 @@
 version 1.0
 
 import "mutect2.wdl" as mutect2Workflow
+import "tasks/gatk.wdl" as gatk
 import "tasks/samtools.wdl" as samtools
 import "tasks/somaticseq.wdl" as somaticSeqTask
 import "strelka.wdl" as strelkaWorkflow
@@ -21,10 +22,15 @@ workflow SomaticVariantcalling {
         File? controlBamIndex
         TrainingSet? trainingSet
         File? regions
+        File? variantsForContamination
+        File? variantsForContaminationIndex
+        File? sitesForContamination
+        File? sitesForContaminationIndex
 
         Boolean runStrelka = true
         Boolean runVardict = true
         Boolean runMutect2 = true
+        Boolean runCombineVariants = false
 
         Map[String, String] dockerImages = {
             "picard":"quay.io/biocontainers/picard:2.19.0--0",
@@ -45,6 +51,8 @@ workflow SomaticVariantcalling {
     String vardictDir = outputDir + "/vardict"
     String somaticSeqDir = outputDir + "/somaticSeq"
 
+    Boolean runStrelkaCombineVariants = if runCombineVariants then true else false
+
     if (runMutect2) {
         call mutect2Workflow.Mutect2 as mutect2 {
             input:
@@ -59,6 +67,10 @@ workflow SomaticVariantcalling {
                 referenceFastaDict = referenceFastaDict,
                 outputDir = mutect2Dir,
                 regions = regions,
+                variantsForContamination = variantsForContamination,
+                variantsForContaminationIndex = variantsForContaminationIndex,
+                sitesForContamination = sitesForContamination,
+                sitesForContaminationIndex = sitesForContaminationIndex,
                 dockerImages = dockerImages
         }
     }
@@ -77,6 +89,7 @@ workflow SomaticVariantcalling {
                 basename = if defined(controlBam)
                     then "${tumorSample}-${controlSample}"
                     else tumorSample,
+                runCombineVariants = runStrelkaCombineVariants,
                 regions = regions,
                 dockerImages = dockerImages
         }
@@ -97,6 +110,20 @@ workflow SomaticVariantcalling {
                 outputDir = vardictDir,
                 regions = regions,
                 dockerImages = dockerImages
+        }
+    }
+
+    if (runCombineVariants && runStrelkaCombineVariants && runVardict &&
+        runMutect2 && defined(strelka.combinedVcf) && runStrelka) {
+        call gatk.CombineVariants as combineVariants {
+            input:
+                referenceFasta = referenceFasta,
+                referenceFastaFai = referenceFastaFai,
+                referenceFastaDict = referenceFastaDict,
+                identifiers = ["mutect2", "varDict", "Strelka"],
+                variantVcfs  = select_all([mutect2.outputVcf, vardict.outputVcf, strelka.combinedVcf]),
+                variantIndexes = select_all([mutect2.outputVcfIndex, vardict.outputVcfIndex, strelka.combinedVcfIndex]),
+                outputPath = outputDir + "/combined-VCFs/combined_vcfs.vcf.gz"
         }
     }
 
@@ -214,7 +241,7 @@ workflow SomaticVariantcalling {
 
     }
 
-    output{
+    output {
         File somaticSeqSnvVcf =  snvIndex.compressed
         File somaticSeqSnvVcfIndex = snvIndex.index
         File somaticSeqIndelVcf = indelIndex.compressed
@@ -227,8 +254,12 @@ workflow SomaticVariantcalling {
         File? strelkaSnvsVcfIndex = strelka.variantsVcfIndex
         File? strelkaIndelsVcf = strelka.indelsVcf
         File? strelkaIndelsVcfIndex = strelka.indelsVcfIndex
+        File? strelkaCombinedVcf = strelka.combinedVcf
+        File? strelkaCombinedVcfIndex = strelka.combinedVcfIndex
         File? mantaVcf = strelka.mantaVcf
         File? mantaVcfIndex = strelka.mantaVcfIndex
+        File? combinedVcf = combineVariants.combinedVcf
+        File? combinedVcfIndex = combineVariants.combinedVcfIndex
         File? ensembleIndelsClassifier = if defined(controlBam)
                                          then pairedTraining.ensembleIndelsClassifier
                                          else singleTraining.ensembleIndelsClassifier

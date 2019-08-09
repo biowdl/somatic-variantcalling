@@ -17,6 +17,10 @@ workflow Mutect2 {
         File? controlBam
         File? controlBamIndex
         File? regions
+        File? variantsForContamination
+        File? variantsForContaminationIndex
+        File? sitesForContamination
+        File? sitesForContaminationIndex
 
         Map[String, String] dockerImages = {
           "picard":"quay.io/biocontainers/picard:2.19.0--0",
@@ -54,6 +58,58 @@ workflow Mutect2 {
         }
     }
 
+    call gatk.MergeStats as mergeStats {
+        input:
+            stats = mutect2.stats,
+            dockerImage = dockerImages["gatk4"]
+    }
+
+    # Read orientation artifacts workflow
+    if (defined(variantsForContamination) && defined(variantsForContaminationIndex)
+        && defined(sitesForContamination) && defined(sitesForContaminationIndex)) {
+        call gatk.LearnReadOrientationModel as learnReadOrientationModel {
+            input:
+                f1r2TarGz = mutect2.f1r2File,
+                dockerImage = dockerImages["gatk4"]
+        }
+
+        call gatk.GetPileupSummaries as getPileupSummariesTumor {
+            input:
+                sampleBam = tumorBam,
+                sampleBamIndex = tumorBamIndex,
+                variantsForContamination = select_first([variantsForContamination]),
+                variantsForContaminationIndex = select_first([variantsForContaminationIndex]),
+                sitesForContamination = select_first([sitesForContamination]),
+                sitesForContaminationIndex = select_first([sitesForContaminationIndex]),
+                outputPrefix = prefix + "-tumor",
+                dockerImage = dockerImages["gatk4"]
+        }
+
+        if (defined(controlBam)) {
+            call gatk.GetPileupSummaries as getPileupSummariesNormal {
+                input:
+                    sampleBam = select_first([controlBam]),
+                    sampleBamIndex = select_first([controlBamIndex]),
+                    variantsForContamination = select_first([variantsForContamination]),
+                    variantsForContaminationIndex = select_first([variantsForContaminationIndex]),
+                    sitesForContamination = select_first([sitesForContamination]),
+                    sitesForContaminationIndex = select_first([sitesForContaminationIndex]),
+                    outputPrefix = prefix + "-normal",
+                    dockerImage = dockerImages["gatk4"]
+            }
+        }
+
+        if (defined(getPileupSummariesNormal.pileups)) {
+            File normalPileups = select_first([getPileupSummariesNormal.pileups])
+        }
+        call gatk.CalculateContamination as calculateContamination {
+            input:
+                tumorPileups = getPileupSummariesTumor.pileups,
+                normalPileups = normalPileups,
+                dockerImage = dockerImages["gatk4"]
+        }
+    }
+
     call picard.MergeVCFs as gatherVcfs {
         input:
             inputVCFs = mutect2.vcfFile,
@@ -62,8 +118,24 @@ workflow Mutect2 {
             dockerImage = dockerImages["picard"]
     }
 
+    call gatk.FilterMutectCalls as filterMutectCalls {
+        input:
+            referenceFasta = referenceFasta,
+            referenceFastaFai = referenceFastaFai,
+            referenceFastaDict = referenceFastaDict,
+            unfilteredVcf = gatherVcfs.outputVcf,
+            unfilteredVcfIndex = gatherVcfs.outputVcfIndex,
+            outputVcf = outputDir + "/" + prefix + ".vcf.gz",
+            contaminationTable = calculateContamination.contaminationTable,
+            mafTumorSegments = calculateContamination.mafTumorSegments,
+            artifactPriors= learnReadOrientationModel.artifactPriorsTable,
+            mutect2Stats = mergeStats.mergedStats,
+            dockerImage = dockerImages["gatk4"]
+    }
+
     output {
-        File outputVcf = gatherVcfs.outputVcf
-        File outputVcfIndex= gatherVcfs.outputVcfIndex
+        File outputVcf = filterMutectCalls.filteredVcf
+        File outputVcfIndex = filterMutectCalls.filteredVcfIndex
+        File filteringStats = filterMutectCalls.filteringStats
     }
 }

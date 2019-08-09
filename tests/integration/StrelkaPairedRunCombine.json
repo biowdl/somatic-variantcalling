@@ -1,0 +1,10 @@
+{
+  "Strelka.tumorBam": "tests/data/wgs3/wgs3.bam",
+  "Strelka.tumorBamIndex": "tests/data/wgs3/wgs3.bai",
+  "Strelka.referenceFasta": "tests/data/reference/reference.fasta",
+  "Strelka.referenceFastaFai": "tests/data/reference/reference.fasta.fai",
+  "Strelka.referenceFastaDict": "tests/data/reference/reference.dict",
+  "Strelka.controlBam": "tests/data/wgs1/wgs1.bam",
+  "Strelka.controlBamIndex": "tests/data/wgs1/wgs1.bai",
+  "Strelka.runCombineVariants": "true"
+}

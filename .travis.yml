@@ -30,13 +30,21 @@ matrix:
     - env: TEST=Mutect2Paired
     - env: TEST=Mutect2Unpaired
     - env: TEST=SomaticVariantcallingPairedTrained
+    - env: TEST=SomaticVariantcallingPairedTrainedRunCombine
     - env: TEST=SomaticVariantcallingUnpairedTrained
+    - env: TEST=SomaticVariantcallingUnpairedTrainedRunCombine
     - env: TEST=SomaticVariantcallingPairedConsensus
+    - env: TEST=SomaticVariantcallingPairedConsensusRunCombine
     - env: TEST=SomaticVariantcallingUnpairedConsensus
+    - env: TEST=SomaticVariantcallingUnpairedConsensusRunCombine
     - env: TEST=StrelkaPaired
+    - env: TEST=StrelkaPairedRunCombine
     - env: TEST=StrelkaUnpaired
+    - env: TEST=StrelkaUnpairedRunCombine
     - env: TEST=StrelkaPairedWithoutManta
+    - env: TEST=StrelkaPairedWithoutMantaRunCombine
     - env: TEST=StrelkaUnpairedWithoutManta
+    - env: TEST=StrelkaUnpairedWithoutMantaRunCombine
     - env: TEST=VardictPaired
     - env: TEST=VardictUnpaired
     # Below is for testing if all files are valid and if all submodules are up to date.
