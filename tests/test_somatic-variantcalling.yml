@@ -16,6 +16,53 @@
     - path: "test-output/strelka/wgs3-wgs1_indels.vcf.gz.tbi"
     - path: "test-output/strelka/wgs3-wgs1_manta.vcf.gz"
     - path: "test-output/strelka/wgs3-wgs1_manta.vcf.gz.tbi"
+    - path: "test-output/strelka/strelka_combined_vcfs.vcf.gz"
+      should_exist: false
+    - path: "test-output/strelka/strelka_combined_vcfs.vcf.gz.tbi"
+      should_exist: false
+    - path: "test-output/combined-VCFs/combined_vcfs.vcf.gz"
+      should_exist: false
+    - path: "test-output/combined-VCFs/combined_vcfs.vcf.gz.tbi"
+      should_exist: false
+    - path: "test-output/somaticSeq/Consensus.sSNV.vcf.gz"
+    - path: "test-output/somaticSeq/Consensus.sSNV.vcf.gz.tbi"
+    - path: "test-output/somaticSeq/Consensus.sINDEL.vcf.gz"
+    - path: "test-output/somaticSeq/Consensus.sINDEL.vcf.gz.tbi"
+    - path: "test-output/somaticSeq/train/Ensemble.sSNV.tsv.ntChange.Classifier.RData"
+      should_exist: false
+    - path: "test-output/somaticSeq/train/Ensemble.sINDEL.tsv.ntChange.Classifier.RData"
+      should_exist: false
+    - path: "test-output/somaticSeq/SSeq.Classified.sSNV.vcf.gz"
+      should_exist: false
+    - path: "test-output/somaticSeq/SSeq.Classified.sSNV.vcf.gz.tbi"
+      should_exist: false
+    - path: "test-output/somaticSeq/SSeq.Classified.sINDEL.vcf.gz"
+      should_exist: false
+    - path: "test-output/somaticSeq/SSeq.Classified.sINDEL.vcf.gz.tbi"
+      should_exist: false
+
+- name: SomaticVariantcallingPairedConsensusRunCombine
+  tags:
+    - integration
+  command: >-
+    cromwell run -o tests/cromwell_options.json
+    -i tests/integration/SomaticVariantcallingPairedConsensusRunCombine.json
+    somatic-variantcalling.wdl
+  files:
+    - path: "test-output/mutect2/wgs3-wgs1.vcf.gz"
+    - path: "test-output/mutect2/wgs3-wgs1.vcf.gz.tbi"
+    - path: "test-output/vardict/wgs3-wgs1.vcf.gz"
+    - path: "test-output/vardict/wgs3-wgs1.vcf.gz.tbi"
+    - path: "test-output/strelka/wgs3-wgs1_variants.vcf.gz"
+    - path: "test-output/strelka/wgs3-wgs1_variants.vcf.gz.tbi"
+    - path: "test-output/strelka/wgs3-wgs1_indels.vcf.gz"
+    - path: "test-output/strelka/wgs3-wgs1_indels.vcf.gz.tbi"
+    - path: "test-output/strelka/wgs3-wgs1_manta.vcf.gz"
+    - path: "test-output/strelka/wgs3-wgs1_manta.vcf.gz.tbi"
+    - path: "test-output/strelka/strelka_combined_vcfs.vcf.gz"
+    - path: "test-output/strelka/strelka_combined_vcfs.vcf.gz.tbi"
+    - path: "test-output/combined-VCFs/combined_vcfs.vcf.gz"
+    - path: "test-output/combined-VCFs/combined_vcfs.vcf.gz.tbi"
     - path: "test-output/somaticSeq/Consensus.sSNV.vcf.gz"
     - path: "test-output/somaticSeq/Consensus.sSNV.vcf.gz.tbi"
     - path: "test-output/somaticSeq/Consensus.sINDEL.vcf.gz"
@@ -53,6 +100,59 @@
       should_exist: false
     - path: "test-output/strelka/wgs3_manta.vcf.gz"
     - path: "test-output/strelka/wgs3_manta.vcf.gz.tbi"
+    - path: "test-output/strelka/strelka_combined_vcfs.vcf.gz"
+      should_exist: false
+    - path: "test-output/strelka/strelka_combined_vcfs.vcf.gz.tbi"
+      should_exist: false
+    - path: "test-output/combined-VCFs/combined_vcfs.vcf.gz"
+      should_exist: false
+    - path: "test-output/combined-VCFs/combined_vcfs.vcf.gz.tbi"
+      should_exist: false
+    - path: "test-output/somaticSeq/Consensus.sSNV.vcf.gz"
+    - path: "test-output/somaticSeq/Consensus.sSNV.vcf.gz.tbi"
+    - path: "test-output/somaticSeq/Consensus.sINDEL.vcf.gz"
+    - path: "test-output/somaticSeq/Consensus.sINDEL.vcf.gz.tbi"
+    - path: "test-output/somaticSeq/train/Ensemble.sSNV.tsv.ntChange.Classifier.RData"
+      should_exist: false
+    - path: "test-output/somaticSeq/train/Ensemble.sINDEL.tsv.ntChange.Classifier.RData"
+      should_exist: false
+    - path: "test-output/somaticSeq/SSeq.Classified.sSNV.vcf.gz"
+      should_exist: false
+    - path: "test-output/somaticSeq/SSeq.Classified.sSNV.vcf.gz.tbi"
+      should_exist: false
+    - path: "test-output/somaticSeq/SSeq.Classified.sINDEL.vcf.gz"
+      should_exist: false
+    - path: "test-output/somaticSeq/SSeq.Classified.sINDEL.vcf.gz.tbi"
+      should_exist: false
+
+- name: SomaticVariantcallingUnpairedConsensusRunCombine
+  tags:
+    - integration
+  command: >-
+    cromwell run -o tests/cromwell_options.json
+    -i tests/integration/SomaticVariantcallingUnpairedConsensusRunCombine.json
+    somatic-variantcalling.wdl
+  files:
+    - path: "test-output/mutect2/wgs3.vcf.gz"
+    - path: "test-output/mutect2/wgs3.vcf.gz.tbi"
+    - path: "test-output/vardict/wgs3.vcf.gz"
+    - path: "test-output/vardict/wgs3.vcf.gz.tbi"
+    - path: "test-output/strelka/wgs3_variants.vcf.gz"
+    - path: "test-output/strelka/wgs3_variants.vcf.gz.tbi"
+    - path: "test-output/strelka/wgs3_indels.vcf.gz"
+      should_exist: false
+    - path: "test-output/strelka/wgs3_indels.vcf.gz.tbi"
+      should_exist: false
+    - path: "test-output/strelka/wgs3_manta.vcf.gz"
+    - path: "test-output/strelka/wgs3_manta.vcf.gz.tbi"
+    - path: "test-output/strelka/strelka_combined_vcfs.vcf.gz"
+      should_exist: false
+    - path: "test-output/strelka/strelka_combined_vcfs.vcf.gz.tbi"
+      should_exist: false
+    - path: "test-output/combined-VCFs/combined_vcfs.vcf.gz"
+      should_exist: false
+    - path: "test-output/combined-VCFs/combined_vcfs.vcf.gz.tbi"
+      should_exist: false
     - path: "test-output/somaticSeq/Consensus.sSNV.vcf.gz"
     - path: "test-output/somaticSeq/Consensus.sSNV.vcf.gz.tbi"
     - path: "test-output/somaticSeq/Consensus.sINDEL.vcf.gz"
@@ -89,6 +189,14 @@
     - path: "test-output/strelka/wgs3-wgs1_indels.vcf.gz.tbi"
     - path: "test-output/strelka/wgs3-wgs1_manta.vcf.gz"
     - path: "test-output/strelka/wgs3-wgs1_manta.vcf.gz.tbi"
+    - path: "test-output/strelka/strelka_combined_vcfs.vcf.gz"
+      should_exist: false
+    - path: "test-output/strelka/strelka_combined_vcfs.vcf.gz.tbi"
+      should_exist: false
+    - path: "test-output/combined-VCFs/combined_vcfs.vcf.gz"
+      should_exist: false
+    - path: "test-output/combined-VCFs/combined_vcfs.vcf.gz.tbi"
+      should_exist: false
     - path: "test-output/somaticSeq/Consensus.sSNV.vcf.gz"
       should_exist: false
     - path: "test-output/somaticSeq/Consensus.sSNV.vcf.gz.tbi"
@@ -121,6 +229,61 @@
         - "chr1	14500	.	AAT	A"
     - path: "test-output/somaticSeq/SSeq.Classified.sINDEL.vcf.gz.tbi"
 
+- name: SomaticVariantcallingPairedTrainedRunCombine
+  tags:
+    - integration
+    - trained
+  command: >-
+    cromwell run -o tests/cromwell_options.json
+    -i tests/integration/SomaticVariantcallingPairedTrainedRunCombine.json
+    somatic-variantcalling.wdl
+  files:
+    - path: "test-output/mutect2/wgs3-wgs1.vcf.gz"
+    - path: "test-output/mutect2/wgs3-wgs1.vcf.gz.tbi"
+    - path: "test-output/vardict/wgs3-wgs1.vcf.gz"
+    - path: "test-output/vardict/wgs3-wgs1.vcf.gz.tbi"
+    - path: "test-output/strelka/wgs3-wgs1_variants.vcf.gz"
+    - path: "test-output/strelka/wgs3-wgs1_variants.vcf.gz.tbi"
+    - path: "test-output/strelka/wgs3-wgs1_indels.vcf.gz"
+    - path: "test-output/strelka/wgs3-wgs1_indels.vcf.gz.tbi"
+    - path: "test-output/strelka/wgs3-wgs1_manta.vcf.gz"
+    - path: "test-output/strelka/wgs3-wgs1_manta.vcf.gz.tbi"
+    - path: "test-output/strelka/strelka_combined_vcfs.vcf.gz"
+    - path: "test-output/strelka/strelka_combined_vcfs.vcf.gz.tbi"
+    - path: "test-output/combined-VCFs/combined_vcfs.vcf.gz"
+    - path: "test-output/combined-VCFs/combined_vcfs.vcf.gz.tbi"
+    - path: "test-output/somaticSeq/Consensus.sSNV.vcf.gz"
+      should_exist: false
+    - path: "test-output/somaticSeq/Consensus.sSNV.vcf.gz.tbi"
+      should_exist: false
+    - path: "test-output/somaticSeq/Consensus.sINDEL.vcf.gz"
+      should_exist: false
+    - path: "test-output/somaticSeq/Consensus.sINDEL.vcf.gz.tbi"
+      should_exist: false
+    - path: "test-output/somaticSeq/train/Ensemble.sSNV.tsv.ntChange.Classifier.RData"
+    - path: "test-output/somaticSeq/train/Ensemble.sINDEL.tsv.ntChange.Classifier.RData"
+    - path: "test-output/somaticSeq/SSeq.Classified.sSNV.vcf.gz"
+      contains:
+        - "chr1 500 . C T"
+        - "chr1 1500  . G A"
+        - "chr1 2500  . A G"
+        - "chr1 3500  . G T"
+        - "chr1 4500  . A C"
+        - "chr1 5500  . C T"
+        - "chr1 6500  . C T"
+        - "chr1 7500  . G C"
+        - "chr1 8500  . T A"
+        - "chr1 9500  . G A"
+    - path: "test-output/somaticSeq/SSeq.Classified.sSNV.vcf.gz.tbi"
+    - path: "test-output/somaticSeq/SSeq.Classified.sINDEL.vcf.gz"
+      contains:
+        - "chr1 10500 . TTG T"
+        - "chr1 11500 . C CG"
+        - "chr1 12500 . CTG C"
+        - "chr1 13500 . G GCC"
+        - "chr1 14500 . AAT A"
+    - path: "test-output/somaticSeq/SSeq.Classified.sINDEL.vcf.gz.tbi"
+
 - name: SomaticVariantcallingUnpairedTrained
   tags:
     - integration
@@ -142,6 +305,14 @@
       should_exist: false
     - path: "test-output/strelka/wgs3_manta.vcf.gz"
     - path: "test-output/strelka/wgs3_manta.vcf.gz.tbi"
+    - path: "test-output/strelka/strelka_combined_vcfs.vcf.gz"
+      should_exist: false
+    - path: "test-output/strelka/strelka_combined_vcfs.vcf.gz.tbi"
+      should_exist: false
+    - path: "test-output/combined-VCFs/combined_vcfs.vcf.gz"
+      should_exist: false
+    - path: "test-output/combined-VCFs/combined_vcfs.vcf.gz.tbi"
+      should_exist: false
     - path: "test-output/somaticSeq/Consensus.sSNV.vcf.gz"
       should_exist: false
     - path: "test-output/somaticSeq/Consensus.sSNV.vcf.gz.tbi"
@@ -174,6 +345,67 @@
         - "chr1	14500	.	AAT	A"
     - path: "test-output/somaticSeq/SSeq.Classified.sINDEL.vcf.gz.tbi"
 
+- name: SomaticVariantcallingUnpairedTrainedRunCombine
+  tags:
+    - integration
+    - trained
+  command: >-
+    cromwell run -o tests/cromwell_options.json
+    -i tests/integration/SomaticVariantcallingUnpairedTrainedRunCombine.json
+    somatic-variantcalling.wdl
+  files:
+    - path: "test-output/mutect2/wgs3.vcf.gz"
+    - path: "test-output/mutect2/wgs3.vcf.gz.tbi"
+    - path: "test-output/vardict/wgs3.vcf.gz"
+    - path: "test-output/vardict/wgs3.vcf.gz.tbi"
+    - path: "test-output/strelka/wgs3_variants.vcf.gz"
+    - path: "test-output/strelka/wgs3_variants.vcf.gz.tbi"
+    - path: "test-output/strelka/wgs3_indels.vcf.gz"
+      should_exist: false
+    - path: "test-output/strelka/wgs3_indels.vcf.gz.tbi"
+      should_exist: false
+    - path: "test-output/strelka/wgs3_manta.vcf.gz"
+    - path: "test-output/strelka/wgs3_manta.vcf.gz.tbi"
+    - path: "test-output/strelka/strelka_combined_vcfs.vcf.gz"
+      should_exist: false
+    - path: "test-output/strelka/strelka_combined_vcfs.vcf.gz.tbi"
+      should_exist: false
+    - path: "test-output/combined-VCFs/combined_vcfs.vcf.gz"
+      should_exist: false
+    - path: "test-output/combined-VCFs/combined_vcfs.vcf.gz.tbi"
+      should_exist: false
+    - path: "test-output/somaticSeq/Consensus.sSNV.vcf.gz"
+      should_exist: false
+    - path: "test-output/somaticSeq/Consensus.sSNV.vcf.gz.tbi"
+      should_exist: false
+    - path: "test-output/somaticSeq/Consensus.sINDEL.vcf.gz"
+      should_exist: false
+    - path: "test-output/somaticSeq/Consensus.sINDEL.vcf.gz.tbi"
+      should_exist: false
+    - path: "test-output/somaticSeq/train/Ensemble.sSNV.tsv.ntChange.Classifier.RData"
+    - path: "test-output/somaticSeq/train/Ensemble.sINDEL.tsv.ntChange.Classifier.RData"
+    - path: "test-output/somaticSeq/SSeq.Classified.sSNV.vcf.gz"
+      contains: #FIXME We should test if FILTER equals PASS for these and REJECT for the rest
+        - "chr1 500 . C T"
+        - "chr1 1500  . G A"
+        - "chr1 2500  . A G"
+        - "chr1 3500  . G T"
+        - "chr1 4500  . A C"
+        - "chr1 5500  . C T"
+        - "chr1 6500  . C T"
+        - "chr1 7500  . G C"
+        - "chr1 8500  . T A"
+        - "chr1 9500  . G A"
+    - path: "test-output/somaticSeq/SSeq.Classified.sSNV.vcf.gz.tbi"
+    - path: "test-output/somaticSeq/SSeq.Classified.sINDEL.vcf.gz"
+      contains:
+        - "chr1 10500 . TTG T"
+        - "chr1 11500 . C CG"
+        - "chr1 12500 . CTG C"
+        - "chr1 13500 . G GCC"
+        - "chr1 14500 . AAT A"
+    - path: "test-output/somaticSeq/SSeq.Classified.sINDEL.vcf.gz.tbi"
+
 - name: SomaticVariantcallingOneCaller
   tags:
     - integration
@@ -199,6 +431,14 @@
     - path: "test-output/strelka/wgs3-wgs1_manta.vcf.gz"
       should_exist: false
     - path: "test-output/strelka/wgs3-wgs1_manta.vcf.gz.tbi"
+      should_exist: false
+    - path: "test-output/strelka/strelka_combined_vcfs.vcf.gz"
+      should_exist: false
+    - path: "test-output/strelka/strelka_combined_vcfs.vcf.gz.tbi"
+      should_exist: false
+    - path: "test-output/combined-VCFs/combined_vcfs.vcf.gz"
+      should_exist: false
+    - path: "test-output/combined-VCFs/combined_vcfs.vcf.gz.tbi"
       should_exist: false
     - path: "test-output/somaticSeq/Consensus.sSNV.vcf.gz"
     - path: "test-output/somaticSeq/Consensus.sSNV.vcf.gz.tbi"

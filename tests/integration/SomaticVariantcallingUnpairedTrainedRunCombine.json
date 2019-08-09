@@ -1,0 +1,18 @@
+{
+  "SomaticVariantcalling.tumorSample": "wgs3",
+  "SomaticVariantcalling.tumorBam": "tests/data/wgs3/wgs3.bam",
+  "SomaticVariantcalling.tumorBamIndex": "tests/data/wgs3/wgs3.bai",
+  "SomaticVariantcalling.referenceFasta": "tests/data/reference/reference.fasta",
+  "SomaticVariantcalling.referenceFastaFai": "tests/data/reference/reference.fasta.fai",
+  "SomaticVariantcalling.referenceFastaDict": "tests/data/reference/reference.dict",
+  "SomaticVariantcalling.trainingSet": {
+    "truthIndel": "tests/data/wgs3/wgs3_indel_subset.vcf.gz",
+    "truthSNV": "tests/data/wgs3/wgs3_snv_subset.vcf.gz",
+    "tumorBam": "tests/data/wgs3/wgs3.bam",
+    "tumorBamIndex": "tests/data/wgs3/wgs3.bai",
+    "mutect2VCF": "tests/data/wgs3/somatic_variantcalling_vcfs/paired/mutect2/wgs3-wgs1.vcf.gz",
+    "vardictVCF": "tests/data/wgs3/somatic_variantcalling_vcfs/paired/vardict/wgs3-wgs1.vcf.gz",
+    "strelkaSNV": "tests/data/wgs3/somatic_variantcalling_vcfs/paired/strelka/strelka_variants.vcf.gz"
+  },
+  "SomaticVariantcalling.runCombineVariants": true
+}
