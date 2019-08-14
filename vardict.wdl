@@ -19,6 +19,8 @@ workflow VarDict{
         String outputDir = "."
         File? regions
 
+        Boolean filterSupplementaryAlignments = false
+
         Map[String, String] dockerImages = {
             "picard":"quay.io/biocontainers/picard:2.18.26--0",
             "vardict-java": "quay.io/biocontainers/vardict-java:1.5.8--1"
@@ -36,15 +38,35 @@ workflow VarDict{
              else referenceFastaDict
     }
 
+    if (filterSupplementaryAlignments) {
+        call samtools.View as filterSupplementaryTumor {
+            input:
+                inFile = tumorBam,
+                excludeFilter = 2048
+        }
+
+        if (defined(controlBam)) {
+            call samtools.View as filterSupplementaryControl {
+                input:
+                    inFile = select_first([controlBam]),
+                    excludeFilter = 2048
+            }
+        }
+    }
+
     scatter (bed in scatterList.scatters){
         call vardict.VarDict as varDict {
             input:
                 tumorSampleName = tumorSample,
-                tumorBam = tumorBam,
-                tumorBamIndex = tumorBamIndex,
+                tumorBam = select_first([filterSupplementaryTumor.outputBam, tumorBam]),
+                tumorBamIndex = select_first([filterSupplementaryTumor.outputBamIndex, tumorBamIndex]),
                 normalSampleName = controlSample,
-                normalBam = controlBam,
-                normalBamIndex = controlBamIndex,
+                normalBam = if defined(filterSupplementaryControl.outputBam)
+                    then filterSupplementaryControl.outputBam
+                    else controlBam,
+                normalBamIndex = if defined(filterSupplementaryControl.outputBam)
+                    then filterSupplementaryControl.outputBamIndex
+                    else controlBamIndex,
                 referenceFasta = referenceFasta,
                 referenceFastaFai = referenceFastaFai,
                 bedFile = bed,
