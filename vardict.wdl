@@ -23,7 +23,8 @@ workflow VarDict{
 
         Map[String, String] dockerImages = {
             "picard":"quay.io/biocontainers/picard:2.18.26--0",
-            "vardict-java": "quay.io/biocontainers/vardict-java:1.5.8--1"
+            "vardict-java": "quay.io/biocontainers/vardict-java:1.5.8--1",
+            "samtools": "quay.io/biocontainers/samtools:1.8--h46bd0b3_5"
         }
     }
 
@@ -42,14 +43,16 @@ workflow VarDict{
         call samtools.View as filterSupplementaryTumor {
             input:
                 inFile = tumorBam,
-                excludeFilter = 2048
+                excludeFilter = 2048,
+                dockerImage=dockerImages["samtools"]
         }
 
         if (defined(controlBam)) {
             call samtools.View as filterSupplementaryControl {
                 input:
                     inFile = select_first([controlBam]),
-                    excludeFilter = 2048
+                    excludeFilter = 2048,
+                    dockerImage=dockerImages["samtools"]
             }
         }
     }
