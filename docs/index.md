@@ -113,7 +113,6 @@ VCF files for each of the variant callers and a combined variants file.
 For any question about running this workflow or feature requests, please use
 the
 <a href='https://github.com/biowdl/jointgenotyping/issues'>github issue tracker</a>
-or contact
-<a href='http://sasc.lumc.nl/'>the SASC team</a> directly at: <a href='&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#115;&#97;&#115;&#99;&#64;&#108;&#117;&#109;&#99;&#46;&#110;&#108;'>
+or contact the SASC team directly at: <a href='&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#115;&#97;&#115;&#99;&#64;&#108;&#117;&#109;&#99;&#46;&#110;&#108;'>
 &#115;&#97;&#115;&#99;&#64;&#108;&#117;&#109;&#99;&#46;&#110;&#108;</a>.
 </p>
