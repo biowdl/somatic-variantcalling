@@ -12,7 +12,7 @@ aggregate the results.
 - somaticseq
 
 This workflow is part of [BioWDL](https://biowdl.github.io/)
-developed by [the SASC team](http://sasc.lumc.nl/).
+developed by the SASC team at [Leiden University Medical Center](https://www.lumc.nl/).
 
 ## Usage
 This workflow can be run using
