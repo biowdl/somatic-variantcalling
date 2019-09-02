@@ -1,189 +1,118 @@
 ---
 layout: default
 title: Home
-version: develop
-latest: true
 ---
 
-This repository contains a collection of [BioWDL](https://github.com/biowdl)
-workflows which can be used for somatic variantcalling. There are currently
-four workflows available:
-- mutect2.wdl: Uses MuTect2
-- strelka.wdl: Uses Strelka
-- vardict.wdl: Uses VarDict
-- somatic-variantcalling.wdl: Perform all three other workflows.
+This workflow uses several programs to call somatic variants and 
+aggregate the results.
+- strelka
+- mutect2
+- vardict
+- manta
+- somaticseq
 
-These workflows do not perform any kind of preprocessing.
+This workflow is part of [BioWDL](https://biowdl.github.io/)
+developed by the SASC team at [Leiden University Medical Center](https://www.lumc.nl/).
 
 ## Usage
-
-### `mutect2.wdl`
-`mutect2.wdl` can be run using
+This workflow can be run using
 [Cromwell](http://cromwell.readthedocs.io/en/stable/):
-```
-java -jar cromwell-<version>.jar run -i inputs.json mutect2.wdl
-```
-
-The inputs JSON can be generated using WOMtools as described in the [WOMtools
-documentation](http://cromwell.readthedocs.io/en/stable/WOMtool/).
-
-The primary inputs are described below, additional inputs (such as precommands)
-are available. Please use the above mentioned WOMtools command to see all
-available inputs.
-
-| field | type | default | |
-|-|-|-|-|
-| refDict | `File` | | The reference Dict file. |
-| refFasta | `File` | | The reference fasta file. |
-| refFastaIndex | `File` | | The index for the reference fasta file. |
-| tumorBam | `File` | | The BAM file containing the aligned sequencing data for the tumor sample. |
-| tumorIndex | `File` | | The index for the tumor BAM file. |
-| tumorSample | `String` | | The name/identifier of the tumor sample. |
-| vcfPath | `String` | | The output VCF file. |
-| controlBam | `File?` | | The BAM file containing the aligned sequencing data for the control/normal sample. |
-| controlIndex | `File?` | | The index for the control BAM file. |
-| controlSample | `String?` | | The name/identifier for the control sample. |
-
->All inputs have to be preceded by `Mutect2.`.
-Type is indicated according to the WDL data types: `File` should be indicators
-of file location (a string in JSON). Types ending in `?` indicate the input is
-optional, types ending in `+` indicate they require at least one element.
-
-### `strelka.wdl`
-`strelka.wdl` can be run using
-[Cromwell](http://cromwell.readthedocs.io/en/stable/):
-```
-java -jar cromwell-<version>.jar run -i inputs.json strelka.wdl
-```
-
-The inputs JSON can be generated using WOMtools as described in the [WOMtools
-documentation](http://cromwell.readthedocs.io/en/stable/WOMtool/).
-
-The primary inputs are described below, additional inputs (such as precommands)
-are available. Please use the above mentioned WOMtools command to see all
-available inputs.
-
-| field | type | default | |
-|-|-|-|-|
-| outputDir | `String` | | The output directory. |
-| refDict | `File` | | The reference Dict file. |
-| refFasta | `File` | | The reference fasta file. |
-| refFastaIndex | `File` | | The index for the reference fasta file. |
-| tumorBam | `File` | | The BAM file containing the aligned sequencing data for the tumor sample. |
-| tumorIndex | `File` | | The index for the tumor BAM file. |
-| basename | `String` | `"strelka"` | The basename for the output files. |
-| mantaSomatic.exome | `Boolean` | `false` | Whether or not the data is exome (or targeted) sequencing data. |
-| runManta | `Boolean` | `true` | Whether or not to run Manta. If true the output from Manta will be used as indelCandidates for Strelka. |
-| strelkaGermline.exome | `Boolean` | `false` | Whether or not the data is exome (or targeted) sequencing data. Only used if no control BAM is given. |
-| strelkaGermline.rna | `Boolean` | `false` | Whether or not the data is RNAseq data. Only used if no control BAM is given. |
-| strelkaSomatic.exome | `Boolean` | `false` | Whether or not the data is exome (or targeted) sequencing data. Only used if a control BAM is given. |
-| controlBam | `File?` | | The BAM file containing the aligned sequencing data for the control/normal sample. If this is not given Strelka's germline analysis is used. |
-| controlIndex | `File?` | | The index for the control BAM file. |
-
->All inputs have to be preceded by `Strelka.`.
-Type is indicated according to the WDL data types: `File` should be indicators
-of file location (a string in JSON). Types ending in `?` indicate the input is
-optional, types ending in `+` indicate they require at least one element.
-
-### `vardict.wdl`
-`vardict.wdl` can be run using
-[Cromwell](http://cromwell.readthedocs.io/en/stable/):
-```
-java -jar cromwell-<version>.jar run -i inputs.json vardict.wdl
-```
-
-The inputs JSON can be generated using WOMtools as described in the [WOMtools
-documentation](http://cromwell.readthedocs.io/en/stable/WOMtool/).
-
-The primary inputs are described below, additional inputs (such as precommands)
-are available. Please use the above mentioned WOMtools command to see all
-available inputs.
-
-| field | type | default | |
-|-|-|-|-|
-| refDict | `File` | | The reference Dict file. |
-| refFasta | `File` | | The reference fasta file. |
-| refFastaIndex | `File` | | The index for the reference fasta file. |
-| tumorBam | `File` | | The BAM file containing the aligned sequencing data for the tumor sample. |
-| tumorIndex | `File` | | The index for the tumor BAM file. |
-| tumorSample | `String` | | The name/identifier of the tumor sample. |
-| vcfPath | `String` | | The output VCF file. |
-| varDict.useJavaVersion | `Boolean` | `true` | Whether or not to use the java version or VarDict. |
-| controlBam | `File?` | | The BAM file containing the aligned sequencing data for the control/normal sample. |
-| controlIndex | `File?` | | The index for the control BAM file. |
-| controlSample | `String?` | | The name/identifier for the control sample. |
-
->All inputs have to be preceded by `VarDict.`.
-Type is indicated according to the WDL data types: `File` should be indicators
-of file location (a string in JSON). Types ending in `?` indicate the input is
-optional, types ending in `+` indicate they require at least one element.
-
-### `somatic-variantcalling.wdl`
-`somatic-variantcalling.wdl` can be run using
-[Cromwell](http://cromwell.readthedocs.io/en/stable/):
-```
+```bash
 java -jar cromwell-<version>.jar run -i inputs.json somatic-variantcalling.wdl
 ```
 
-The inputs JSON can be generated using WOMtools as described in the [WOMtools
-documentation](http://cromwell.readthedocs.io/en/stable/WOMtool/).
+### Inputs
+Inputs are provided through a JSON file. The minimally required inputs are
+described below and a template containing all possible inputs can be generated
+using Womtool as described in the
+[WOMtool documentation](http://cromwell.readthedocs.io/en/stable/WOMtool/). See
+[this page](/inputs.html) for some additional general notes and information
+about pipeline inputs.
+```json
+{
+  "SomaticVariantcalling.tumorBam": "The bam file to be processed",
+  "SomaticVariantcalling.tumorBamIndex": "The bam file's index",
+  "SomaticVariantcalling.tumorSample": "Name of the sample. This name will be used as a basename for the outputs.",
+  "SomaticVariantcalling.referenceFasta": "A reference fasta file",
+  "SomaticVariantcalling.referenceFastaFai": "The index for the reference fasta",
+  "SomaticVariantcalling.referenceFastaDict": "The dict file for the reference fasta"
+}
+```
 
-The primary inputs are described below, additional inputs (such as precommands)
-are available. Please use the above mentioned WOMtools command to see all
-available inputs.
+Some additional inputs that may be of interest are:
+```json
+{
+  "SomaticVariantcalling.controlBam": "A control (not tumor) sample bam file",
+  "SomaticVariantcalling.controlBamIndex": "Index of the control bam file",
+  "SomaticVariantcalling.controlSample": "Name of the control sample. Used as a basename for the outputs.",
+  "SomaticVariantcalling.trainingSet": "A training set for SomaticSeq",
+  "SomaticVariantcalling.runCombineVariants": "A boolean that notes whether the variant vcfs should be combined."
+}
+```
 
-| field | type | default | |
-|-|-|-|-|
-| outputDir | `String` | | The output directory. |
-| refDict | `File` | | The reference Dict file. |
-| refFasta | `File` | | The reference fasta file. |
-| refFastaIndex | `File` | | The index for the reference fasta file. |
-| tumorBam | `File` | | The BAM file containing the aligned sequencing data for the tumor sample. |
-| tumorIndex | `File` | | The index for the tumor BAM file. |
-| tumorSample | `String` | | The name/identifier of the tumor sample. |
-| strelka.Strelka.mantaSomatic.<br />exome | `Boolean` | `false` | Whether or not the data is exome (or targeted) sequencing data. |
-| strelka.Strelka.<br />strelkaGermline.exome | `Boolean` | `false` | Whether or not the data is exome (or targeted) sequencing data. Only used if no control BAM is given. |
-| strelka.Strelka.<br />strelkaGermline.rna | `Boolean` | `false` | Whether or not the data is RNAseq data. Only used if no control BAM is given. |
-| strelka.Strelka.<br />strelkaSomatic.exome | `Boolean` | `false` | Whether or not the data is exome (or targeted) sequencing data. Only used if a control BAM is given. |
-| strelka.runManta | `Boolean` | `true` | Whether or not to run Manta. |
-| controlBam | `File?` | | The BAM file containing the aligned sequencing data for the control/normal sample. If this is not given Strelka's germline analysis is used. |
-| controlIndex | `File?` | | The index for the control BAM file. |
-| controlSample | `String?` | | The name/identifier for the control sample. |
+An output directory can be set using an `options.json` file. See [the
+cromwell documentation](
+https://cromwell.readthedocs.io/en/stable/wf_options/Overview/) for more
+information.
 
->All inputs have to be preceded by `SomaticVariantcalling.`.
-Type is indicated according to the WDL data types: `File` should be indicators
-of file location (a string in JSON). Types ending in `?` indicate the input is
-optional, types ending in `+` indicate they require at least one element.
+Example `options.json` file:
+```JSON
+{
+"final_workflow_outputs_dir": "my-analysis-output",
+"use_relative_output_paths": true,
+"default_runtime_attributes": {
+  "docker_user": "$EUID"
+  }
+}
+```
+Alternatively an output directory can be set with `GatkPreprocess.outputDir`.
+`GatkPreprocess.outputDir` must be mounted in the docker container. Cromwell will
+need a custom configuration to allow this.
 
-## Tool versions
-Included in the repository is an `environment.yml` file. This file includes
-all the tool version on which the workflow was tested. You can use conda and
-this file to create an environment with all the correct tools.
+#### Example
+```json
+{
+  "SomaticVariantcalling.tumorSample": "wgs3",
+  "SomaticVariantcalling.tumorBam": "tests/data/wgs3/wgs3.bam",
+  "SomaticVariantcalling.tumorBamIndex": "tests/data/wgs3/wgs3.bai",
+  "SomaticVariantcalling.referenceFasta": "tests/data/reference/reference.fasta",
+  "SomaticVariantcalling.referenceFastaFai": "tests/data/reference/reference.fasta.fai",
+  "SomaticVariantcalling.referenceFastaDict": "tests/data/reference/reference.dict",
+  "SomaticVariantcalling.trainingSet": {
+    "truthIndel": "tests/data/wgs3/wgs3_indel_subset.vcf.gz",
+    "truthSNV": "tests/data/wgs3/wgs3_snv_subset.vcf.gz",
+    "tumorBam": "tests/data/wgs3/wgs3.bam",
+    "tumorBamIndex": "tests/data/wgs3/wgs3.bai",
+    "mutect2VCF": "tests/data/wgs3/somatic_variantcalling_vcfs/paired/mutect2/wgs3-wgs1.vcf.gz",
+    "vardictVCF": "tests/data/wgs3/somatic_variantcalling_vcfs/paired/vardict/wgs3-wgs1.vcf.gz",
+    "strelkaSNV": "tests/data/wgs3/somatic_variantcalling_vcfs/paired/strelka/strelka_variants.vcf.gz"
+  },
+  "SomaticVariantcalling.runCombineVariants": true
+}
+```
 
-## Output
-### `mutect2.wdl`
-A VCF file and its index.
+### Dependency requirements and tool versions
+Biowdl pipelines use docker images to ensure  reproducibility. This
+means that biowdl pipelines will run on any system that has docker
+installed. Alternatively they can be run with singularity.
 
-### `strelka.wdl`
-A VCF file and its index for indels and SNVs (and SVs if Manta is run).
+For more advanced configuration of docker or singularity please check
+the [cromwell documentation on containers](
+https://cromwell.readthedocs.io/en/stable/tutorials/Containers/).
 
-### `vardict.wdl`
-A VCF file and its index.
+Images from [biocontainers](https://biocontainers.pro) are preferred for
+biowdl pipelines. The list of default images for this pipeline can be
+found in the default for the `dockerImages` input.
 
-### `somatic-variantcalling.wdl`
-A Directory per used caller (MuTect2, Strelka and VarDict), each containing
-the VCF (and its index) with the results from that caller.
-
-## About
-These workflows are part of [BioWDL](https://biowdl.github.io/)
-developed by [the SASC team](http://sasc.lumc.nl/).
+### Output
+VCF files for each of the variant callers and a combined variants file.
 
 ## Contact
 <p>
   <!-- Obscure e-mail address for spammers -->
-For any question related to these workflows, please use the
-<a href='https://github.com/biowdl/somatic-variantcalling/issues'>github issue tracker</a>
-or contact
- <a href='http://sasc.lumc.nl/'>the SASC team</a> directly at: <a href='&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#115;&#97;&#115;&#99;&#64;&#108;&#117;&#109;&#99;&#46;&#110;&#108;'>
+For any question about running this workflow or feature requests, please use
+the
+<a href='https://github.com/biowdl/jointgenotyping/issues'>github issue tracker</a>
+or contact the SASC team directly at: <a href='&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#115;&#97;&#115;&#99;&#64;&#108;&#117;&#109;&#99;&#46;&#110;&#108;'>
 &#115;&#97;&#115;&#99;&#64;&#108;&#117;&#109;&#99;&#46;&#110;&#108;</a>.
 </p>
