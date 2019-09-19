@@ -6,8 +6,8 @@
     -i tests/integration/SomaticVariantcallingPairedConsensus.json
     somatic-variantcalling.wdl
   files:
-    - path: "test-output/mutect2/wgs3-wgs1.vcf.gz"
-    - path: "test-output/mutect2/wgs3-wgs1.vcf.gz.tbi"
+    - path: "test-output/mutect2/wgs3-wgs1.filtered.vcf.gz"
+    - path: "test-output/mutect2/wgs3-wgs1.filtered.vcf.gz.tbi"
     - path: "test-output/vardict/wgs3-wgs1.vcf.gz"
     - path: "test-output/vardict/wgs3-wgs1.vcf.gz.tbi"
     - path: "test-output/strelka/wgs3-wgs1_variants.vcf.gz"
@@ -49,8 +49,8 @@
     -i tests/integration/SomaticVariantcallingPairedConsensusRunCombine.json
     somatic-variantcalling.wdl
   files:
-    - path: "test-output/mutect2/wgs3-wgs1.vcf.gz"
-    - path: "test-output/mutect2/wgs3-wgs1.vcf.gz.tbi"
+    - path: "test-output/mutect2/wgs3-wgs1.filtered.vcf.gz"
+    - path: "test-output/mutect2/wgs3-wgs1.filtered.vcf.gz.tbi"
     - path: "test-output/vardict/wgs3-wgs1.vcf.gz"
     - path: "test-output/vardict/wgs3-wgs1.vcf.gz.tbi"
     - path: "test-output/strelka/wgs3-wgs1_variants.vcf.gz"
@@ -88,8 +88,8 @@
     -i tests/integration/SomaticVariantcallingUnpairedConsensus.json
     somatic-variantcalling.wdl
   files:
-    - path: "test-output/mutect2/wgs3.vcf.gz"
-    - path: "test-output/mutect2/wgs3.vcf.gz.tbi"
+    - path: "test-output/mutect2/wgs3.filtered.vcf.gz"
+    - path: "test-output/mutect2/wgs3.filtered.vcf.gz.tbi"
     - path: "test-output/vardict/wgs3.vcf.gz"
     - path: "test-output/vardict/wgs3.vcf.gz.tbi"
     - path: "test-output/strelka/wgs3_variants.vcf.gz"
@@ -133,8 +133,8 @@
     -i tests/integration/SomaticVariantcallingUnpairedConsensusRunCombine.json
     somatic-variantcalling.wdl
   files:
-    - path: "test-output/mutect2/wgs3.vcf.gz"
-    - path: "test-output/mutect2/wgs3.vcf.gz.tbi"
+    - path: "test-output/mutect2/wgs3.filtered.vcf.gz"
+    - path: "test-output/mutect2/wgs3.filtered.vcf.gz.tbi"
     - path: "test-output/vardict/wgs3.vcf.gz"
     - path: "test-output/vardict/wgs3.vcf.gz.tbi"
     - path: "test-output/strelka/wgs3_variants.vcf.gz"
@@ -179,8 +179,8 @@
     -i tests/integration/SomaticVariantcallingPairedTrained.json
     somatic-variantcalling.wdl
   files:
-    - path: "test-output/mutect2/wgs3-wgs1.vcf.gz"
-    - path: "test-output/mutect2/wgs3-wgs1.vcf.gz.tbi"
+    - path: "test-output/mutect2/wgs3-wgs1.filtered.vcf.gz"
+    - path: "test-output/mutect2/wgs3-wgs1.filtered.vcf.gz.tbi"
     - path: "test-output/vardict/wgs3-wgs1.vcf.gz"
     - path: "test-output/vardict/wgs3-wgs1.vcf.gz.tbi"
     - path: "test-output/strelka/wgs3-wgs1_variants.vcf.gz"
@@ -238,8 +238,8 @@
     -i tests/integration/SomaticVariantcallingPairedTrainedRunCombine.json
     somatic-variantcalling.wdl
   files:
-    - path: "test-output/mutect2/wgs3-wgs1.vcf.gz"
-    - path: "test-output/mutect2/wgs3-wgs1.vcf.gz.tbi"
+    - path: "test-output/mutect2/wgs3-wgs1.filtered.vcf.gz"
+    - path: "test-output/mutect2/wgs3-wgs1.filtered.vcf.gz.tbi"
     - path: "test-output/vardict/wgs3-wgs1.vcf.gz"
     - path: "test-output/vardict/wgs3-wgs1.vcf.gz.tbi"
     - path: "test-output/strelka/wgs3-wgs1_variants.vcf.gz"
@@ -293,8 +293,8 @@
     -i tests/integration/SomaticVariantcallingUnpairedTrained.json
     somatic-variantcalling.wdl
   files:
-    - path: "test-output/mutect2/wgs3.vcf.gz"
-    - path: "test-output/mutect2/wgs3.vcf.gz.tbi"
+    - path: "test-output/mutect2/wgs3.filtered.vcf.gz"
+    - path: "test-output/mutect2/wgs3.filtered.vcf.gz.tbi"
     - path: "test-output/vardict/wgs3.vcf.gz"
     - path: "test-output/vardict/wgs3.vcf.gz.tbi"
     - path: "test-output/strelka/wgs3_variants.vcf.gz"
@@ -354,8 +354,8 @@
     -i tests/integration/SomaticVariantcallingUnpairedTrainedRunCombine.json
     somatic-variantcalling.wdl
   files:
-    - path: "test-output/mutect2/wgs3.vcf.gz"
-    - path: "test-output/mutect2/wgs3.vcf.gz.tbi"
+    - path: "test-output/mutect2/wgs3.filtered.vcf.gz"
+    - path: "test-output/mutect2/wgs3.filtered.vcf.gz.tbi"
     - path: "test-output/vardict/wgs3.vcf.gz"
     - path: "test-output/vardict/wgs3.vcf.gz.tbi"
     - path: "test-output/strelka/wgs3_variants.vcf.gz"
@@ -414,8 +414,8 @@
     -i tests/integration/SomaticVariantcallingOneCaller.json
     somatic-variantcalling.wdl
   files:
-    - path: "test-output/mutect2/wgs3-wgs1.vcf.gz"
-    - path: "test-output/mutect2/wgs3-wgs1.vcf.gz.tbi"
+    - path: "test-output/mutect2/wgs3-wgs1.filtered.vcf.gz"
+    - path: "test-output/mutect2/wgs3-wgs1.filtered.vcf.gz.tbi"
     - path: "test-output/vardict/wgs3-wgs1.vcf.gz"
       should_exist: false
     - path: "test-output/vardict/wgs3-wgs1.vcf.gz.tbi"
