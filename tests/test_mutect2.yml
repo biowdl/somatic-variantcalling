@@ -5,7 +5,7 @@
     cromwell run -o tests/cromwell_options.json
     -i tests/integration/Mutect2Paired.json mutect2.wdl
   files:
-    - path: "test-output/wgs3-wgs1.vcf.gz"
+    - path: "test-output/wgs3-wgs1.filtered.vcf.gz"
       contains:
         - "chr1	500	.	C	T"
         - "chr1	1500	.	G	A"
@@ -17,7 +17,7 @@
         - "chr1	7500	.	G	C"
         - "chr1	8500	.	T	A"
         - "chr1	9500	.	G	A"
-    - path: "test-output/wgs3-wgs1.vcf.gz.tbi"
+    - path: "test-output/wgs3-wgs1.filtered.vcf.gz.tbi"
 
 - name: Mutect2Unpaired
   tags:
@@ -26,7 +26,7 @@
     cromwell run -o tests/cromwell_options.json
     -i tests/integration/Mutect2Unpaired.json mutect2.wdl
   files:
-    - path: "test-output/wgs3.vcf.gz"
+    - path: "test-output/wgs3.filtered.vcf.gz"
       contains:
         - "chr1	500	.	C	T"
         - "chr1	1500	.	G	A"
@@ -38,4 +38,4 @@
         - "chr1	7500	.	G	C"
         - "chr1	8500	.	T	A"
         - "chr1	9500	.	G	A"
-    - path: "test-output/wgs3.vcf.gz.tbi"
+    - path: "test-output/wgs3.filtered.vcf.gz.tbi"

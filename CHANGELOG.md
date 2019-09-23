@@ -9,6 +9,10 @@ This document is user facing. Please word the changes in such a way
 that users understand how the changes affect the new version.
 -->
 
+version 1.1.0-dev
+---------------------------
++ Mutect2: Filtered output no longer overwrites unfiltered mutect2 output
+
 version 1.0.0
 ---------------------------
 + Added documentation
