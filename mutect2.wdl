@@ -21,6 +21,7 @@ workflow Mutect2 {
         File? variantsForContaminationIndex
         File? sitesForContamination
         File? sitesForContaminationIndex
+        Int scatterSize = 1000000000
 
         Map[String, String] dockerImages = {
           "picard":"quay.io/biocontainers/picard:2.19.0--0",
@@ -37,6 +38,8 @@ workflow Mutect2 {
         input:
             referenceFasta = referenceFasta,
             referenceFastaDict = referenceFastaDict,
+            scatterSize = scatterSize,
+            notSplitContigs = true,
             regions = regions,
             dockerImage = dockerImages["biopet-scatterregions"]
 
