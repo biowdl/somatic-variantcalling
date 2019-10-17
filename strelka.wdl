@@ -22,6 +22,7 @@ workflow Strelka {
         Boolean runManta = true
         Boolean runCombineVariants = false # even if true needs manta, indels and variants to run
         File? regions
+        Int scatterSize = 1000000000
 
         Map[String, String] dockerImages = {
             "picard":"quay.io/biocontainers/picard:2.18.26--0",
@@ -37,6 +38,8 @@ workflow Strelka {
         input:
             referenceFasta = referenceFasta,
             referenceFastaDict = referenceFastaDict,
+            scatterSize = scatterSize,
+            notSplitContigs = true,
             regions = regions,
             dockerImage = dockerImages["biopet-scatterregions"]
     }
