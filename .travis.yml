@@ -29,7 +29,11 @@ install:
   - conda install --file requirements-test.txt
 
 script:
-  - pytest --tag $TEST tests/
+  - pytest --keep-workflow-wd-on-fail --tag $TEST tests/
+
+after_failure:
+  # Get the last 1000 lines of the cromwell log to catch the error.
+  - bash -c 'tail -n 1000 /tmp/pytest_workflow_*/*/log.out'
 
 matrix:
   include:
@@ -60,3 +64,5 @@ matrix:
       install:
         - conda install cromwell
       script: bash scripts/biowdl_lint.sh
+      after_failure:
+        - echo "Linting failed"
