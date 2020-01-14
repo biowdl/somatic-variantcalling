@@ -267,4 +267,35 @@ workflow SomaticVariantcalling {
                                       then pairedTraining.ensembleSNVClassifier
                                       else singleTraining.ensembleSNVClassifier
     }
+
+    parameter_meta {
+        outputDir: {description: "The directory to which the outputs will be written.", category: "common"}
+        referenceFasta: {description: "The reference fasta file.", category: "required"}
+        referenceFastaFai: {description: "Fasta index (.fai) file of the reference.", category: "required"}
+        referenceFastaDict: {description: "Sequence dictionary (.dict) file of the reference.", category: "required"}
+        tumorSample: {description: "The name of the tumor/case sample.", category: "required"}
+        tumorBam: {description: "The BAM file for the tumor/case sample.", category: "required"}
+        tumorBamIndex: {description: "The index for the tumor/case sample's BAM file.", category: "required"}
+        controlSample: {description: "The name of the normal/control sample.", category: "common"}
+        controlBam: {description: "The BAM file for the normal/control sample.", category: "common"}
+        controlBamIndex: {description: "The index for the normal/control sample's BAM file.", category: "common"}
+        trainingSet: {description: "VCF files used to train somaticseq.", category: "advanced"}
+        regions: {description: "A bed file describing the regions to operate on.", category: "common"}
+        variantsForContamination: {description: "A VCF file with common variants.", category: "advanced"}
+        variantsForContaminationIndex: {description: "The index of the common variants VCF file.", category: "advanced"}
+        sitesForContamination: {description: "A bed file, vcf file or interval list with regions for GetPileupSummaries to operate on.", category: "advanced"}
+        sitesForContaminationIndex: {description: "The index for the vcf file provided to sitesForContamination.", category: "advanced"}
+        runStrelka: {description: "Whether or not to run Strelka.", category: "common"}
+        runVardict: {description: "Whether or not to run VarDict.", category: "common"}
+        runMutect2: {description: "Whether or not to run Mutect2.", category: "common"}
+        runCombineVariants: {description: "Whether or not to combine the variant calling results into one VCF file.", category: "advanced"}
+        dockerImages: {description: "The docker images used. Changing this may result in errors which the developers may choose not to address.",
+                       category: "advanced"}
+    }
+
+    meta {
+        WDL_AID: {
+            exclude: ["DONOTDEFINETHIS", "indelIndex.type", "snvIndex.type"]
+        }
+    }
 }
