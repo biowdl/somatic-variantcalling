@@ -11,6 +11,9 @@ that users understand how the changes affect the new version.
 
 version 1.2.0-dev
 -----------------
++ Added "rna" and "exome" inputs to strelka.
++ Added inputs oveviews to docs.
++ Added parameter_meta.
 + Added miniwdl to linting.
 
 version 1.1.0

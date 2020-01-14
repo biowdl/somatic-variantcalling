@@ -22,6 +22,8 @@ workflow Strelka {
         Boolean runManta = true
         Boolean runCombineVariants = false # even if true needs manta, indels and variants to run
         File? regions
+        Boolean exome = false
+        Boolean rna = false
         Int scatterSize = 1000000000
 
         Map[String, String] dockerImages = {
@@ -65,6 +67,7 @@ workflow Strelka {
                     referenceFastaFai = referenceFastaFai,
                     callRegions = bedPrepare.compressed,
                     callRegionsIndex = bedPrepare.index,
+                    exome = exome,
                     dockerImage = dockerImages["manta"]
             }
         }
@@ -83,6 +86,7 @@ workflow Strelka {
                     callRegionsIndex = bedPrepare.index,
                     indelCandidatesVcf = mantaSomatic.candidateSmallIndelsVcf,
                     indelCandidatesVcfIndex = mantaSomatic.candidateSmallIndelsVcfIndex,
+                    exome = exome,
                     dockerImage = dockerImages["strelka"]
             }
         }
@@ -97,6 +101,8 @@ workflow Strelka {
                     referenceFastaFai = referenceFastaFai,
                     callRegions = bedPrepare.compressed,
                     callRegionsIndex = bedPrepare.index,
+                    exome = exome,
+                    rna = rna,
                     dockerImage = dockerImages["strelka"]
             }
         }
@@ -200,6 +206,33 @@ workflow Strelka {
         File? indelsVcfIndex = indelsIndex.index
         File? combinedVcf = combineVariants.combinedVcf
         File? combinedVcfIndex = combineVariants.combinedVcfIndex
+    }
+
+    parameter_meta {
+        tumorBam: {description: "The BAM file for the tumor/case sample.", category: "required"}
+        tumorBamIndex: {description: "The index for the tumor/case sample's BAM file.", category: "required"}
+        controlBam: {description: "The BAM file for the normal/control sample.", category: "common"}
+        controlBamIndex: {description: "The index for the normal/control sample's BAM file.", category: "common"}
+        referenceFasta: {description: "The reference fasta file.", category: "required"}
+        referenceFastaFai: {description: "Fasta index (.fai) file of the reference.", category: "required"}
+        referenceFastaDict: {description: "Sequence dictionary (.dict) file of the reference.", category: "required"}
+        outputDir: {description: "The directory to which the outputs will be written.", category: "common"}
+        basename: {description: "The basename for the output.", category: "common"}
+        runManta: {description: "Whether or not mata should be run.", category: "common"}
+        runCombineVariants: {description: "Whether or not found variants should be combined into a single VCf file.", category: "advanced"}
+        regions: {description: "A bed file describing the regions to operate on.", category: "common"}
+        exome: {description: "Whether or not the data is from exome sequencing.", category: "common"}
+        rna: {description: "Whether or not the data is from RNA sequencing.", category: "common"}
+        scatterSize: {description: "The size of the scattered regions in bases. Scattering is used to speed up certain processes. The genome will be sseperated into multiple chunks (scatters) which will be processed in their own job, allowing for parallel processing. Higher values will result in a lower number of jobs. The optimal value here will depend on the available resources.",
+                      category: "advanced"}
+        dockerImages: {description: "The docker images used. Changing this may result in errors which the developers may choose not to address.",
+                       category: "advanced"}
+    }
+
+    meta {
+        WDL_AID: {
+            exclude: ["indelsIndex.type", "svsIndex.type", "variantsIndex.type"]
+        }
     }
 }
 
