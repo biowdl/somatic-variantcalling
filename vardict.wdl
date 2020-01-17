@@ -44,6 +44,7 @@ workflow VarDict{
             input:
                 inFile = tumorBam,
                 excludeFilter = 2048,
+                outputFileName = "noSupsTumor.bam",
                 dockerImage=dockerImages["samtools"]
         }
 
@@ -52,6 +53,7 @@ workflow VarDict{
                 input:
                     inFile = select_first([controlBam]),
                     excludeFilter = 2048,
+                    outputFileName = "noSupsControl.bam",
                     dockerImage=dockerImages["samtools"]
             }
         }
@@ -89,5 +91,23 @@ workflow VarDict{
     output {
         File outputVcf = gatherVcfs.outputVcf
         File outputVcfIndex = gatherVcfs.outputVcfIndex
+    }
+
+    parameter_meta {
+        tumorSample: {description: "The name of the tumor/case sample.", category: "required"}
+        tumorBam: {description: "The BAM file for the tumor/case sample.", category: "required"}
+        tumorBamIndex: {description: "The index for the tumor/case sample's BAM file.", category: "required"}
+        controlSample: {description: "The name of the normal/control sample.", category: "common"}
+        controlBam: {description: "The BAM file for the normal/control sample.", category: "common"}
+        controlBamIndex: {description: "The index for the normal/control sample's BAM file.", category: "common"}
+        referenceFasta: {description: "The reference fasta file.", category: "required"}
+        referenceFastaFai: {description: "Fasta index (.fai) file of the reference.", category: "required"}
+        referenceFastaDict: {description: "Sequence dictionary (.dict) file of the reference.", category: "required"}
+        outputDir: {description: "The directory to which the outputs will be written.", category: "common"}
+        regions: {description: "A bed file describing the regions to operate on.", category: "common"}
+        filterSupplementaryAlignments: {description: "Whether or not supplementary reads should be filtered before vardict is run.",
+                                        category: "advanced"}
+        dockerImages: {description: "The docker images used. Changing this may result in errors which the developers may choose not to address.",
+                       category: "advanced"}
     }
 }
