@@ -7,5 +7,5 @@
   "Strelka.controlBam": "tests/data/wgs1/wgs1.bam",
   "Strelka.controlBamIndex": "tests/data/wgs1/wgs1.bai",
   "Strelka.runManta": false,
-  "Strelka.runCombineVariants": "true"
+  "Strelka.runCombineVariants": true
 }
