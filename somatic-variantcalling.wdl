@@ -133,7 +133,7 @@ workflow SomaticVariantcalling {
         }
     }
 
-    if (runCombineVariants && runCombineVariants && runVardict &&
+    if (runCombineVariants && runVardict &&
         runMutect2 && defined(strelka.combinedVcf) && runStrelka) {
         call gatk.CombineVariants as combineVariants {
             input:
