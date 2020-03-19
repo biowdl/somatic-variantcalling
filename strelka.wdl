@@ -238,7 +238,7 @@ workflow Strelka {
         referenceFastaDict: {description: "Sequence dictionary (.dict) file of the reference.", category: "required"}
         outputDir: {description: "The directory to which the outputs will be written.", category: "common"}
         basename: {description: "The basename for the output.", category: "common"}
-        runManta: {description: "Whether or not mata should be run.", category: "common"}
+        runManta: {description: "Whether or not manta should be run.", category: "common"}
         runCombineVariants: {description: "Whether or not found variants should be combined into a single VCf file.", category: "advanced"}
         regions: {description: "A bed file describing the regions to operate on.", category: "common"}
         exome: {description: "Whether or not the data is from exome sequencing.", category: "common"}

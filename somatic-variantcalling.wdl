@@ -306,6 +306,7 @@ workflow SomaticVariantcalling {
         sitesForContamination: {description: "A bed file, vcf file or interval list with regions for GetPileupSummaries to operate on.", category: "advanced"}
         sitesForContaminationIndex: {description: "The index for the vcf file provided to sitesForContamination.", category: "advanced"}
         runStrelka: {description: "Whether or not to run Strelka.", category: "common"}
+        runManta: {description: "Whether or not manta should be run as part of the Strelka pipeline.", category: "common"}
         runVardict: {description: "Whether or not to run VarDict.", category: "common"}
         runMutect2: {description: "Whether or not to run Mutect2.", category: "common"}
         runCombineVariants: {description: "Whether or not to combine the variant calling results into one VCF file.", category: "advanced"}
