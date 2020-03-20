@@ -50,6 +50,7 @@ workflow SomaticVariantcalling {
         Boolean runStrelka = true
         Boolean runVardict = true
         Boolean runMutect2 = true
+        Boolean runManta = true
         Boolean runCombineVariants = false
 
         Map[String, String] dockerImages = {
@@ -70,8 +71,6 @@ workflow SomaticVariantcalling {
     String strelkaDir = outputDir + "/strelka"
     String vardictDir = outputDir + "/vardict"
     String somaticSeqDir = outputDir + "/somaticSeq"
-
-    Boolean runStrelkaCombineVariants = if runCombineVariants then true else false
 
     if (runMutect2) {
         call mutect2Workflow.Mutect2 as mutect2 {
@@ -109,7 +108,8 @@ workflow SomaticVariantcalling {
                 basename = if defined(controlBam)
                     then "${tumorSample}-${controlSample}"
                     else tumorSample,
-                runCombineVariants = runStrelkaCombineVariants,
+                runCombineVariants = runCombineVariants,
+                runManta = runManta,
                 regions = regions,
                 dockerImages = dockerImages
         }
@@ -133,7 +133,7 @@ workflow SomaticVariantcalling {
         }
     }
 
-    if (runCombineVariants && runStrelkaCombineVariants && runVardict &&
+    if (runCombineVariants && runVardict &&
         runMutect2 && defined(strelka.combinedVcf) && runStrelka) {
         call gatk.CombineVariants as combineVariants {
             input:
@@ -306,6 +306,7 @@ workflow SomaticVariantcalling {
         sitesForContamination: {description: "A bed file, vcf file or interval list with regions for GetPileupSummaries to operate on.", category: "advanced"}
         sitesForContaminationIndex: {description: "The index for the vcf file provided to sitesForContamination.", category: "advanced"}
         runStrelka: {description: "Whether or not to run Strelka.", category: "common"}
+        runManta: {description: "Whether or not manta should be run as part of the Strelka pipeline.", category: "common"}
         runVardict: {description: "Whether or not to run VarDict.", category: "common"}
         runMutect2: {description: "Whether or not to run Mutect2.", category: "common"}
         runCombineVariants: {description: "Whether or not to combine the variant calling results into one VCF file.", category: "advanced"}
