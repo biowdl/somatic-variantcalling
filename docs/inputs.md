@@ -60,11 +60,6 @@ SomaticVariantcalling.
     <i>String? </i><br />
     The name of the normal/control sample.
 </dd>
-<dt id="SomaticVariantcalling.indelIndex.type"><a href="#SomaticVariantcalling.indelIndex.type">SomaticVariantcalling.indelIndex.type</a></dt>
-<dd>
-    <i>String </i><i>&mdash; Default:</i> <code>"vcf"</code><br />
-    The type of file (eg. vcf or bed) to be compressed and indexed.
-</dd>
 <dt id="SomaticVariantcalling.outputDir"><a href="#SomaticVariantcalling.outputDir">SomaticVariantcalling.outputDir</a></dt>
 <dd>
     <i>String </i><i>&mdash; Default:</i> <code>"."</code><br />
@@ -84,6 +79,11 @@ SomaticVariantcalling.
 <dd>
     <i>File? </i><br />
     A bed file describing the regions to operate on.
+</dd>
+<dt id="SomaticVariantcalling.runManta"><a href="#SomaticVariantcalling.runManta">SomaticVariantcalling.runManta</a></dt>
+<dd>
+    <i>Boolean </i><i>&mdash; Default:</i> <code>true</code><br />
+    Whether or not manta should be run as part of the Strelka pipeline.
 </dd>
 <dt id="SomaticVariantcalling.runMutect2"><a href="#SomaticVariantcalling.runMutect2">SomaticVariantcalling.runMutect2</a></dt>
 <dd>
@@ -110,11 +110,6 @@ SomaticVariantcalling.
     <i>File? </i><br />
     A bed file describing regions to exclude.
 </dd>
-<dt id="SomaticVariantcalling.snvIndex.type"><a href="#SomaticVariantcalling.snvIndex.type">SomaticVariantcalling.snvIndex.type</a></dt>
-<dd>
-    <i>String </i><i>&mdash; Default:</i> <code>"vcf"</code><br />
-    The type of file (eg. vcf or bed) to be compressed and indexed.
-</dd>
 <dt id="SomaticVariantcalling.strelka.exome"><a href="#SomaticVariantcalling.strelka.exome">SomaticVariantcalling.strelka.exome</a></dt>
 <dd>
     <i>Boolean </i><i>&mdash; Default:</i> <code>false</code><br />
@@ -124,11 +119,6 @@ SomaticVariantcalling.
 <dd>
     <i>Boolean </i><i>&mdash; Default:</i> <code>false</code><br />
     Whether or not the data is from RNA sequencing.
-</dd>
-<dt id="SomaticVariantcalling.strelka.runManta"><a href="#SomaticVariantcalling.strelka.runManta">SomaticVariantcalling.strelka.runManta</a></dt>
-<dd>
-    <i>Boolean </i><i>&mdash; Default:</i> <code>true</code><br />
-    Whether or not mata should be run.
 </dd>
 </dl>
 
@@ -563,7 +553,7 @@ SomaticVariantcalling.
 </dd>
 <dt id="SomaticVariantcalling.vardict.filterSupplementaryControl.uncompressedBamOutput"><a href="#SomaticVariantcalling.vardict.filterSupplementaryControl.uncompressedBamOutput">SomaticVariantcalling.vardict.filterSupplementaryControl.uncompressedBamOutput</a></dt>
 <dd>
-    <i>Boolean? </i><br />
+    <i>Boolean </i><i>&mdash; Default:</i> <code>false</code><br />
     Equivalent to samtools view's `-u` flag.
 </dd>
 <dt id="SomaticVariantcalling.vardict.filterSupplementaryTumor.excludeSpecificFilter"><a href="#SomaticVariantcalling.vardict.filterSupplementaryTumor.excludeSpecificFilter">SomaticVariantcalling.vardict.filterSupplementaryTumor.excludeSpecificFilter</a></dt>
@@ -598,7 +588,7 @@ SomaticVariantcalling.
 </dd>
 <dt id="SomaticVariantcalling.vardict.filterSupplementaryTumor.uncompressedBamOutput"><a href="#SomaticVariantcalling.vardict.filterSupplementaryTumor.uncompressedBamOutput">SomaticVariantcalling.vardict.filterSupplementaryTumor.uncompressedBamOutput</a></dt>
 <dd>
-    <i>Boolean? </i><br />
+    <i>Boolean </i><i>&mdash; Default:</i> <code>false</code><br />
     Equivalent to samtools view's `-u` flag.
 </dd>
 <dt id="SomaticVariantcalling.vardict.gatherVcfs.javaXmx"><a href="#SomaticVariantcalling.vardict.gatherVcfs.javaXmx">SomaticVariantcalling.vardict.gatherVcfs.javaXmx</a></dt>
@@ -723,6 +713,8 @@ The following inputs should ***not*** be set, even though womtool may
 show them as being available inputs.
 
 * SomaticVariantcalling.DONOTDEFINETHIS
+* SomaticVariantcalling.indelIndex.type
+* SomaticVariantcalling.snvIndex.type
 * SomaticVariantcalling.strelka.indelsIndex.type
 * SomaticVariantcalling.strelka.svsIndex.type
 * SomaticVariantcalling.strelka.variantsIndex.type

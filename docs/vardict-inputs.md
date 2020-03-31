@@ -118,7 +118,7 @@ VarDict.
 </dd>
 <dt id="VarDict.filterSupplementaryControl.uncompressedBamOutput"><a href="#VarDict.filterSupplementaryControl.uncompressedBamOutput">VarDict.filterSupplementaryControl.uncompressedBamOutput</a></dt>
 <dd>
-    <i>Boolean? </i><br />
+    <i>Boolean </i><i>&mdash; Default:</i> <code>false</code><br />
     Equivalent to samtools view's `-u` flag.
 </dd>
 <dt id="VarDict.filterSupplementaryTumor.excludeSpecificFilter"><a href="#VarDict.filterSupplementaryTumor.excludeSpecificFilter">VarDict.filterSupplementaryTumor.excludeSpecificFilter</a></dt>
@@ -153,7 +153,7 @@ VarDict.
 </dd>
 <dt id="VarDict.filterSupplementaryTumor.uncompressedBamOutput"><a href="#VarDict.filterSupplementaryTumor.uncompressedBamOutput">VarDict.filterSupplementaryTumor.uncompressedBamOutput</a></dt>
 <dd>
-    <i>Boolean? </i><br />
+    <i>Boolean </i><i>&mdash; Default:</i> <code>false</code><br />
     Equivalent to samtools view's `-u` flag.
 </dd>
 <dt id="VarDict.gatherVcfs.javaXmx"><a href="#VarDict.gatherVcfs.javaXmx">VarDict.gatherVcfs.javaXmx</a></dt>

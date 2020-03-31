@@ -78,7 +78,7 @@ Strelka.
 <dt id="Strelka.runManta"><a href="#Strelka.runManta">Strelka.runManta</a></dt>
 <dd>
     <i>Boolean </i><i>&mdash; Default:</i> <code>true</code><br />
-    Whether or not mata should be run.
+    Whether or not manta should be run.
 </dd>
 </dl>
 
