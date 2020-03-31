@@ -9,7 +9,7 @@ This document is user facing. Please word the changes in such a way
 that users understand how the changes affect the new version.
 -->
 
-version 2.0.0-dev
+version 2.0.0
 -----------------
 + Move commonly used inputs to the top-level workflow inputs sections in order
   to work better with cromwell 48 and higher.
