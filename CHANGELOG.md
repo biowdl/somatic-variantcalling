@@ -9,6 +9,12 @@ This document is user facing. Please word the changes in such a way
 that users understand how the changes affect the new version.
 -->
 
+version 2.1.0-develop
+---------------------
++ Tasks were updated to contain the `time_minutes` runtime attribute and
+  associated `timeMinutes` input, describing the maximum time the task will
+  take to run.
+
 version 2.0.0
 -----------------
 + Move commonly used inputs to the top-level workflow inputs sections in order
