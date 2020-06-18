@@ -44,7 +44,8 @@ workflow VarDict{
         Map[String, String] dockerImages = {
             "picard":"quay.io/biocontainers/picard:2.18.26--0",
             "vardict-java": "quay.io/biocontainers/vardict-java:1.5.8--1",
-            "samtools": "quay.io/biocontainers/samtools:1.8--h46bd0b3_5"
+            "samtools": "quay.io/biocontainers/samtools:1.8--h46bd0b3_5",
+            "chunked-scatter": "quay.io/biocontainers/chunked-scatter:0.2.0--py_0"
         }
     }
 
@@ -54,9 +55,8 @@ workflow VarDict{
 
     call chunkedScatter.ChunkedScatter as scatterList {
         input:
-            inputFile = if defined(regions)
-             then select_first([regions])
-             else referenceFastaDict
+            inputFile = select_first([regions, referenceFastaFai]),
+            dockerImage = dockerImages["chunked-scatter"]
     }
 
     if (filterSupplementaryAlignments) {

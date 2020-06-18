@@ -20,7 +20,7 @@ version 1.0
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import "tasks/biopet/biopet.wdl" as biopet
+import "tasks/chunked-scatter.wdl" as chunkedScatter
 import "tasks/gatk.wdl" as gatk
 import "tasks/picard.wdl" as picard
 
@@ -41,12 +41,13 @@ workflow Mutect2 {
         File? variantsForContaminationIndex
         File? sitesForContamination
         File? sitesForContaminationIndex
-        Int scatterSize = 1000000000
+        Int? scatterSize
+        Int scatterSizeMillions = 1000
 
         Map[String, String] dockerImages = {
           "picard":"quay.io/biocontainers/picard:2.19.0--0",
           "gatk4":"quay.io/biocontainers/gatk4:4.1.2.0--1",
-          "biopet-scatterregions":"quay.io/biocontainers/biopet-scatterregions:0.2--0"
+          "chunked-scatter": "quay.io/biocontainers/chunked-scatter:0.2.0--py_0"
         }
     }
 
@@ -54,15 +55,13 @@ workflow Mutect2 {
         then "~{tumorSample}-~{controlSample}"
         else tumorSample
 
-    call biopet.ScatterRegions as scatterList {
+    call chunkedScatter.ScatterRegions as scatterList {
         input:
-            referenceFasta = referenceFasta,
-            referenceFastaDict = referenceFastaDict,
+            inputFile = select_first([regions, referenceFastaFai]),
             scatterSize = scatterSize,
-            notSplitContigs = true,
-            regions = regions,
-            dockerImage = dockerImages["biopet-scatterregions"]
-
+            scatterSizeMillions = scatterSizeMillions,
+            splitContigs = false,
+            dockerImage = dockerImages["chunked-scatter"]
     }
 
     scatter (bed in scatterList.scatters) {
