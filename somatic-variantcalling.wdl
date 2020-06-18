@@ -55,7 +55,7 @@ workflow SomaticVariantcalling {
 
         Map[String, String] dockerImages = {
             "picard":"quay.io/biocontainers/picard:2.19.0--0",
-            "biopet-scatterregions":"quay.io/biocontainers/biopet-scatterregions:0.2--0",
+            "chunked-scatter": "quay.io/biocontainers/chunked-scatter:0.2.0--py_0",
             "tabix":"quay.io/biocontainers/tabix:0.2.6--ha92aebf_0",
             "manta": "quay.io/biocontainers/manta:1.4.0--py27_1",
             "strelka": "quay.io/biocontainers/strelka:2.9.7--0",
