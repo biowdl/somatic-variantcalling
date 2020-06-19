@@ -11,6 +11,7 @@ that users understand how the changes affect the new version.
 
 version 2.1.0-develop
 ---------------------
++ Replace biopet-scatterregions with scatter-regions tool from chunked-scatter.
 + Tasks were updated to contain the `time_minutes` runtime attribute and
   associated `timeMinutes` input, describing the maximum time the task will
   take to run.

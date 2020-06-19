@@ -20,7 +20,7 @@ version 1.0
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import "tasks/biopet/biopet.wdl" as biopet
+import "tasks/chunked-scatter.wdl" as chunkedScatter
 import "tasks/gatk.wdl" as gatk
 import "tasks/manta.wdl" as manta
 import "tasks/picard.wdl" as picard
@@ -44,11 +44,12 @@ workflow Strelka {
         File? regions
         Boolean exome = false
         Boolean rna = false
-        Int scatterSize = 1000000000
+        Int scatterSizeMillions = 1000
+        Int? scatterSize
 
         Map[String, String] dockerImages = {
             "picard":"quay.io/biocontainers/picard:2.18.26--0",
-            "biopet-scatterregions":"quay.io/biocontainers/biopet-scatterregions:0.2--0",
+            "chunked-scatter": "quay.io/biocontainers/chunked-scatter:0.2.0--py_0",
             "tabix":"quay.io/biocontainers/tabix:0.2.6--ha92aebf_0",
             "manta": "quay.io/biocontainers/manta:1.4.0--py27_1",
             "strelka": "quay.io/biocontainers/strelka:2.9.7--0",
@@ -56,14 +57,13 @@ workflow Strelka {
         }
     }
 
-    call biopet.ScatterRegions as scatterList {
+    call chunkedScatter.ScatterRegions as scatterList {
         input:
-            referenceFasta = referenceFasta,
-            referenceFastaDict = referenceFastaDict,
+            inputFile = select_first([regions, referenceFastaFai]),
             scatterSize = scatterSize,
-            notSplitContigs = true,
-            regions = regions,
-            dockerImage = dockerImages["biopet-scatterregions"]
+            scatterSizeMillions = scatterSizeMillions,
+            splitContigs = false,
+            dockerImage = dockerImages["chunked-scatter"]
     }
 
     scatter (bed in scatterList.scatters) {
@@ -243,8 +243,10 @@ workflow Strelka {
         regions: {description: "A bed file describing the regions to operate on.", category: "common"}
         exome: {description: "Whether or not the data is from exome sequencing.", category: "common"}
         rna: {description: "Whether or not the data is from RNA sequencing.", category: "common"}
-        scatterSize: {description: "The size of the scattered regions in bases. Scattering is used to speed up certain processes. The genome will be sseperated into multiple chunks (scatters) which will be processed in their own job, allowing for parallel processing. Higher values will result in a lower number of jobs. The optimal value here will depend on the available resources.",
-                      category: "advanced"}
+        scatterSize: {description: "The size of the scattered regions in bases. Scattering is used to speed up certain processes. The genome will be seperated into multiple chunks (scatters) which will be processed in their own job, allowing for parallel processing. Higher values will result in a lower number of jobs. The optimal value here will depend on the available resources.",
+              category: "advanced"}
+        scatterSizeMillions:{ description: "Same as scatterSize, but is multiplied by 1000000 to get scatterSize. This allows for setting larger values more easily",
+                              category: "advanced"}
         dockerImages: {description: "The docker images used. Changing this may result in errors which the developers may choose not to address.",
                        category: "advanced"}
     }
