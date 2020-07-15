@@ -48,7 +48,8 @@ workflow VarDict{
             "chunked-scatter": "quay.io/biocontainers/chunked-scatter:0.2.0--py_0"
         }
     }
-
+    meta {allowNestedInputs: true}
+    
     String prefix = if (defined(controlSample))
         then "~{tumorSample}-~{controlSample}"
         else tumorSample

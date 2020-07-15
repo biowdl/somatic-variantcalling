@@ -255,6 +255,7 @@ workflow Strelka {
         WDL_AID: {
             exclude: ["indelsIndex.type", "svsIndex.type", "variantsIndex.type"]
         }
+        allowNestedInputs: true
     }
 }
 

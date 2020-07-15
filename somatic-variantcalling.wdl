@@ -318,5 +318,6 @@ workflow SomaticVariantcalling {
         WDL_AID: {
             exclude: ["DONOTDEFINETHIS", "indelIndex.type", "snvIndex.type"]
         }
+        allowNestedInputs: true
     }
 }
