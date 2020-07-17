@@ -42,9 +42,9 @@ workflow VarDict{
         Boolean filterSupplementaryAlignments = false
 
         Map[String, String] dockerImages = {
-            "picard":"quay.io/biocontainers/picard:2.18.26--0",
+            "picard":"quay.io/biocontainers/picard:2.23.2--0",
             "vardict-java": "quay.io/biocontainers/vardict-java:1.5.8--1",
-            "samtools": "quay.io/biocontainers/samtools:1.8--h46bd0b3_5",
+            "samtools": "quay.io/biocontainers/samtools:1.10--h9402c20_2",
             "chunked-scatter": "quay.io/biocontainers/chunked-scatter:0.2.0--py_0"
         }
     }

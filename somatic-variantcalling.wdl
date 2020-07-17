@@ -54,14 +54,15 @@ workflow SomaticVariantcalling {
         Boolean runCombineVariants = false
 
         Map[String, String] dockerImages = {
-            "picard":"quay.io/biocontainers/picard:2.19.0--0",
-            "chunked-scatter": "quay.io/biocontainers/chunked-scatter:0.2.0--py_0",
+            "picard":"quay.io/biocontainers/picard:2.23.2--0",
+            "gatk4": "quay.io/biocontainers/gatk4:4.1.8.0--py38h37ae868_0",
+            "chunked-scatter": "quay.io/biocontainers/chunked-scatter:1.0.0--py_0",
             "tabix":"quay.io/biocontainers/tabix:0.2.6--ha92aebf_0",
             "manta": "quay.io/biocontainers/manta:1.4.0--py27_1",
             "strelka": "quay.io/biocontainers/strelka:2.9.7--0",
-            "gatk4":"quay.io/biocontainers/gatk4:4.1.2.0--1",
             "vardict-java": "quay.io/biocontainers/vardict-java:1.5.8--1",
-            "somaticseq": "lethalfang/somaticseq:3.1.0"
+            "somaticseq": "lethalfang/somaticseq:3.1.0",
+            "samtools": "quay.io/biocontainers/samtools:1.10--h9402c20_2"
         }
 
         IndexedVcfFile? DONOTDEFINETHIS #FIXME

@@ -48,8 +48,8 @@ workflow Strelka {
         Int? scatterSize
 
         Map[String, String] dockerImages = {
-            "picard":"quay.io/biocontainers/picard:2.18.26--0",
-            "chunked-scatter": "quay.io/biocontainers/chunked-scatter:0.2.0--py_0",
+            "picard":"quay.io/biocontainers/picard:2.23.2--0",
+            "chunked-scatter": "quay.io/biocontainers/chunked-scatter:1.0.0--py_0",
             "tabix":"quay.io/biocontainers/tabix:0.2.6--ha92aebf_0",
             "manta": "quay.io/biocontainers/manta:1.4.0--py27_1",
             "strelka": "quay.io/biocontainers/strelka:2.9.7--0",
