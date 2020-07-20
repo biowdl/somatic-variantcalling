@@ -45,9 +45,9 @@ workflow Mutect2 {
         Int scatterSizeMillions = 1000
 
         Map[String, String] dockerImages = {
-          "picard":"quay.io/biocontainers/picard:2.19.0--0",
-          "gatk4":"quay.io/biocontainers/gatk4:4.1.2.0--1",
-          "chunked-scatter": "quay.io/biocontainers/chunked-scatter:0.2.0--py_0"
+            "picard":"quay.io/biocontainers/picard:2.23.2--0",
+            "gatk4": "quay.io/biocontainers/gatk4:4.1.8.0--py38h37ae868_0",
+            "chunked-scatter": "quay.io/biocontainers/chunked-scatter:1.0.0--py_0",
         }
     }
     meta {allowNestedInputs: true}
