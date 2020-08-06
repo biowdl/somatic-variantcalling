@@ -78,7 +78,7 @@ VarDict.
 <dl>
 <dt id="VarDict.dockerImages"><a href="#VarDict.dockerImages">VarDict.dockerImages</a></dt>
 <dd>
-    <i>Map[String,String] </i><i>&mdash; Default:</i> <code>{"picard": "quay.io/biocontainers/picard:2.18.26--0", "vardict-java": "quay.io/biocontainers/vardict-java:1.5.8--1", "samtools": "quay.io/biocontainers/samtools:1.8--h46bd0b3_5"}</code><br />
+    <i>Map[String,String] </i><i>&mdash; Default:</i> <code>{"picard": "quay.io/biocontainers/picard:2.23.2--0", "vardict-java": "quay.io/biocontainers/vardict-java:1.5.8--1", "samtools": "quay.io/biocontainers/samtools:1.10--h9402c20_2", "chunked-scatter": "quay.io/biocontainers/chunked-scatter:0.2.0--py_0"}</code><br />
     The docker images used. Changing this may result in errors which the developers may choose not to address.
 </dd>
 <dt id="VarDict.filterSupplementaryAlignments"><a href="#VarDict.filterSupplementaryAlignments">VarDict.filterSupplementaryAlignments</a></dt>
@@ -116,6 +116,11 @@ VarDict.
     <i>Int </i><i>&mdash; Default:</i> <code>1</code><br />
     The number of threads to use.
 </dd>
+<dt id="VarDict.filterSupplementaryControl.timeMinutes"><a href="#VarDict.filterSupplementaryControl.timeMinutes">VarDict.filterSupplementaryControl.timeMinutes</a></dt>
+<dd>
+    <i>Int </i><i>&mdash; Default:</i> <code>1 + ceil((size(inFile,"G") * 5))</code><br />
+    The maximum amount of time the job will run in minutes.
+</dd>
 <dt id="VarDict.filterSupplementaryControl.uncompressedBamOutput"><a href="#VarDict.filterSupplementaryControl.uncompressedBamOutput">VarDict.filterSupplementaryControl.uncompressedBamOutput</a></dt>
 <dd>
     <i>Boolean </i><i>&mdash; Default:</i> <code>false</code><br />
@@ -151,6 +156,11 @@ VarDict.
     <i>Int </i><i>&mdash; Default:</i> <code>1</code><br />
     The number of threads to use.
 </dd>
+<dt id="VarDict.filterSupplementaryTumor.timeMinutes"><a href="#VarDict.filterSupplementaryTumor.timeMinutes">VarDict.filterSupplementaryTumor.timeMinutes</a></dt>
+<dd>
+    <i>Int </i><i>&mdash; Default:</i> <code>1 + ceil((size(inFile,"G") * 5))</code><br />
+    The maximum amount of time the job will run in minutes.
+</dd>
 <dt id="VarDict.filterSupplementaryTumor.uncompressedBamOutput"><a href="#VarDict.filterSupplementaryTumor.uncompressedBamOutput">VarDict.filterSupplementaryTumor.uncompressedBamOutput</a></dt>
 <dd>
     <i>Boolean </i><i>&mdash; Default:</i> <code>false</code><br />
@@ -163,18 +173,23 @@ VarDict.
 </dd>
 <dt id="VarDict.gatherVcfs.memory"><a href="#VarDict.gatherVcfs.memory">VarDict.gatherVcfs.memory</a></dt>
 <dd>
-    <i>String </i><i>&mdash; Default:</i> <code>"24G"</code><br />
+    <i>String </i><i>&mdash; Default:</i> <code>"9G"</code><br />
     The amount of memory this job will use.
+</dd>
+<dt id="VarDict.gatherVcfs.timeMinutes"><a href="#VarDict.gatherVcfs.timeMinutes">VarDict.gatherVcfs.timeMinutes</a></dt>
+<dd>
+    <i>Int </i><i>&mdash; Default:</i> <code>1 + ceil((size(vcfFiles,"G") * 5))</code><br />
+    The maximum amount of time the job will run in minutes.
 </dd>
 <dt id="VarDict.scatterList.chunkSize"><a href="#VarDict.scatterList.chunkSize">VarDict.scatterList.chunkSize</a></dt>
 <dd>
     <i>Int? </i><br />
     Equivalent to chunked-scatter's `-c` option.
 </dd>
-<dt id="VarDict.scatterList.dockerImage"><a href="#VarDict.scatterList.dockerImage">VarDict.scatterList.dockerImage</a></dt>
+<dt id="VarDict.scatterList.memory"><a href="#VarDict.scatterList.memory">VarDict.scatterList.memory</a></dt>
 <dd>
-    <i>String </i><i>&mdash; Default:</i> <code>"quay.io/biocontainers/chunked-scatter:0.1.0--py_0"</code><br />
-    The docker image used for this task. Changing this may result in errors which the developers may choose not to address.
+    <i>String </i><i>&mdash; Default:</i> <code>"256M"</code><br />
+    The amount of memory this job will use.
 </dd>
 <dt id="VarDict.scatterList.minimumBasesPerFile"><a href="#VarDict.scatterList.minimumBasesPerFile">VarDict.scatterList.minimumBasesPerFile</a></dt>
 <dd>
@@ -190,6 +205,11 @@ VarDict.
 <dd>
     <i>String </i><i>&mdash; Default:</i> <code>"./scatter"</code><br />
     The prefix for the output files.
+</dd>
+<dt id="VarDict.scatterList.timeMinutes"><a href="#VarDict.scatterList.timeMinutes">VarDict.scatterList.timeMinutes</a></dt>
+<dd>
+    <i>Int </i><i>&mdash; Default:</i> <code>2</code><br />
+    The maximum amount of time the job will run in minutes.
 </dd>
 <dt id="VarDict.varDict.chromosomeColumn"><a href="#VarDict.varDict.chromosomeColumn">VarDict.varDict.chromosomeColumn</a></dt>
 <dd>
@@ -218,7 +238,7 @@ VarDict.
 </dd>
 <dt id="VarDict.varDict.memory"><a href="#VarDict.varDict.memory">VarDict.varDict.memory</a></dt>
 <dd>
-    <i>String </i><i>&mdash; Default:</i> <code>"40G"</code><br />
+    <i>String </i><i>&mdash; Default:</i> <code>"18G"</code><br />
     The amount of memory this job will use.
 </dd>
 <dt id="VarDict.varDict.minimumAlleleFrequency"><a href="#VarDict.varDict.minimumAlleleFrequency">VarDict.varDict.minimumAlleleFrequency</a></dt>
@@ -255,6 +275,11 @@ VarDict.
 <dd>
     <i>Int </i><i>&mdash; Default:</i> <code>1</code><br />
     The number of threads to use.
+</dd>
+<dt id="VarDict.varDict.timeMinutes"><a href="#VarDict.varDict.timeMinutes">VarDict.varDict.timeMinutes</a></dt>
+<dd>
+    <i>Int </i><i>&mdash; Default:</i> <code>300</code><br />
+    The maximum amount of time the job will run in minutes.
 </dd>
 </dl>
 </details>
