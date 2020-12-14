@@ -38,26 +38,16 @@ jobs:
         test:
           - Mutect2Paired
           - Mutect2Unpaired
-          - SomaticVariantcallingPairedTrained
-          - SomaticVariantcallingPairedTrainedRunCombine
-          - SomaticVariantcallingUnpairedTrained
-          - SomaticVariantcallingUnpairedTrainedRunCombine
           - SomaticVariantcallingPairedConsensus
           - SomaticVariantcallingPairedConsensusRunCombine
           - SomaticVariantcallingUnpairedConsensus
-          - SomaticVariantcallingUnpairedConsensusRunCombine
           - StrelkaPaired
           - StrelkaPairedRunCombine
           - StrelkaUnpaired
-          - StrelkaUnpairedRunCombine
           - StrelkaPairedWithoutManta
-          - StrelkaPairedWithoutMantaRunCombine
-          - StrelkaUnpairedWithoutManta
-          - StrelkaUnpairedWithoutMantaRunCombine
           - VardictPaired
           - VardictPairedSupplementaryFilter
           - VardictUnpaired
-          - VardictUnpairedSupplementaryFilter
     steps:
       - uses: actions/checkout@v2.3.4 # https://github.com/actions/checkout.
         with:
