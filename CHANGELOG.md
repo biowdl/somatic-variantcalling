@@ -10,6 +10,10 @@ that users understand how the changes affect the new version.
 -->
 
 version 2.1.0
+--------------------
++ Various stability fixes in tasks.
+
+version 2.1.0
 ---------------------
 + Default docker images have been updated to newer versions.
 + Replace biopet-scatterregions with scatter-regions tool from chunked-scatter.
