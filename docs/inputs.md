@@ -204,7 +204,7 @@ SomaticVariantcalling.
 <dt id="SomaticVariantcalling.mutect2.gatherVcfs.compressionLevel"><a href="#SomaticVariantcalling.mutect2.gatherVcfs.compressionLevel">SomaticVariantcalling.mutect2.gatherVcfs.compressionLevel</a></dt>
 <dd>
     <i>Int </i><i>&mdash; Default:</i> <code>1</code><br />
-    The compression level at which the BAM files are written
+    The compression level at which the BAM files are written.
 </dd>
 <dt id="SomaticVariantcalling.mutect2.gatherVcfs.javaXmx"><a href="#SomaticVariantcalling.mutect2.gatherVcfs.javaXmx">SomaticVariantcalling.mutect2.gatherVcfs.javaXmx</a></dt>
 <dd>
@@ -544,7 +544,7 @@ SomaticVariantcalling.
 <dt id="SomaticVariantcalling.strelka.gatherIndels.compressionLevel"><a href="#SomaticVariantcalling.strelka.gatherIndels.compressionLevel">SomaticVariantcalling.strelka.gatherIndels.compressionLevel</a></dt>
 <dd>
     <i>Int </i><i>&mdash; Default:</i> <code>1</code><br />
-    The compression level at which the BAM files are written
+    The compression level at which the BAM files are written.
 </dd>
 <dt id="SomaticVariantcalling.strelka.gatherIndels.javaXmx"><a href="#SomaticVariantcalling.strelka.gatherIndels.javaXmx">SomaticVariantcalling.strelka.gatherIndels.javaXmx</a></dt>
 <dd>
@@ -574,7 +574,7 @@ SomaticVariantcalling.
 <dt id="SomaticVariantcalling.strelka.gatherSVs.compressionLevel"><a href="#SomaticVariantcalling.strelka.gatherSVs.compressionLevel">SomaticVariantcalling.strelka.gatherSVs.compressionLevel</a></dt>
 <dd>
     <i>Int </i><i>&mdash; Default:</i> <code>1</code><br />
-    The compression level at which the BAM files are written
+    The compression level at which the BAM files are written.
 </dd>
 <dt id="SomaticVariantcalling.strelka.gatherSVs.javaXmx"><a href="#SomaticVariantcalling.strelka.gatherSVs.javaXmx">SomaticVariantcalling.strelka.gatherSVs.javaXmx</a></dt>
 <dd>
@@ -604,7 +604,7 @@ SomaticVariantcalling.
 <dt id="SomaticVariantcalling.strelka.gatherVariants.compressionLevel"><a href="#SomaticVariantcalling.strelka.gatherVariants.compressionLevel">SomaticVariantcalling.strelka.gatherVariants.compressionLevel</a></dt>
 <dd>
     <i>Int </i><i>&mdash; Default:</i> <code>1</code><br />
-    The compression level at which the BAM files are written
+    The compression level at which the BAM files are written.
 </dd>
 <dt id="SomaticVariantcalling.strelka.gatherVariants.javaXmx"><a href="#SomaticVariantcalling.strelka.gatherVariants.javaXmx">SomaticVariantcalling.strelka.gatherVariants.javaXmx</a></dt>
 <dd>
@@ -845,6 +845,11 @@ SomaticVariantcalling.
 <dd>
     <i>String </i><i>&mdash; Default:</i> <code>"./scatter"</code><br />
     The prefix for the output files.
+</dd>
+<dt id="SomaticVariantcalling.vardict.scatterList.splitContigs"><a href="#SomaticVariantcalling.vardict.scatterList.splitContigs">SomaticVariantcalling.vardict.scatterList.splitContigs</a></dt>
+<dd>
+    <i>Boolean </i><i>&mdash; Default:</i> <code>false</code><br />
+    If set, contigs are allowed to be split up over multiple files.
 </dd>
 <dt id="SomaticVariantcalling.vardict.scatterList.timeMinutes"><a href="#SomaticVariantcalling.vardict.scatterList.timeMinutes">SomaticVariantcalling.vardict.scatterList.timeMinutes</a></dt>
 <dd>
