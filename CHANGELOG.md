@@ -9,6 +9,10 @@ This document is user facing. Please word the changes in such a way
 that users understand how the changes affect the new version.
 -->
 
+version 2.1.1
+--------------------
++ Update number of tasks: add memory runtime
+
 version 2.1.0
 --------------------
 + Various stability fixes in tasks.
