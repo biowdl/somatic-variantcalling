@@ -206,6 +206,11 @@ VarDict.
     <i>String </i><i>&mdash; Default:</i> <code>"./scatter"</code><br />
     The prefix for the output files.
 </dd>
+<dt id="VarDict.scatterList.splitContigs"><a href="#VarDict.scatterList.splitContigs">VarDict.scatterList.splitContigs</a></dt>
+<dd>
+    <i>Boolean </i><i>&mdash; Default:</i> <code>false</code><br />
+    If set, contigs are allowed to be split up over multiple files.
+</dd>
 <dt id="VarDict.scatterList.timeMinutes"><a href="#VarDict.scatterList.timeMinutes">VarDict.scatterList.timeMinutes</a></dt>
 <dd>
     <i>Int </i><i>&mdash; Default:</i> <code>2</code><br />

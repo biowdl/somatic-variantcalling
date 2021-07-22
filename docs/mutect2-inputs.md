@@ -119,7 +119,7 @@ Mutect2.
 <dt id="Mutect2.gatherVcfs.compressionLevel"><a href="#Mutect2.gatherVcfs.compressionLevel">Mutect2.gatherVcfs.compressionLevel</a></dt>
 <dd>
     <i>Int </i><i>&mdash; Default:</i> <code>1</code><br />
-    The compression level at which the BAM files are written
+    The compression level at which the BAM files are written.
 </dd>
 <dt id="Mutect2.gatherVcfs.javaXmx"><a href="#Mutect2.gatherVcfs.javaXmx">Mutect2.gatherVcfs.javaXmx</a></dt>
 <dd>

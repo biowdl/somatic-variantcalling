@@ -161,6 +161,11 @@ SomaticVariantcalling.
     <i>Map[String,String] </i><i>&mdash; Default:</i> <code>{"picard": "quay.io/biocontainers/picard:2.23.2--0", "gatk4": "quay.io/biocontainers/gatk4:4.1.8.0--py38h37ae868_0", "chunked-scatter": "quay.io/biocontainers/chunked-scatter:1.0.0--py_0", "tabix": "quay.io/biocontainers/tabix:0.2.6--ha92aebf_0", "manta": "quay.io/biocontainers/manta:1.4.0--py27_1", "strelka": "quay.io/biocontainers/strelka:2.9.7--0", "vardict-java": "quay.io/biocontainers/vardict-java:1.5.8--1", "somaticseq": "lethalfang/somaticseq:3.1.0", "samtools": "quay.io/biocontainers/samtools:1.10--h9402c20_2"}</code><br />
     The docker images used. Changing this may result in errors which the developers may choose not to address.
 </dd>
+<dt id="SomaticVariantcalling.indelIndex.memory"><a href="#SomaticVariantcalling.indelIndex.memory">SomaticVariantcalling.indelIndex.memory</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"2G"</code><br />
+    The amount of memory this job will use.
+</dd>
 <dt id="SomaticVariantcalling.indelIndex.timeMinutes"><a href="#SomaticVariantcalling.indelIndex.timeMinutes">SomaticVariantcalling.indelIndex.timeMinutes</a></dt>
 <dd>
     <i>Int </i><i>&mdash; Default:</i> <code>1 + ceil(size(inputFile,"G"))</code><br />
@@ -376,6 +381,11 @@ SomaticVariantcalling.
     <i>File? </i><br />
     An SNV VCF as produced by lofreq.
 </dd>
+<dt id="SomaticVariantcalling.pairedSomaticSeq.memory"><a href="#SomaticVariantcalling.pairedSomaticSeq.memory">SomaticVariantcalling.pairedSomaticSeq.memory</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"2G"</code><br />
+    The amount of memory this job will use.
+</dd>
 <dt id="SomaticVariantcalling.pairedSomaticSeq.museVCF"><a href="#SomaticVariantcalling.pairedSomaticSeq.museVCF">SomaticVariantcalling.pairedSomaticSeq.museVCF</a></dt>
 <dd>
     <i>File? </i><br />
@@ -411,6 +421,11 @@ SomaticVariantcalling.
     <i>File? </i><br />
     An SNV VCF as produced by varscan.
 </dd>
+<dt id="SomaticVariantcalling.pairedTraining.memory"><a href="#SomaticVariantcalling.pairedTraining.memory">SomaticVariantcalling.pairedTraining.memory</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"2G"</code><br />
+    The amount of memory this job will use.
+</dd>
 <dt id="SomaticVariantcalling.pairedTraining.threads"><a href="#SomaticVariantcalling.pairedTraining.threads">SomaticVariantcalling.pairedTraining.threads</a></dt>
 <dd>
     <i>Int </i><i>&mdash; Default:</i> <code>1</code><br />
@@ -430,6 +445,11 @@ SomaticVariantcalling.
 <dd>
     <i>File? </i><br />
     A VCF as produced by lofreq.
+</dd>
+<dt id="SomaticVariantcalling.singleSomaticSeq.memory"><a href="#SomaticVariantcalling.singleSomaticSeq.memory">SomaticVariantcalling.singleSomaticSeq.memory</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"2G"</code><br />
+    The amount of memory this job will use.
 </dd>
 <dt id="SomaticVariantcalling.singleSomaticSeq.scalpelVCF"><a href="#SomaticVariantcalling.singleSomaticSeq.scalpelVCF">SomaticVariantcalling.singleSomaticSeq.scalpelVCF</a></dt>
 <dd>
@@ -451,6 +471,11 @@ SomaticVariantcalling.
     <i>File? </i><br />
     A VCF as produced by varscan.
 </dd>
+<dt id="SomaticVariantcalling.singleTraining.memory"><a href="#SomaticVariantcalling.singleTraining.memory">SomaticVariantcalling.singleTraining.memory</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"2G"</code><br />
+    The amount of memory this job will use.
+</dd>
 <dt id="SomaticVariantcalling.singleTraining.threads"><a href="#SomaticVariantcalling.singleTraining.threads">SomaticVariantcalling.singleTraining.threads</a></dt>
 <dd>
     <i>Int </i><i>&mdash; Default:</i> <code>1</code><br />
@@ -471,10 +496,20 @@ SomaticVariantcalling.
     <i>File? </i><br />
     The index for the vcf file provided to sitesForContamination.
 </dd>
+<dt id="SomaticVariantcalling.snvIndex.memory"><a href="#SomaticVariantcalling.snvIndex.memory">SomaticVariantcalling.snvIndex.memory</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"2G"</code><br />
+    The amount of memory this job will use.
+</dd>
 <dt id="SomaticVariantcalling.snvIndex.timeMinutes"><a href="#SomaticVariantcalling.snvIndex.timeMinutes">SomaticVariantcalling.snvIndex.timeMinutes</a></dt>
 <dd>
     <i>Int </i><i>&mdash; Default:</i> <code>1 + ceil(size(inputFile,"G"))</code><br />
     The maximum amount of time the job will run in minutes.
+</dd>
+<dt id="SomaticVariantcalling.strelka.addGTFieldIndels.memory"><a href="#SomaticVariantcalling.strelka.addGTFieldIndels.memory">SomaticVariantcalling.strelka.addGTFieldIndels.memory</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"2G"</code><br />
+    The amount of memory this job will use.
 </dd>
 <dt id="SomaticVariantcalling.strelka.addGTFieldIndels.outputVCFName"><a href="#SomaticVariantcalling.strelka.addGTFieldIndels.outputVCFName">SomaticVariantcalling.strelka.addGTFieldIndels.outputVCFName</a></dt>
 <dd>
@@ -486,6 +521,11 @@ SomaticVariantcalling.
     <i>Int </i><i>&mdash; Default:</i> <code>20</code><br />
     The maximum amount of time the job will run in minutes.
 </dd>
+<dt id="SomaticVariantcalling.strelka.addGTFieldSVs.memory"><a href="#SomaticVariantcalling.strelka.addGTFieldSVs.memory">SomaticVariantcalling.strelka.addGTFieldSVs.memory</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"2G"</code><br />
+    The amount of memory this job will use.
+</dd>
 <dt id="SomaticVariantcalling.strelka.addGTFieldSVs.outputVCFName"><a href="#SomaticVariantcalling.strelka.addGTFieldSVs.outputVCFName">SomaticVariantcalling.strelka.addGTFieldSVs.outputVCFName</a></dt>
 <dd>
     <i>String </i><i>&mdash; Default:</i> <code>basename(strelkaVCF,".gz")</code><br />
@@ -496,6 +536,11 @@ SomaticVariantcalling.
     <i>Int </i><i>&mdash; Default:</i> <code>20</code><br />
     The maximum amount of time the job will run in minutes.
 </dd>
+<dt id="SomaticVariantcalling.strelka.addGTFieldVariants.memory"><a href="#SomaticVariantcalling.strelka.addGTFieldVariants.memory">SomaticVariantcalling.strelka.addGTFieldVariants.memory</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"2G"</code><br />
+    The amount of memory this job will use.
+</dd>
 <dt id="SomaticVariantcalling.strelka.addGTFieldVariants.outputVCFName"><a href="#SomaticVariantcalling.strelka.addGTFieldVariants.outputVCFName">SomaticVariantcalling.strelka.addGTFieldVariants.outputVCFName</a></dt>
 <dd>
     <i>String </i><i>&mdash; Default:</i> <code>basename(strelkaVCF,".gz")</code><br />
@@ -505,6 +550,11 @@ SomaticVariantcalling.
 <dd>
     <i>Int </i><i>&mdash; Default:</i> <code>20</code><br />
     The maximum amount of time the job will run in minutes.
+</dd>
+<dt id="SomaticVariantcalling.strelka.bedPrepare.memory"><a href="#SomaticVariantcalling.strelka.bedPrepare.memory">SomaticVariantcalling.strelka.bedPrepare.memory</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"2G"</code><br />
+    The amount of memory this job will use.
 </dd>
 <dt id="SomaticVariantcalling.strelka.bedPrepare.timeMinutes"><a href="#SomaticVariantcalling.strelka.bedPrepare.timeMinutes">SomaticVariantcalling.strelka.bedPrepare.timeMinutes</a></dt>
 <dd>
@@ -631,6 +681,11 @@ SomaticVariantcalling.
     <i>Boolean </i><i>&mdash; Default:</i> <code>true</code><br />
     True, uses the java inflater. False, uses the optimized intel inflater.
 </dd>
+<dt id="SomaticVariantcalling.strelka.indelsIndex.memory"><a href="#SomaticVariantcalling.strelka.indelsIndex.memory">SomaticVariantcalling.strelka.indelsIndex.memory</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"2G"</code><br />
+    The amount of memory this job will use.
+</dd>
 <dt id="SomaticVariantcalling.strelka.indelsIndex.timeMinutes"><a href="#SomaticVariantcalling.strelka.indelsIndex.timeMinutes">SomaticVariantcalling.strelka.indelsIndex.timeMinutes</a></dt>
 <dd>
     <i>Int </i><i>&mdash; Default:</i> <code>1 + ceil(size(inputFile,"G"))</code><br />
@@ -706,10 +761,20 @@ SomaticVariantcalling.
     <i>Int </i><i>&mdash; Default:</i> <code>90</code><br />
     The maximum amount of time the job will run in minutes.
 </dd>
+<dt id="SomaticVariantcalling.strelka.svsIndex.memory"><a href="#SomaticVariantcalling.strelka.svsIndex.memory">SomaticVariantcalling.strelka.svsIndex.memory</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"2G"</code><br />
+    The amount of memory this job will use.
+</dd>
 <dt id="SomaticVariantcalling.strelka.svsIndex.timeMinutes"><a href="#SomaticVariantcalling.strelka.svsIndex.timeMinutes">SomaticVariantcalling.strelka.svsIndex.timeMinutes</a></dt>
 <dd>
     <i>Int </i><i>&mdash; Default:</i> <code>1 + ceil(size(inputFile,"G"))</code><br />
     The maximum amount of time the job will run in minutes.
+</dd>
+<dt id="SomaticVariantcalling.strelka.variantsIndex.memory"><a href="#SomaticVariantcalling.strelka.variantsIndex.memory">SomaticVariantcalling.strelka.variantsIndex.memory</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"2G"</code><br />
+    The amount of memory this job will use.
 </dd>
 <dt id="SomaticVariantcalling.strelka.variantsIndex.timeMinutes"><a href="#SomaticVariantcalling.strelka.variantsIndex.timeMinutes">SomaticVariantcalling.strelka.variantsIndex.timeMinutes</a></dt>
 <dd>
