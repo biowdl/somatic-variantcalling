@@ -86,6 +86,11 @@ Strelka.
 <details>
 <summary> Show/Hide </summary>
 <dl>
+<dt id="Strelka.addGTFieldIndels.memory"><a href="#Strelka.addGTFieldIndels.memory">Strelka.addGTFieldIndels.memory</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"2G"</code><br />
+    The amount of memory this job will use.
+</dd>
 <dt id="Strelka.addGTFieldIndels.outputVCFName"><a href="#Strelka.addGTFieldIndels.outputVCFName">Strelka.addGTFieldIndels.outputVCFName</a></dt>
 <dd>
     <i>String </i><i>&mdash; Default:</i> <code>basename(strelkaVCF,".gz")</code><br />
@@ -95,6 +100,11 @@ Strelka.
 <dd>
     <i>Int </i><i>&mdash; Default:</i> <code>20</code><br />
     The maximum amount of time the job will run in minutes.
+</dd>
+<dt id="Strelka.addGTFieldSVs.memory"><a href="#Strelka.addGTFieldSVs.memory">Strelka.addGTFieldSVs.memory</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"2G"</code><br />
+    The amount of memory this job will use.
 </dd>
 <dt id="Strelka.addGTFieldSVs.outputVCFName"><a href="#Strelka.addGTFieldSVs.outputVCFName">Strelka.addGTFieldSVs.outputVCFName</a></dt>
 <dd>
@@ -106,6 +116,11 @@ Strelka.
     <i>Int </i><i>&mdash; Default:</i> <code>20</code><br />
     The maximum amount of time the job will run in minutes.
 </dd>
+<dt id="Strelka.addGTFieldVariants.memory"><a href="#Strelka.addGTFieldVariants.memory">Strelka.addGTFieldVariants.memory</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"2G"</code><br />
+    The amount of memory this job will use.
+</dd>
 <dt id="Strelka.addGTFieldVariants.outputVCFName"><a href="#Strelka.addGTFieldVariants.outputVCFName">Strelka.addGTFieldVariants.outputVCFName</a></dt>
 <dd>
     <i>String </i><i>&mdash; Default:</i> <code>basename(strelkaVCF,".gz")</code><br />
@@ -115,6 +130,11 @@ Strelka.
 <dd>
     <i>Int </i><i>&mdash; Default:</i> <code>20</code><br />
     The maximum amount of time the job will run in minutes.
+</dd>
+<dt id="Strelka.bedPrepare.memory"><a href="#Strelka.bedPrepare.memory">Strelka.bedPrepare.memory</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"2G"</code><br />
+    The amount of memory this job will use.
 </dd>
 <dt id="Strelka.bedPrepare.timeMinutes"><a href="#Strelka.bedPrepare.timeMinutes">Strelka.bedPrepare.timeMinutes</a></dt>
 <dd>
@@ -159,7 +179,7 @@ Strelka.
 <dt id="Strelka.gatherIndels.compressionLevel"><a href="#Strelka.gatherIndels.compressionLevel">Strelka.gatherIndels.compressionLevel</a></dt>
 <dd>
     <i>Int </i><i>&mdash; Default:</i> <code>1</code><br />
-    The compression level at which the BAM files are written
+    The compression level at which the BAM files are written.
 </dd>
 <dt id="Strelka.gatherIndels.javaXmx"><a href="#Strelka.gatherIndels.javaXmx">Strelka.gatherIndels.javaXmx</a></dt>
 <dd>
@@ -189,7 +209,7 @@ Strelka.
 <dt id="Strelka.gatherSVs.compressionLevel"><a href="#Strelka.gatherSVs.compressionLevel">Strelka.gatherSVs.compressionLevel</a></dt>
 <dd>
     <i>Int </i><i>&mdash; Default:</i> <code>1</code><br />
-    The compression level at which the BAM files are written
+    The compression level at which the BAM files are written.
 </dd>
 <dt id="Strelka.gatherSVs.javaXmx"><a href="#Strelka.gatherSVs.javaXmx">Strelka.gatherSVs.javaXmx</a></dt>
 <dd>
@@ -219,7 +239,7 @@ Strelka.
 <dt id="Strelka.gatherVariants.compressionLevel"><a href="#Strelka.gatherVariants.compressionLevel">Strelka.gatherVariants.compressionLevel</a></dt>
 <dd>
     <i>Int </i><i>&mdash; Default:</i> <code>1</code><br />
-    The compression level at which the BAM files are written
+    The compression level at which the BAM files are written.
 </dd>
 <dt id="Strelka.gatherVariants.javaXmx"><a href="#Strelka.gatherVariants.javaXmx">Strelka.gatherVariants.javaXmx</a></dt>
 <dd>
@@ -245,6 +265,11 @@ Strelka.
 <dd>
     <i>Boolean </i><i>&mdash; Default:</i> <code>true</code><br />
     True, uses the java inflater. False, uses the optimized intel inflater.
+</dd>
+<dt id="Strelka.indelsIndex.memory"><a href="#Strelka.indelsIndex.memory">Strelka.indelsIndex.memory</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"2G"</code><br />
+    The amount of memory this job will use.
 </dd>
 <dt id="Strelka.indelsIndex.timeMinutes"><a href="#Strelka.indelsIndex.timeMinutes">Strelka.indelsIndex.timeMinutes</a></dt>
 <dd>
@@ -326,10 +351,20 @@ Strelka.
     <i>Int </i><i>&mdash; Default:</i> <code>90</code><br />
     The maximum amount of time the job will run in minutes.
 </dd>
+<dt id="Strelka.svsIndex.memory"><a href="#Strelka.svsIndex.memory">Strelka.svsIndex.memory</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"2G"</code><br />
+    The amount of memory this job will use.
+</dd>
 <dt id="Strelka.svsIndex.timeMinutes"><a href="#Strelka.svsIndex.timeMinutes">Strelka.svsIndex.timeMinutes</a></dt>
 <dd>
     <i>Int </i><i>&mdash; Default:</i> <code>1 + ceil(size(inputFile,"G"))</code><br />
     The maximum amount of time the job will run in minutes.
+</dd>
+<dt id="Strelka.variantsIndex.memory"><a href="#Strelka.variantsIndex.memory">Strelka.variantsIndex.memory</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"2G"</code><br />
+    The amount of memory this job will use.
 </dd>
 <dt id="Strelka.variantsIndex.timeMinutes"><a href="#Strelka.variantsIndex.timeMinutes">Strelka.variantsIndex.timeMinutes</a></dt>
 <dd>
