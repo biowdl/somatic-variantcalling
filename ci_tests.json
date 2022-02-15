@@ -1,0 +1,14 @@
+[
+  "Mutect2Paired",
+  "Mutect2Unpaired",
+  "SomaticVariantcallingPairedConsensus",
+  "SomaticVariantcallingPairedConsensusRunCombine",
+  "SomaticVariantcallingUnpairedConsensus",
+  "SomaticVariantcallingUnpairedConsensusRunCombine",
+  "StrelkaPairedRunCombine",
+  "StrelkaUnpaired",
+  "StrelkaPairedWithoutManta",
+  "VardictPaired",
+  "VardictPairedSupplementaryFilter",
+  "VardictUnpaired"
+]
