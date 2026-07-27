@@ -43,6 +43,7 @@ workflow Mutect2 {
         File? sitesForContaminationIndex
         Int? scatterSize
         Int scatterSizeMillions = 1000
+        Boolean checkOrientationBias = false
 
         Map[String, String] dockerImages = {
             "picard":"quay.io/biocontainers/picard:2.23.2--0",
@@ -87,15 +88,21 @@ workflow Mutect2 {
             dockerImage = dockerImages["gatk4"]
     }
 
-    # Read orientation artifacts workflow
-    if (defined(variantsForContamination) && defined(variantsForContaminationIndex)
-        && defined(sitesForContamination) && defined(sitesForContaminationIndex)) {
+    Boolean checkContamination = (defined(variantsForContamination) &&
+                                  defined(variantsForContaminationIndex) &&
+                                  defined(sitesForContamination) &&
+                                  defined(sitesForContaminationIndex))
+
+    if (checkContamination || checkOrientationBias) {
         call gatk.LearnReadOrientationModel as learnReadOrientationModel {
             input:
                 f1r2TarGz = mutect2.f1r2File,
                 dockerImage = dockerImages["gatk4"]
         }
+    }
 
+    # Find contamination
+    if (checkContamination) {
         call gatk.GetPileupSummaries as getPileupSummariesTumor {
             input:
                 sampleBam = tumorBam,
@@ -180,8 +187,9 @@ workflow Mutect2 {
         sitesForContaminationIndex: {description: "The index for the vcf file provided to sitesForContamination.", category: "advanced"}
         scatterSize: {description: "The size of the scattered regions in bases. Scattering is used to speed up certain processes. The genome will be seperated into multiple chunks (scatters) which will be processed in their own job, allowing for parallel processing. Higher values will result in a lower number of jobs. The optimal value here will depend on the available resources.",
               category: "advanced"}
-        scatterSizeMillions:{ description: "Same as scatterSize, but is multiplied by 1000000 to get scatterSize. This allows for setting larger values more easily",
+        scatterSizeMillions: {description: "Same as scatterSize, but is multiplied by 1000000 to get scatterSize. This allows for setting larger values more easily",
                               category: "advanced"}
+        checkOrientationBias: {description: "Whether or not to run learnReadOrientationModel.", category: "advanced"}
         dockerImages: {description: "The docker images used. Changing this may result in errors which the developers may choose not to address.",
                        category: "advanced"}
     }

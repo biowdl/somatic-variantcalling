@@ -9,6 +9,11 @@ This document is user facing. Please word the changes in such a way
 that users understand how the changes affect the new version.
 -->
 
+version 2.2.0-dev
+--------------------
++ Allow running LearnReadOrientationModel in mutect2 workflow without
+  provision of contamination variants/sites.
+
 version 2.1.1
 --------------------
 + Update number of tasks: add memory runtime
